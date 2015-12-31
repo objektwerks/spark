@@ -2,6 +2,7 @@ package spark
 
 import org.apache.spark.HashPartitioner
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.expressions.Aggregator
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.FunSuite
 
@@ -142,6 +143,19 @@ class SparkTest extends FunSuite {
 
     row = df.agg(Map("age" -> "avg")).first
     assert(row.getDouble(0) == 22.5)
+  }
+
+  test("dataset") {
+    import sqlContext.implicits._
+    val theNewInsanityRedefinedSum = new Aggregator[Int, Int, Int] with Serializable {
+      def zero: Int = 0
+      def reduce(b: Int, a: Int) = b + a
+      def merge(b1: Int, b2: Int) = b1 + b2
+      def finish(b: Int) = b
+    }.toColumn
+
+    val ds = Seq(1, 2, 3).toDS()
+    assert(ds.select(theNewInsanityRedefinedSum).collect.apply(0) == 6)
   }
 
   test("json > case class") {
