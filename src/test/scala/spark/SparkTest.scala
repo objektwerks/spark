@@ -144,7 +144,7 @@ class SparkTest extends FunSuite {
     assert(row.getDouble(0) == 22.5)
   }
 
-  test("json-to-case class") {
+  test("json > case class") {
     val rdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
     val df = sqlContext.createDataFrame[Person](rdd)
     df.registerTempTable("persons")
@@ -156,6 +156,13 @@ class SparkTest extends FunSuite {
     val ages = df.select("age").orderBy("age").collect
     assert(ages.length == 4)
     assert(ages.head.getLong(0) == 21)
+  }
+
+  test("json > dataset") {
+    import sqlContext.implicits._
+    val ds = sqlContext.read.json(context.makeRDD(SparkInstance.json)).as[Person]
+    assert(ds.count == 4)
+    assert(ds.filter(_.age == 24).first.name == "fred")
   }
 
   test("stateless spark streaming") {
