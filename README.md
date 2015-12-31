@@ -1,6 +1,6 @@
 Spark Prototypes and Tests
 --------------------------
->The purpose of the project is to test Spark features using Scala 2.11.7.
+>The purpose of the project is to prototype and test Spark features using Scala 2.11.7.
 
 ***
 
@@ -63,7 +63,7 @@ Assembly and Submit
 Assembly and Run
 ----------------
 1. sbt assembly
-2. java -cp $SCALA_LIB/scala-library.jar:$SPARK_LAUNCHER/spark-launcher_2.11-1.5.0-SNAPSHOT.jar:./target/scala-2.11/spark-app-0.1.jar sc.SparkAppLauncher
+2. java -cp $SCALA_LIB/scala-library.jar:$SPARK_LAUNCHER/spark-launcher_2.11-2.0.0-SNAPSHOT.jar:./target/scala-2.11/spark-app-0.1.jar sc.SparkAppLauncher
 
 >This is not an ideal option. Moreover, an uber jar is problematic. Instead, go with assembly and submit whenever possible.
 That said, a lightweight uber jar, composing scala-library, spark-launcher and spark app classes/resources is a viable
