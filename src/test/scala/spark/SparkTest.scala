@@ -145,15 +145,15 @@ class SparkTest extends FunSuite {
   }
 
   test("json-to-case class") {
-    val personRdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
-    val personDf = sqlContext.createDataFrame[Person](personRdd)
-    personDf.registerTempTable("persons")
+    val rdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
+    val df = sqlContext.createDataFrame[Person](rdd)
+    df.registerTempTable("persons")
 
-    val names = personDf.select("name").orderBy("name").collect
+    val names = df.select("name").orderBy("name").collect
     assert(names.length == 4)
     assert(names.head.mkString == "barney")
 
-    val ages = personDf.select("age").orderBy("age").collect
+    val ages = df.select("age").orderBy("age").collect
     assert(ages.length == 4)
     assert(ages.head.getLong(0) == 21)
   }
