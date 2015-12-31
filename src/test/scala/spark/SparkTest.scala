@@ -144,10 +144,6 @@ class SparkTest extends FunSuite {
     assert(row.getDouble(0) == 22.5)
   }
 
-  /*
-    A json schema is inferred and then sorted alphabetically by field name. This is incorrect behavior.
-    Until a fix is found, case classes must define fields in alphabetical order.
-  */
   test("json-to-case class") {
     val personRdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
     val personDf = sqlContext.createDataFrame[Person](personRdd)
