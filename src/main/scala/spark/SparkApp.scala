@@ -11,7 +11,7 @@ object SparkApp extends App {
   val conf = new SparkConf().setAppName("sparky").setMaster("local[*]")
   val context = new SparkContext(conf)
 
-  run
+  run()
 
   def run(): Unit = {
     val streamingContext = new StreamingContext(context, Milliseconds(500))

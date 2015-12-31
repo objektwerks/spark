@@ -6,6 +6,8 @@ libraryDependencies ++= {
   val sparkVersion = "1.6.0"
   Seq(
     "org.apache.spark" % "spark-core_2.11" % sparkVersion % "provided",
+    "org.apache.spark" % "spark-streaming_2.11" % sparkVersion % "provided",
+    "org.apache.spark" % "spark-sql_2.11" % sparkVersion % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.13" % "test",
     "org.scalatest" % "scalatest_2.11" % "2.2.5" % "test"
   )

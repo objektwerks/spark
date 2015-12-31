@@ -1,15 +1,18 @@
 package spark
 
 import org.apache.spark.HashPartitioner
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.rdd.RDD
+import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.FunSuite
+
+import scala.collection.mutable
 
 case class Person(age: Long, name: String)
 
 class SparkTest extends FunSuite {
   val conf = SparkInstance.conf
   val context = SparkInstance.context
-  val sqlContext = new SQLContext(context)
+  val sqlContext = SparkInstance.sqlContext
 
   test("transformations with action") {
     val rdd = context.makeRDD(Array(1, 2, 3)).cache
@@ -149,5 +152,17 @@ class SparkTest extends FunSuite {
     val personRdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
     val personDf = sqlContext.createDataFrame[Person](personRdd)
     personDf.registerTempTable("persons")
+  }
+
+  test("stateless spark streaming") {
+    val streamingContext = new StreamingContext(context, Milliseconds(1000))
+    val queue = mutable.Queue[RDD[String]]()
+    val ds = streamingContext.queueStream(queue)
+    queue += context.makeRDD(SparkInstance.license)
+    val wordCountDs = countWords(ds)
+    wordCountDs.saveAsTextFiles("./target/output/test/ds")
+    streamingContext.start
+    streamingContext.awaitTerminationOrTimeout(1000)
+    streamingContext.stop(stopSparkContext = false, stopGracefully = true)
   }
 }
