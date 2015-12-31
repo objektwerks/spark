@@ -148,6 +148,14 @@ class SparkTest extends FunSuite {
     val personRdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
     val personDf = sqlContext.createDataFrame[Person](personRdd)
     personDf.registerTempTable("persons")
+
+    val names = personDf.select("name").orderBy("name").collect
+    assert(names.length == 4)
+    assert(names.head.mkString == "barney")
+
+    val ages = personDf.select("age").orderBy("age").collect
+    assert(ages.length == 4)
+    assert(ages.head.getLong(0) == 21)
   }
 
   test("stateless spark streaming") {
