@@ -45,7 +45,7 @@ Configuration
 2. spark.properties
 
 >The test versions are fine as is. The main version of log4j.properties is only used within your IDE. To enable Spark
-logging, copy main/resources/log4j.properties to $SPARK_HOME/conf ( where you will see a tempalte version ). Tune as required.
+logging, **copy main/resources/log4j.properties to $SPARK_HOME/conf** ( where you will see a tempalte version ). Tune as required.
 
 Tests
 -----
