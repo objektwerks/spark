@@ -10,6 +10,8 @@ import scala.collection.mutable
 
 case class Person(age: Long, name: String)
 
+case class Data(n: Long)
+
 class SparkTest extends FunSuite {
   val conf = SparkInstance.conf
   val context = SparkInstance.context
@@ -123,8 +125,8 @@ class SparkTest extends FunSuite {
     assert(word == "the" && count == 14)
   }
 
-  test("dataframes") {
-    val df = sqlContext.read.json(context.makeRDD(SparkInstance.json))
+  test("dataframe") {
+    val df = sqlContext.read.json(context.makeRDD(SparkInstance.personJson))
 
     val names = df.select("name").orderBy("name").collect
     assert(names.length == 4)
@@ -145,21 +147,8 @@ class SparkTest extends FunSuite {
     assert(row.getDouble(0) == 22.5)
   }
 
-  test("dataset") {
-    import sqlContext.implicits._
-    val theNewInsanityRedefinedSum = new Aggregator[Int, Int, Int] with Serializable {
-      def zero: Int = 0
-      def reduce(b: Int, a: Int) = b + a
-      def merge(b1: Int, b2: Int) = b1 + b2
-      def finish(b: Int) = b
-    }.toColumn
-
-    val ds = Seq(1, 2, 3).toDS()
-    assert(ds.select(theNewInsanityRedefinedSum).collect.apply(0) == 6)
-  }
-
-  test("json > case class") {
-    val rdd = sqlContext.read.json(context.makeRDD(SparkInstance.json)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
+  test("json > case class > dataframe") {
+    val rdd = sqlContext.read.json(context.makeRDD(SparkInstance.personJson)).map(p => Person(p(0).asInstanceOf[Long], p(1).asInstanceOf[String]))
     val df = sqlContext.createDataFrame[Person](rdd)
     df.registerTempTable("persons")
 
@@ -172,11 +161,37 @@ class SparkTest extends FunSuite {
     assert(ages.head.getLong(0) == 21)
   }
 
-  test("json > dataset") {
+  test("aggregator > dataset") {
     import sqlContext.implicits._
-    val ds = sqlContext.read.json(context.makeRDD(SparkInstance.json)).as[Person]
+    val sum = new Aggregator[Int, Int, Int] with Serializable {
+      def zero: Int = 0
+      def reduce(b: Int, a: Int) = b + a
+      def merge(b1: Int, b2: Int) = b1 + b2
+      def finish(b: Int) = b
+    }.toColumn
+
+    val ds = Seq(1, 2, 3).toDS()
+    assert(ds.select(sum).collect.apply(0) == 6)
+  }
+
+  test("json > case class > dataset") {
+    import sqlContext.implicits._
+    val ds = sqlContext.read.json(context.makeRDD(SparkInstance.personJson)).as[Person]
     assert(ds.count == 4)
     assert(ds.filter(_.age == 24).first.name == "fred")
+  }
+
+  test("json > case class > aggregator > dataset") {
+    import sqlContext.implicits._
+    val sum =  new Aggregator[Data, Long, Long] {
+      def zero: Long = 0
+      def reduce(b: Long, a: Data): Long = b + a.n
+      def merge(b1: Long, b2: Long): Long = b1 + b2
+      def finish(b: Long): Long = b
+    }.toColumn
+
+    val ds = sqlContext.read.json(context.makeRDD(SparkInstance.dataJson)).as[Data]
+    assert(ds.select(sum).collect.apply(0) == 6)
   }
 
   test("stateless spark streaming") {
