@@ -8,10 +8,6 @@ import org.scalatest.FunSuite
 
 import scala.collection.mutable
 
-case class Person(age: Long, name: String)
-
-case class Data(n: Long)
-
 class SparkTest extends FunSuite {
   val conf = SparkInstance.conf
   val context = SparkInstance.context
