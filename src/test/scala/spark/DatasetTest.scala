@@ -12,9 +12,9 @@ class DatasetTest extends FunSuite {
     import sqlContext.implicits._
     val sum = new Aggregator[Int, Int, Int] with Serializable {
       def zero: Int = 0
-      def reduce(b: Int, a: Int) = b + a
-      def merge(b1: Int, b2: Int) = b1 + b2
-      def finish(b: Int) = b
+      def reduce(y: Int, x: Int) = y + x
+      def merge(y1: Int, y2: Int) = y1 + y2
+      def finish(y: Int) = y
     }.toColumn
 
     val ds = Seq(1, 2, 3).toDS()
@@ -32,9 +32,9 @@ class DatasetTest extends FunSuite {
     import sqlContext.implicits._
     val sum =  new Aggregator[Data, Long, Long] {
       def zero: Long = 0
-      def reduce(b: Long, a: Data): Long = b + a.n
-      def merge(b1: Long, b2: Long): Long = b1 + b2
-      def finish(b: Long): Long = b
+      def reduce(y: Long, x: Data): Long = y + x.n
+      def merge(y1: Long, y2: Long): Long = y1 + y2
+      def finish(y: Long): Long = y
     }.toColumn
 
     val ds = sqlContext.read.json(context.makeRDD(SparkInstance.dataJson)).as[Data]
