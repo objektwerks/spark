@@ -17,9 +17,12 @@ class DStreamTest extends FunSuite {
     queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds)
     wordCountDs.saveAsTextFiles("./target/output/test/ds")
+    val count = mutable.ArrayBuffer[Int]()
+    wordCountDs foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+    assert(count.sum == 168)
   }
 
   test("window") {
@@ -29,8 +32,11 @@ class DStreamTest extends FunSuite {
     queue += context.makeRDD(SparkInstance.license)
     val wordCountDs = countWords(ds, windowLengthInMillis = 2000, slideIntervalInMillis = 1000)
     wordCountDs.saveAsTextFiles("./target/output/test/ds/window")
+    val count = mutable.ArrayBuffer[Int]()
+    wordCountDs foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+    assert(count.sum == 336) // Bug. Should be 168.
   }
 }
