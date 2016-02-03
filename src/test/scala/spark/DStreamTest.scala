@@ -30,13 +30,13 @@ class DStreamTest extends FunSuite {
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
-    val wordCountDs = countWords(ds, windowLengthInMillis = 200, slideIntervalInMillis = 100)
+    val wordCountDs = countWords(ds, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     wordCountDs.saveAsTextFiles("./target/output/test/ds/window")
     val count = mutable.ArrayBuffer[Int]()
     wordCountDs foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    assert(count.sum == 336) // Bug. Should be 168.
+    assert(count.sum == 168)
   }
 }
