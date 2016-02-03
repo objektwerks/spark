@@ -21,4 +21,16 @@ class DStreamTest extends FunSuite {
     streamingContext.awaitTerminationOrTimeout(1000)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
   }
+
+  test("window") {
+    val streamingContext = new StreamingContext(context, Milliseconds(1000))
+    val queue = mutable.Queue[RDD[String]]()
+    val ds = streamingContext.queueStream(queue)
+    queue += context.makeRDD(SparkInstance.license)
+    val wordCountDs = countWords(ds, 2000, 1000)
+    wordCountDs.saveAsTextFiles("./target/output/test/ds/window")
+    streamingContext.start
+    streamingContext.awaitTerminationOrTimeout(1000)
+    streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+  }
 }
