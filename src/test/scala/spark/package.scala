@@ -13,7 +13,11 @@ package object spark {
     ds.flatMap(l => l.split(regex)).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
   }
 
-  def countWords(ds: DStream[String], windowLength: Int, slideInterval: Int): DStream[(String, Int)] = {
-    ds.flatMap(l => l.split(regex)).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKeyAndWindow((x:Int, y:Int) => x + y, Milliseconds(windowLength), Milliseconds(slideInterval))
+  def countWords(ds: DStream[String], windowLengthInMillis: Int, slideIntervalInMillis: Int): DStream[(String, Int)] = {
+    ds.flatMap(l => l.split(regex))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .map(w => (w, 1))
+      .reduceByKeyAndWindow((x:Int, y:Int) => x + y, Milliseconds(windowLengthInMillis), Milliseconds(slideIntervalInMillis))
   }
 }

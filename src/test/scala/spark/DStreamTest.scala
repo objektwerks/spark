@@ -27,7 +27,7 @@ class DStreamTest extends FunSuite {
     val queue = mutable.Queue[RDD[String]]()
     val ds = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
-    val wordCountDs = countWords(ds, 2000, 1000)
+    val wordCountDs = countWords(ds, windowLengthInMillis = 2000, slideIntervalInMillis = 1000)
     wordCountDs.saveAsTextFiles("./target/output/test/ds/window")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(1000)
