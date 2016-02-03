@@ -22,7 +22,7 @@ class DStreamTest extends FunSuite {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    assert(count.sum == 168)
+    assert(count.sum == 169)
   }
 
   test("window") {
@@ -37,6 +37,6 @@ class DStreamTest extends FunSuite {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    assert(count.sum == 168)
+    assert(count.sum == 169)
   }
 }
