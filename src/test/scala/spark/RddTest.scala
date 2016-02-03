@@ -107,8 +107,8 @@ class RddTest extends FunSuite {
     assert(longestLine == 77)
 
     val wordCountRdd = countWords(rdd).cache
-    val totalWords = wordCountRdd.count
-    assert(totalWords == 95)
+    val totalWords = wordCountRdd.map(_._2).sum.toInt
+    assert(totalWords == 168)
 
     val maxCount = wordCountRdd.values.max
     val (word, count) = wordCountRdd.filter(_._2 == maxCount).first
