@@ -52,6 +52,13 @@ class RddTest extends FunSuite {
     assert(x == 55 && y == 10)
   }
 
+  test("join") {
+    val leftRdd = context.makeRDD(Array((1, 2)))
+    val rightRdd = context.makeRDD(Array((1, 3)))
+    val joinedRdd = leftRdd.join(rightRdd)
+    joinedRdd.collect foreach { case t:(Int, (Int, Int)) => assert( (1,(2,3)) == t ) }
+  }
+
   test("sets") {
     val rdd1 = context.makeRDD(Array(1, 2, 3)).cache
     val rdd2 = context.makeRDD(Array(3, 4, 5)).cache
