@@ -64,20 +64,22 @@ Assembly and Submit
 1. sbt assembly
 2. spark-submit --class spark.SparkApp --master local[*] ./target/scala-2.11/spark-app-0.1.jar
 
->[Submitting Spark Applications] (https://spark.apache.org/docs/latest/submitting-applications.html)
+>This is the best option. See: [Submitting Spark Applications] (https://spark.apache.org/docs/latest/submitting-applications.html)
 
 Assembly and Run
 ----------------
 1. sbt assembly
-2. java -cp $SCALA_LIB/scala-library.jar:$SPARK_LAUNCHER/spark-launcher_2.11-1.6.0-SNAPSHOT.jar:./target/scala-2.11/spark-app-0.1.jar sc.SparkAppLauncher
+2. sbt run
+3. [1] spark.SparkApp   [2] spark.SparkAppLauncher
 
->This is not an ideal option. Moreover, an uber jar is problematic. Instead, go with assembly and submit whenever possible.
-That said, a lightweight uber jar, composing scala-library, spark-launcher and spark app classes/resources is a viable
-option with SparkLauncher, which ultimately calls spark-submit --- which, in addition to a large number of Spark built
-dependencies, loads the spark assembly uber jar.
+>This is the next best option, selecting option [1]. Selection option [2] fails.
 
-1. sbt run
-2. [1] spark.SparkApp   [2] spark.SparkAppLauncher
+Assembly and Launch
+-------------------
+1. sbt assembly
+2. java -cp $SCALA_LIB/scala-library.jar:$SPARK_LAUNCHER/spark-launcher_2.11-1.6.0-SNAPSHOT.jar:./target/scala-2.11/spark-app-0.1.jar spark.SparkAppLauncher
+
+>This is not an ideal option. It ultimately calls spark-submit.
 
 Output
 ------
