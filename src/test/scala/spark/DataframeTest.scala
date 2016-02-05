@@ -3,7 +3,6 @@ package spark
 import org.scalatest.FunSuite
 
 class DataframeTest extends FunSuite {
-  val conf = SparkInstance.conf
   val context = SparkInstance.context
   val sqlContext = SparkInstance.sqlContext
 

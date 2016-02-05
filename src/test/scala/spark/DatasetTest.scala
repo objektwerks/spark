@@ -4,7 +4,6 @@ import org.apache.spark.sql.expressions.Aggregator
 import org.scalatest.FunSuite
 
 class DatasetTest extends FunSuite {
-  val conf = SparkInstance.conf
   val context = SparkInstance.context
   val sqlContext = SparkInstance.sqlContext
 

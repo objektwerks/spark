@@ -4,7 +4,6 @@ import org.apache.spark.HashPartitioner
 import org.scalatest.FunSuite
 
 class RddTest extends FunSuite {
-  val conf = SparkInstance.conf
   val context = SparkInstance.context
 
   test("transformations with action") {

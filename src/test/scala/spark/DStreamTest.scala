@@ -7,7 +7,6 @@ import org.scalatest.FunSuite
 import scala.collection.mutable
 
 class DStreamTest extends FunSuite {
-  val conf = SparkInstance.conf
   val context = SparkInstance.context
 
   test("dstream") {
