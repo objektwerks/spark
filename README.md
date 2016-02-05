@@ -72,14 +72,14 @@ Assembly and Run
 2. sbt run
 3. [1] spark.SparkApp   [2] spark.SparkAppLauncher
 
->This is the next best option, selecting option [1]. Selection option [2] fails.
+>Selecting option [1] might be the next best option. Selection option [2] fails.
 
 Assembly and Launch
 -------------------
 1. sbt assembly
 2. java -cp $SCALA_LIB/scala-library.jar:$SPARK_LAUNCHER/spark-launcher_2.11-1.6.0-SNAPSHOT.jar:./target/scala-2.11/spark-app-0.1.jar spark.SparkAppLauncher
 
->This is not an ideal option. It ultimately calls spark-submit.
+>This may not be an ideal option either. It ultimately calls spark-submit.
 
 Output
 ------
