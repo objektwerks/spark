@@ -13,3 +13,7 @@ object SparkInstance {
   val dataJson = Source.fromInputStream(getClass.getResourceAsStream("/data.json.txt")).getLines.toSeq
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
 }
+
+case class Data(n: Long)
+
+case class Person(age: Long, name: String)
