@@ -47,6 +47,12 @@ Configuration
 >The test versions are fine as is. The main version of log4j.properties is only used within your IDE. To enable Spark
 logging, **copy main/resources/log4j.properties to $SPARK_HOME/conf** ( where you will see a tempalte version ). Tune as required.
 
+Logging
+-------
+>Spark depends on log4j. Providing a log4j.properties file works great during testing and lauching of a spark app within an IDE.
+Spark, however, ignores a jar-based log4j.properties file whether a job is run by spark-submit.sh or SparkLauncher. You have to
+place a log4j.properties file in the $SPARK_HOME/conf directory. A log4j.properties.template file is provided in the same directory.
+
 Tests
 -----
 >Test results can be viewed at ./target/output/test. See the Output section below.
@@ -72,14 +78,6 @@ dependencies, loads the spark assembly uber jar.
 
 1. sbt run
 2. [1] spark.SparkApp   [2] spark.SparkAppLauncher
-
->Optional: Above, select option 1. Selecting option 2 fails.
-
-Logging
--------
->Spark depends on log4j. Providing a log4j.properties file works great during testing and lauching of a spark app within an IDE.
-Spark, however, ignores a jar-based log4j.properties file whether a job is run by spark-submit.sh or SparkLauncher. You have to
-place a log4j.properties file in the $SPARK_HOME/conf directory. A log4j.properties.template file is provided in the same directory.
 
 Output
 ------
