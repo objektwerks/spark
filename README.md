@@ -99,7 +99,7 @@ Spark Notes
 
 - Driver 1 ---> 1 ClusterManager 1 ---> * Worker
 
->Notes
+>Scenarios
 
 - A Driver executes in a JVM and composes a SparkContext ( optional StreamingContext, SqlContext, etc... ).
 - On Driver failure, Checkpointing must have been configured and used for a successful auto-restart.
