@@ -3,6 +3,8 @@ package spark
 import org.apache.spark.HashPartitioner
 import org.scalatest.FunSuite
 
+import scala.collection.SortedSet
+
 class RddTest extends FunSuite {
   val context = SparkInstance.context
 
@@ -28,6 +30,7 @@ class RddTest extends FunSuite {
     assert(rdd.sum == 6)
     assert(rdd.fold(0)(_ + _) == 6)
     assert(rdd.reduce(_ + _) == 6)
+    assert(rdd.takeOrdered(3).toSet == SortedSet(1, 2, 3))
     assert(rdd.take(1) sameElements Array(1))
   }
 
