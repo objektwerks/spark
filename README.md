@@ -90,14 +90,9 @@ Output
 
 Spark Notes
 -----------
->Logical Flow
+>Architecture
 
-- Driver 1 --- Task --- > * Executor * --- Result --- > * Store
-- Driver 1 <--- Task > | < Result --- > * Executor
-
->Logical Architecture
-
-- Driver 1 ---> 1 ClusterManager 1 ---> * Worker
+- Driver(Context) 1 ---> 1 ClusterManager 1 ---> * Worker 1 ---> * Executor 1 ---> * Task
 
 >Scenarios
 
