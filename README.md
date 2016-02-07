@@ -92,7 +92,7 @@ Spark Notes
 -----------
 >Architecture
 
-- Driver(Context, Scheduler, Jobs, Tasks, UI) 1 ---> 1 ClusterManager 1 ---> * Worker 1 ---> * Executor 1 ---> * Task
+- Driver(Context, Schedulers, Jobs, Tasks, UI) 1 ---> 1 ClusterManager 1 ---> * Worker 1 ---> * Executor 1 ---> * Task
 
 >Scenarios
 
