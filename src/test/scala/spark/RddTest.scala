@@ -100,8 +100,7 @@ class RddTest extends FunSuite {
 
   test("map values") {
     val rdd = context.makeRDD(Array((1, 1), (1, 2), (1, 3)))
-    val (key, values) = rdd.mapValues(_ * 2).groupByKey.first
-    assert(key == 1 && values.sum == 12)
+    assert(12 == rdd.mapValues(_ * 2).values.sum)
   }
 
   test("text") {
@@ -119,8 +118,8 @@ class RddTest extends FunSuite {
     val totalWords = wordCountRdd.map(_._2).sum.toInt
     assert(totalWords == 169)
 
-    val maxCount = wordCountRdd.values.max
-    val (word, count) = wordCountRdd.filter(_._2 == maxCount).first
+    val maxWordCount = wordCountRdd.values.max
+    val (word, count) = wordCountRdd.filter(_._2 == maxWordCount).first
     assert(word == "the" && count == 14)
   }
 }
