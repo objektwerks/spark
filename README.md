@@ -105,8 +105,8 @@ Spark Notes
 - On Executor failure, the Driver resends Tasks to another Executor.
 - A Driver creates Jobs, schedules Tasks, sends Tasks and retrieves Task results via a Cluster Manager and Worker Nodes.
 - A Job composes a set of Stages, which composes a DAG of RDDs, defined by a set of chained Transformations, terminated by an Action.
-- A Transformation yields an RDD. Transformations are chainable.
-- An Action, a terminal operation on a chain of Transformations, yields a result.
+- A Transformation yields an RDD. Transformations are chainable and lazy.
+- An Action, a terminal operation on a chain of Transformations, returns a result to the Driver.
 - An RDD composes Partitions. Partitions are tunable.
 - A Task executes Transformation logic on a Partition.
 - A DStream composes a set of RDDs, which can be analyzed in micro-batches across a measured, finite windows of time.
