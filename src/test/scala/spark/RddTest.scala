@@ -54,6 +54,14 @@ class RddTest extends FunSuite {
     assert(x == 55 && y == 10)
   }
 
+  test("cogroup") {
+    val leftRdd = context.makeRDD(Array((1, 2)))
+    val rightRdd = context.makeRDD(Array((1, 3)))
+    val cogroupRdd = leftRdd.cogroup(rightRdd)
+    cogroupRdd foreach println
+    cogroupRdd.collect foreach { case t:(Int, (Iterable[Int], Iterable[Int])) => assert( (1,(Iterable(2),Iterable(3))) == t ) }
+  }
+
   test("join") {
     val leftRdd = context.makeRDD(Array((1, 2)))
     val rightRdd = context.makeRDD(Array((1, 3)))
