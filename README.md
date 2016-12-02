@@ -1,7 +1,8 @@
 Spark Prototypes and Tests
 --------------------------
->The purpose of the project is to prototype and test Spark features using Scala 2.11.7.
+>The purpose of the project is to prototype and test Spark features using Scala 2.11.8.
 
+>**WARNING:** This project is defunct due to massive changes in Spark 2.0!!!
 ***
 
 Homebrew
