@@ -1,8 +1,7 @@
 Spark Prototypes and Tests
 --------------------------
->The purpose of the project is to prototype and test Spark features using Scala 2.11.8.
+>The purpose of the project is to test Spark features.
 
->**WARNING:** This project is defunct due to massive changes in Spark 2.0!!!
 ***
 
 Homebrew
@@ -88,26 +87,3 @@ Output
 
 1. ./target/output/test
 2. ./target/output/main
-
-Spark Notes
------------
->Architecture
-
-- Driver(Context, Schedulers, Jobs, Tasks, UI) 1 ---> 1 ClusterManager 1 ---> * Worker 1 ---> * Executor 1 ---> * Task
-
->Scenarios
-
-- A Driver executes in a JVM and composes a SparkContext ( optional StreamingContext, SqlContext, etc... ).
-- On Driver failure, Checkpointing must have been configured and used for a successful auto-restart.
-- A Cluster Manager (Standalone, YARN, Mesos ) executes in a JVM and interacts with a Driver and managed Workers.
-- A Worker composes an Executor, Cache and Tasks.
-- An Executor invokes Tasks to work on data blocks, which are replicated across Executors for failover.
-- Data guarantees include: (1) at least once with Receivers; and (2) Exactly once with DirectStreams.
-- On Executor failure, the Driver resends Tasks to another Executor.
-- A Driver creates Jobs, schedules Tasks, sends Tasks and retrieves Task results via a Cluster Manager and Worker nodes.
-- A Job composes a set of Stages, which composes a DAG of RDDs, defined by a set of chained Transformations, terminated by an Action.
-- A Transformation yields an RDD. Transformations are chainable and lazy.
-- An Action, a terminal operation on a chain of Transformations, returns a result to the Driver.
-- An RDD composes Partitions, which are tunable.
-- A Task executes Transformation logic on a Partition.
-- A DStream composes a set of RDDs, which can be analyzed in micro-batches across a measured, finite window of time.
