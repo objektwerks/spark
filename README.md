@@ -18,14 +18,14 @@ Installation
 
 Environment
 -----------
->The following environment variables should be in your .bash_profile
+>The following environment variables should be in your .bash_profile. **NOTE* Have yet to verify with Spark 2.0
 
 - export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home"
-- export SCALA_VERSION="2.11.7"
+- export SCALA_VERSION="2.11.8"
 - export SCALA_BINARY_VERSION="2.11"
-- export SCALA_LIB="/usr/local/Cellar/scala/2.11.7/libexec/lib"
+- export SCALA_LIB="/usr/local/Cellar/scala/2.11.8/libexec/lib"
 - export SPARK_SCALA_VERSION="2.11"
-- export SPARK_HOME="/Users/javawerks/workspace/apache/spark"
+- export SPARK_HOME="/Users/myself/workspace/apache/spark"
 - export SPARK_LAUNCHER="$SPARK_HOME/launcher/target"
 - export PATH=${JAVA_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:/usr/local/bin:/usr/local/sbin:$PATH
 
