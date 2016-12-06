@@ -29,16 +29,6 @@ Environment
 - export SPARK_LAUNCHER="$SPARK_HOME/launcher/target"
 - export PATH=${JAVA_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:/usr/local/bin:/usr/local/sbin:$PATH
 
-Spark
------
->Install Spark the current release from github. The brew and apache distros are Scala 2.10 oriented.
-
-1. git clone --branch branch-1.6 https://github.com/apache/spark/
-2. dev/change-scala-version.sh 2.11
-3. mvn -Pyarn -Phadoop-2.6 -Dscala-2.11 -DskipTests clean package
-
->See [Scala 2.11 Support Instructions] (http://spark.apache.org/docs/latest/building-spark.html#building-for-scala-211)
-
 Configuration
 -------------
 1. log4j.properties
@@ -59,20 +49,19 @@ Tests
 
 1. sbt test
 
+Assembly and Run
+----------------
+1. sbt clean compile assembly run
+3. [1] spark.SparkApp   [2] spark.SparkAppLauncher
+
+>Selecting option [1] might be the next best option. Selection option [2] fails.
+
 Assembly and Submit
 -------------------
 1. sbt assembly
 2. spark-submit --class spark.SparkApp --master local[*] ./target/scala-2.11/spark-app-0.1.jar
 
 >This is the best option. See: [Submitting Spark Applications] (https://spark.apache.org/docs/latest/submitting-applications.html)
-
-Assembly and Run
-----------------
-1. sbt assembly
-2. sbt run
-3. [1] spark.SparkApp   [2] spark.SparkAppLauncher
-
->Selecting option [1] might be the next best option. Selection option [2] fails.
 
 Assembly and Launch
 -------------------
