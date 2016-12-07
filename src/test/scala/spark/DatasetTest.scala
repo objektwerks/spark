@@ -8,8 +8,8 @@ class DatasetTest extends FunSuite {
 
   test("json > case class > dataset") {
     import session.implicits._
-    val ds = session.read.json(context.makeRDD(SparkInstance.personJson)).as[Person]
-    assert(ds.count == 4)
-    assert(ds.filter(_.age == 24).first.name == "fred")
+    val dataset = session.read.json(context.makeRDD(SparkInstance.personJson)).as[Person]
+    assert(dataset.count == 4)
+    assert(dataset.filter(_.age == 24).first.name == "fred")
   }
 }

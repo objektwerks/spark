@@ -12,12 +12,12 @@ class DStreamTest extends FunSuite {
   test("dstream") {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
-    val ds = streamingContext.queueStream(queue)
+    val dstream = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
-    val wordCountDs = countWords(ds)
+    val wordCountDstream = countWords(dstream)
     val count = mutable.ArrayBuffer[Int]()
-    wordCountDs foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
-    wordCountDs.saveAsTextFiles("./target/output/test/ds")
+    wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
+    wordCountDstream.saveAsTextFiles("./target/output/test/ds")
     streamingContext.checkpoint("./target/output/test/ds/checkpoint")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
@@ -28,12 +28,12 @@ class DStreamTest extends FunSuite {
   test("window") {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
-    val ds = streamingContext.queueStream(queue)
+    val dstream = streamingContext.queueStream(queue)
     queue += context.makeRDD(SparkInstance.license)
-    val wordCountDs = countWords(ds, windowLengthInMillis = 100, slideIntervalInMillis = 100)
+    val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     val count = mutable.ArrayBuffer[Int]()
-    wordCountDs foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
-    wordCountDs.saveAsTextFiles("./target/output/test/window")
+    wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
+    wordCountDstream.saveAsTextFiles("./target/output/test/window")
     streamingContext.checkpoint("./target/output/test/window/checkpoint")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
