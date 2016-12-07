@@ -3,8 +3,8 @@ package spark
 import org.scalatest.FunSuite
 
 class DatasetTest extends FunSuite {
-  val context = SparkInstance.context
-  val session = SparkInstance.session
+  val session = SparkInstance.sparkSession
+  val context = SparkInstance.sparkSession.sparkContext
 
   test("json > case class > dataset") {
     import session.implicits._

@@ -6,7 +6,7 @@ import org.scalatest.FunSuite
 import scala.collection.SortedSet
 
 class RddTest extends FunSuite {
-  val context = SparkInstance.context
+  val context = SparkInstance.sparkSession.sparkContext
 
   test("transformations with action") {
     val rdd = context.makeRDD(Array(1, 2, 3)).cache

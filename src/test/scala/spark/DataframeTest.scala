@@ -3,8 +3,8 @@ package spark
 import org.scalatest.FunSuite
 
 class DataframeTest extends FunSuite {
-  val context = SparkInstance.context
-  val session = SparkInstance.session
+  val session = SparkInstance.sparkSession
+  val context = SparkInstance.sparkSession.sparkContext
 
   test("dataframe") {
     val df = session.read.json(context.makeRDD(SparkInstance.personJson))

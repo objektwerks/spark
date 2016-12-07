@@ -7,7 +7,7 @@ import org.scalatest.FunSuite
 import scala.collection.mutable
 
 class DStreamTest extends FunSuite {
-  val context = SparkInstance.context
+  val context = SparkInstance.sparkSession.sparkContext
 
   test("dstream") {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
