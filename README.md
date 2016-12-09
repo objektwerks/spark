@@ -51,7 +51,8 @@ Tests
 
 Assembly and Run
 ----------------
-1. sbt clean test assembly run
+1. sbt clean assembly
+2. sbt run
 3. [1] spark.SparkApp   [2] spark.SparkAppLauncher
 
 >Selecting option [1] might be the next best option. Selection option [2] fails.
