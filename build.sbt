@@ -4,14 +4,14 @@ version := "0.1"
 scalaVersion := "2.11.11"
 ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 libraryDependencies ++= {
-  val sparkVersion = "2.1.0"
+  val sparkVersion = "2.1.1"
   Seq(
     "org.apache.spark" % "spark-core_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-streaming_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-sql_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-mllib_2.11" % sparkVersion % "provided",
-    "org.slf4j" % "slf4j-api" % "1.7.21" % "test",
-    "org.scalatest" % "scalatest_2.11" % "3.0.1" % "test"
+    "org.slf4j" % "slf4j-api" % "1.7.25" % "test",
+    "org.scalatest" % "scalatest_2.11" % "3.0.3" % "test"
   )
 }
 scalacOptions ++= Seq(
