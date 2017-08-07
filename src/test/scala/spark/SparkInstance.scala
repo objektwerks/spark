@@ -10,6 +10,5 @@ object SparkInstance {
     .appName("sparky")
     .getOrCreate()
   val personJson = Source.fromInputStream(getClass.getResourceAsStream("/person.json.txt")).getLines.toSeq
-  val dataJson = Source.fromInputStream(getClass.getResourceAsStream("/data.json.txt")).getLines.toSeq
   val license = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
 }
