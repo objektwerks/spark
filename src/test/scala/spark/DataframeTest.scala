@@ -3,13 +3,11 @@ package spark
 import org.scalatest.FunSuite
 
 class DataframeTest extends FunSuite {
-  val session = SparkInstance.sparkSession
-  val context = SparkInstance.sparkSession.sparkContext
-
   test("dataframe") {
-    import session.implicits._
+    import SparkInstance._
+    import sparkSession.implicits._
 
-    val dataframe = session.read.json(SparkInstance.personJson.toDS()).as[Person]
+    val dataframe = sparkSession.read.json(personJson.toDS()).as[Person]
 
     val names = dataframe.select("name").orderBy("name").collect
     assert(names.length == 4)

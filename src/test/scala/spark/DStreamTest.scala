@@ -7,13 +7,15 @@ import org.scalatest.FunSuite
 import scala.collection.mutable
 
 class DStreamTest extends FunSuite {
-  val context = SparkInstance.sparkSession.sparkContext
+  import SparkInstance._
+
+  val context = sparkSession.sparkContext
 
   test("dstream") {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += context.makeRDD(SparkInstance.license)
+    queue += context.makeRDD(license)
     val wordCountDstream = countWords(dstream)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
@@ -29,7 +31,7 @@ class DStreamTest extends FunSuite {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += context.makeRDD(SparkInstance.license)
+    queue += context.makeRDD(license)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }

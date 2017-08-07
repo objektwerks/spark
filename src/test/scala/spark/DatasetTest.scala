@@ -3,13 +3,11 @@ package spark
 import org.scalatest.FunSuite
 
 class DatasetTest extends FunSuite {
-  val session = SparkInstance.sparkSession
-  val context = SparkInstance.sparkSession.sparkContext
-
   test("dataset") {
-    import session.implicits._
+    import SparkInstance._
+    import sparkSession.implicits._
 
-    val dataset = session.read.json(SparkInstance.personJson.toDS()).as[Person]
+    val dataset = sparkSession.read.json(personJson.toDS()).as[Person]
 
     assert(dataset.count == 4)
     assert(dataset.filter(_.age == 24).first.name == "fred")
