@@ -7,7 +7,9 @@ class DataframeTest extends FunSuite {
   val context = SparkInstance.sparkSession.sparkContext
 
   test("dataframe") {
-    val dataframe = session.read.json(context.makeRDD(SparkInstance.personJson))
+    import session.implicits._
+
+    val dataframe = session.read.json(SparkInstance.personJson.toDS()).as[Person]
 
     val names = dataframe.select("name").orderBy("name").collect
     assert(names.length == 4)
@@ -17,14 +19,14 @@ class DataframeTest extends FunSuite {
     assert(ages.length == 4)
     assert(ages.head.getLong(0) == 21)
 
-    var row = dataframe.filter(dataframe("age") > 23).first
-    assert(row.getLong(0) == 24)
-    assert(row.getAs[String](1) == "fred")
+    val fred = dataframe.filter(dataframe("age") > 23).first
+    assert(fred.age == 24)
+    assert(fred.name == "fred")
 
-    row = dataframe.agg(Map("age" -> "max")).first
-    assert(row.getLong(0) == 24)
+    val minAge = dataframe.agg(Map("age" -> "min")).first
+    assert(minAge.getLong(0) == 21)
 
-    row = dataframe.agg(Map("age" -> "avg")).first
-    assert(row.getDouble(0) == 22.5)
+    val avgAge = dataframe.agg(Map("age" -> "avg")).first
+    assert(avgAge.getDouble(0) == 22.5)
   }
 }

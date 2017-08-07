@@ -18,9 +18,9 @@ Installation
 
 Environment
 -----------
->The following environment variables should be in your .bash_profile. **NOTE* Have yet to verify with Spark 2.0
+>The following environment variables should be in your .bash_profile.
 
-- export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home"
+- export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home"
 - export SCALA_VERSION="2.11.8"
 - export SCALA_BINARY_VERSION="2.11"
 - export SCALA_LIB="/usr/local/Cellar/scala/2.11.8/libexec/lib"
