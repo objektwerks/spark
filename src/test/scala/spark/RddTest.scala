@@ -112,7 +112,7 @@ class RddTest extends FunSuite {
   }
 
   test("text") {
-    val rdd = context.makeRDD(SparkInstance.license).cache
+    val rdd = context.makeRDD(SparkInstance.licenseText).cache
     val totalLines = rdd.count
     assert(totalLines == 19)
 

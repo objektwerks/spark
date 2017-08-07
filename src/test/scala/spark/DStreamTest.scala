@@ -15,7 +15,7 @@ class DStreamTest extends FunSuite {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += context.makeRDD(license)
+    queue += context.makeRDD(licenseText)
     val wordCountDstream = countWords(dstream)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
@@ -31,7 +31,7 @@ class DStreamTest extends FunSuite {
     val streamingContext = new StreamingContext(context, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += context.makeRDD(license)
+    queue += context.makeRDD(licenseText)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
