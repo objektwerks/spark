@@ -2,11 +2,11 @@ package spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.mutable
 
-class DStreamTest extends FunSuite {
+class DStreamTest extends FunSuite with Matchers {
   import SparkInstance._
 
   val context = sparkSession.sparkContext
@@ -24,7 +24,7 @@ class DStreamTest extends FunSuite {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    assert(count.sum == 169)
+    count.sum shouldBe 169
   }
 
   test("window") {
@@ -40,6 +40,6 @@ class DStreamTest extends FunSuite {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    assert(count.sum == 169)
+    count.sum shouldBe 169
   }
 }

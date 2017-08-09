@@ -1,8 +1,8 @@
 package spark
 
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, Matchers}
 
-class DataframeTest extends FunSuite {
+class DataframeTest extends FunSuite with Matchers {
   test("dataframe") {
     import SparkInstance._
     import sparkSession.implicits._
@@ -10,21 +10,21 @@ class DataframeTest extends FunSuite {
     val dataframe = sparkSession.read.json(personJson.toDS()).as[Person]
 
     val names = dataframe.select("name").orderBy("name").collect
-    assert(names.length == 4)
-    assert(names.head.mkString == "barney")
+    names.length shouldBe 4
+    names.head.mkString shouldBe "barney"
 
     val ages = dataframe.select("age").orderBy("age").collect
-    assert(ages.length == 4)
-    assert(ages.head.getLong(0) == 21)
+    ages.length shouldBe 4
+    ages.head.getLong(0) shouldBe 21
 
     val fred = dataframe.filter(dataframe("age") > 23).first
-    assert(fred.age == 24)
-    assert(fred.name == "fred")
+    fred.age shouldBe 24
+    fred.name shouldBe "fred"
 
     val minAge = dataframe.agg(Map("age" -> "min")).first
-    assert(minAge.getLong(0) == 21)
+    minAge.getLong(0) shouldBe 21
 
     val avgAge = dataframe.agg(Map("age" -> "avg")).first
-    assert(avgAge.getDouble(0) == 22.5)
+    avgAge.getDouble(0) shouldBe 22.5
   }
 }
