@@ -10,7 +10,7 @@ class RatingsTest extends FunSuite with Matchers {
   test("count") {
     // u.data = ( userid, movieid, rating, timestamp )
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
-    val lines = sparkContext.makeRDD(data).cache
+    val lines = sparkContext.makeRDD(data)
     val ratings = lines.map(line => line.split("\t")(2).toInt)
     val ratingsByCount = ratings.countByValue
     ratingsByCount(1) shouldBe 6110
