@@ -6,10 +6,10 @@ import org.scalatest.FunSuite
 import scala.collection.SortedSet
 
 class RddTest extends FunSuite {
-  val context = SparkInstance.sparkSession.sparkContext
+  import SparkInstance._
 
   test("transformations with action") {
-    val rdd = context.makeRDD(Array(1, 2, 3)).cache
+    val rdd = sparkContext.makeRDD(Array(1, 2, 3)).cache
     assert(rdd.filter(_ % 2 == 0).first == 2)
     assert(rdd.filter(_ % 2 != 0).first == 1)
     assert(rdd.map(_ + 1).sum == 9)
@@ -17,7 +17,7 @@ class RddTest extends FunSuite {
   }
 
   test("actions") {
-    val rdd = context.makeRDD(Array(1, 2, 3)).cache
+    val rdd = sparkContext.makeRDD(Array(1, 2, 3)).cache
     assert(rdd.count == 3)
     assert(rdd.first == 1)
     assert(rdd.min == 1)
@@ -36,57 +36,57 @@ class RddTest extends FunSuite {
 
   test("parallelize") {
     val data = 1 to 1000000
-    val rdd = context.parallelize(data)
+    val rdd = sparkContext.parallelize(data)
     val result = rdd.filter(_ % 2 == 0).collect
     assert(result.length == 500000)
   }
 
   test("partitioner") {
-    val rdd = context.parallelize(List((1, 1), (2, 2), (3, 3))).partitionBy(new HashPartitioner(2)).persist
+    val rdd = sparkContext.parallelize(List((1, 1), (2, 2), (3, 3))).partitionBy(new HashPartitioner(2)).persist
     val partitioner = rdd.partitioner.get // ShuffleRDDPartition @0 / @1
     assert(partitioner.numPartitions == 2)
   }
 
   test("aggregate") {
     val data = 1 to 10
-    val rdd = context.parallelize(data)
+    val rdd = sparkContext.parallelize(data)
     val (x, y) = rdd.aggregate((0, 0))((x, y) => (x._1 + y, x._2 + 1), (x, y) => (x._1 + y._1, x._2 + y._2))
     assert(x == 55 && y == 10)
   }
 
   test("cogroup") {
-    val leftRdd = context.makeRDD(Array((1, 2)))
-    val rightRdd = context.makeRDD(Array((1, 3)))
+    val leftRdd = sparkContext.makeRDD(Array((1, 2)))
+    val rightRdd = sparkContext.makeRDD(Array((1, 3)))
     val cogroupRdd = leftRdd.cogroup(rightRdd)
     cogroupRdd foreach println
     cogroupRdd.collect foreach { t:(Int, (Iterable[Int], Iterable[Int])) => assert( (1,(Iterable(2),Iterable(3))) == t ) }
   }
 
   test("join") {
-    val leftRdd = context.makeRDD(Array((1, 2)))
-    val rightRdd = context.makeRDD(Array((1, 3)))
+    val leftRdd = sparkContext.makeRDD(Array((1, 2)))
+    val rightRdd = sparkContext.makeRDD(Array((1, 3)))
     val joinRdd = leftRdd.join(rightRdd)
     joinRdd.collect foreach { t:(Int, (Int, Int)) => assert( (1, (2, 3)) == t ) }
   }
 
   test("sets") {
-    val rdd1 = context.makeRDD(Array(1, 2, 3)).cache
-    val rdd2 = context.makeRDD(Array(3, 4, 5)).cache
+    val rdd1 = sparkContext.makeRDD(Array(1, 2, 3)).cache
+    val rdd2 = sparkContext.makeRDD(Array(3, 4, 5)).cache
     assert(rdd1.union(rdd2).collect sameElements Array(1, 2, 3, 3, 4, 5))
     assert(rdd1.intersection(rdd2).collect sameElements Array(3))
     assert(rdd1.subtract(rdd2).collect.sorted sameElements Array(1, 2))
     assert(rdd2.subtract(rdd1).collect.sorted sameElements Array(4, 5))
 
-    val rdd3 = context.makeRDD(Array(1, 1, 2, 2, 3, 3))
+    val rdd3 = sparkContext.makeRDD(Array(1, 1, 2, 2, 3, 3))
     assert(rdd3.distinct.collect.sorted sameElements Array(1, 2, 3))
 
-    val rdd4 = context.makeRDD(Array(1, 2))
-    val rdd5 = context.makeRDD(Array(3, 4))
+    val rdd4 = sparkContext.makeRDD(Array(1, 2))
+    val rdd5 = sparkContext.makeRDD(Array(3, 4))
     assert(rdd4.cartesian(rdd5).collect sameElements Array((1,3), (1, 4), (2, 3), (2, 4)))
   }
 
   test("reduce by key") {
-    val rdd = context.makeRDD(Array((1, 1), (1, 2), (1, 3))).cache
+    val rdd = sparkContext.makeRDD(Array((1, 1), (1, 2), (1, 3))).cache
     val (key, aggregate) = rdd.reduceByKey(_ + _).first
     assert(rdd.keys.collect sameElements Array(1, 1, 1))
     assert(rdd.values.collect sameElements Array(1, 2, 3))
@@ -94,7 +94,7 @@ class RddTest extends FunSuite {
   }
 
   test("group by key") {
-    val rdd = context.makeRDD(Array((1, 1), (1, 2), (1, 3))).cache
+    val rdd = sparkContext.makeRDD(Array((1, 1), (1, 2), (1, 3))).cache
     val (key, list) = rdd.groupByKey.first
     assert(rdd.keys.collect sameElements Array(1, 1, 1))
     assert(rdd.values.collect sameElements Array(1, 2, 3))
@@ -102,17 +102,17 @@ class RddTest extends FunSuite {
   }
 
   test("sort by key") {
-    val rdd = context.makeRDD(Array((3, 1), (2, 2), (1, 3)))
+    val rdd = sparkContext.makeRDD(Array((3, 1), (2, 2), (1, 3)))
     assert(rdd.reduceByKey(_ + _).sortByKey(ascending = true).collect sameElements Array((1,3), (2, 2), (3, 1)))
   }
 
   test("map values") {
-    val rdd = context.makeRDD(Array((1, 1), (1, 2), (1, 3)))
+    val rdd = sparkContext.makeRDD(Array((1, 1), (1, 2), (1, 3)))
     assert(12 == rdd.mapValues(_ * 2).values.sum)
   }
 
   test("text") {
-    val rdd = context.makeRDD(SparkInstance.licenseText).cache
+    val rdd = sparkContext.makeRDD(SparkInstance.licenseText).cache
     val totalLines = rdd.count
     assert(totalLines == 19)
 
