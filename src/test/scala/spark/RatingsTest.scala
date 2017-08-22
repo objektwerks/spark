@@ -12,8 +12,7 @@ class RatingsTest extends FunSuite {
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
     val lines = sparkContext.makeRDD(data).cache
     val ratings = lines.map(line => line.split("\t")(2))
-    val results = ratings.countByValue
-    val sortedResults = results.toSeq.sortBy(_._1)
-    sortedResults.foreach(println)
+    val ratingsByCount = ratings.countByValue
+    ratingsByCount.toSeq.sortBy(_._1).foreach(println)
   }
 }
