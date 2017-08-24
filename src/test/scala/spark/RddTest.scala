@@ -1,5 +1,6 @@
 package spark
 
+import breeze.linalg.{max, min}
 import org.apache.spark.HashPartitioner
 import org.scalatest.{FunSuite, Matchers}
 
@@ -147,7 +148,9 @@ class RddTest extends FunSuite with Matchers {
   test("average") {
     def parseLine(line: String): (Int, Int) = {
       val fields = line.split(",")
-      (fields(2).toInt, fields(3).toInt)
+      val age = fields(2).toInt
+      val friends = fields(3).toInt
+      (age, friends)
     }
 
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/friends.txt")).getLines.toSeq
@@ -158,5 +161,31 @@ class RddTest extends FunSuite with Matchers {
     val results = averagesByAge.collect.sorted
     (18, 343) shouldEqual results.head
     (69, 235) shouldEqual results.last
+  }
+
+  test("min, max") {
+    def parseLine(line: String): (String, String, Float) = {
+      val fields = line.split(",")
+      val stationId = fields(0)
+      val entryType = fields(2)
+      val temperature = fields(3).toFloat * 0.1f * (9.0f / 5.0f) + 32.0f
+      (stationId, entryType, temperature)
+    }
+
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/weather.txt")).getLines.toSeq
+    val lines = sparkContext.makeRDD(data)
+    val parsedLines = lines.map(parseLine)
+
+    val minTemps = parsedLines.filter(x => x._2 == "TMIN")
+    val minStationTemps = minTemps.map(x => (x._1, x._3))
+    val minTempsByStation = minStationTemps.reduceByKey((x, y) => min(x, y))
+    val minResults = minTempsByStation.collect.sorted
+    ("EZE00100082", 7.700001F) shouldBe minResults.head
+
+    val maxTemps = parsedLines.filter(x => x._2 == "TMAX")
+    val maxStationTemps = maxTemps.map(x => (x._1, x._3.toFloat))
+    val maxTempsByStation = maxStationTemps.reduceByKey( (x,y) => max(x,y))
+    val maxResults = maxTempsByStation.collect.sorted
+    ("EZE00100082", 90.14F) shouldBe maxResults.head
   }
 }
