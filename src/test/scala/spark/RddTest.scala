@@ -155,8 +155,8 @@ class RddTest extends FunSuite with Matchers {
 
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/friends.txt")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
-    val rdd = lines.map(parseLine)
-    val totalsByAge = rdd.mapValues(x => (x, 1)).reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2)) // (age, (friends, 1))
+    val parsedLines = lines.map(parseLine)
+    val totalsByAge = parsedLines.mapValues(x => (x, 1)).reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2)) // (age, (friends, 1))
     val averagesByAge = totalsByAge.mapValues(x => x._1 / x._2) // (age, friends)
     val results = averagesByAge.collect.sorted
     (18, 343) shouldEqual results.head
@@ -168,8 +168,8 @@ class RddTest extends FunSuite with Matchers {
       val fields = line.split(",")
       val stationId = fields(0)
       val entryType = fields(2)
-      val temperature = fields(3).toFloat * 0.1f * (9.0f / 5.0f) + 32.0f
-      (stationId, entryType, temperature)
+      val temp = fields(3).toFloat * 0.1f * (9.0f / 5.0f) + 32.0f
+      (stationId, entryType, temp)
     }
 
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/weather.txt")).getLines.toSeq
