@@ -25,7 +25,7 @@ class RatingsTest extends FunSuite with Matchers {
       (fields(2).toInt, fields(3).toInt)
     }
 
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/friends.csv")).getLines.toSeq
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/friends.txt")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
     val rdd = lines.map(parseLine)
     val totalsByAge = rdd.mapValues(x => (x, 1)).reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2)) // (age, (friends, 1))
