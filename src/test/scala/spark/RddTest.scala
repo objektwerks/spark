@@ -166,10 +166,10 @@ class RddTest extends FunSuite with Matchers {
   test("min, max") {
     def parseLine(line: String): (String, String, Float) = {
       val fields = line.split(",")
-      val stationId = fields(0)
-      val entryType = fields(2)
+      val station = fields(0)
+      val entry = fields(2)
       val temp = fields(3).toFloat * 0.1f * (9.0f / 5.0f) + 32.0f
-      (stationId, entryType, temp)
+      (station, entry, temp)
     }
 
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/weather.txt")).getLines.toSeq
@@ -187,5 +187,29 @@ class RddTest extends FunSuite with Matchers {
     val maxTempsByStation = maxStationTemps.reduceByKey( (x,y) => max(x,y))
     val maxResults = maxTempsByStation.collect.sorted
     ("EZE00100082", 90.14F) shouldBe maxResults.head
+  }
+
+  test("sorted key value analysis") {
+    def parseLine(line: String): (Int, Float) = {
+      val fields = line.split(",")
+      val customer = fields(0).toInt
+      val amount = fields(2).toFloat
+      (customer, amount)
+    }
+
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/orders.txt")).getLines.toSeq
+    val lines = sparkContext.makeRDD(data)
+    val parsedLines = lines.map(parseLine)
+    val customerByTotal = parsedLines.reduceByKey((x,y) => x + y)
+    val totalByCustomer = customerByTotal.map(kv => (kv._2, kv._1))
+    val totalByCustomerSorted = totalByCustomer.sortByKey()
+    val results = totalByCustomerSorted.collect()
+    (3309.3804F, 45) shouldBe results.head // min
+    (6375.45F, 68) shouldBe results.last // max
+    val amounts = results.map(kv => kv._1)
+    500489.16F shouldBe amounts.sum
+    3309.3804F shouldBe amounts.min
+    6375.45F shouldBe amounts.max
+    5004.8916F shouldBe amounts.sum / amounts.length // avg
   }
 }
