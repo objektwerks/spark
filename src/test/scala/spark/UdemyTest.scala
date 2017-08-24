@@ -4,7 +4,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import scala.io.Source
 
-class RatingsTest extends FunSuite with Matchers {
+class UdemyTest extends FunSuite with Matchers {
   import SparkInstance._
 
   test("count") {
