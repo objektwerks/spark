@@ -113,7 +113,7 @@ class RddTest extends FunSuite with Matchers {
     assert(12 == rdd.mapValues(_ * 2).values.sum)
   }
 
-  test("text") {
+  test("count") {
     val rdd = sparkContext.makeRDD(SparkInstance.licenseText).cache
     val totalLines = rdd.count
     assert(totalLines == 19)
@@ -133,7 +133,7 @@ class RddTest extends FunSuite with Matchers {
     assert(word == "the" && count == 14)
   }
 
-  test("count") {
+  test("count by value") {
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
     val ratings = lines.map(line => line.split("\t")(2).toInt)
