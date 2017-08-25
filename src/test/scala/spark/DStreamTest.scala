@@ -8,14 +8,12 @@ import scala.collection.mutable
 
 class DStreamTest extends FunSuite with Matchers {
   import SparkInstance._
-
-  val context = sparkSession.sparkContext
-
+  
   test("dstream") {
-    val streamingContext = new StreamingContext(context, Milliseconds(100))
+    val streamingContext = new StreamingContext(sparkContext, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += context.makeRDD(licenseText)
+    queue += sparkContext.makeRDD(licenseText)
     val wordCountDstream = countWords(dstream)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
@@ -28,10 +26,10 @@ class DStreamTest extends FunSuite with Matchers {
   }
 
   test("window") {
-    val streamingContext = new StreamingContext(context, Milliseconds(100))
+    val streamingContext = new StreamingContext(sparkContext, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += context.makeRDD(licenseText)
+    queue += sparkContext.makeRDD(licenseText)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
