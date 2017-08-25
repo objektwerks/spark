@@ -6,11 +6,19 @@ package object spark {
   val regex = "\\W+"
 
   def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
-    rdd.flatMap(l => l.split(regex)).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
+    rdd.flatMap(l => l.split(regex))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .map(w => (w, 1))
+      .reduceByKey(_ + _)
   }
 
   def countWords(ds: DStream[String]): DStream[(String, Int)] = {
-    ds.flatMap(l => l.split(regex)).filter(_.nonEmpty).map(_.toLowerCase).map(w => (w, 1)).reduceByKey(_ + _)
+    ds.flatMap(l => l.split(regex))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .map(w => (w, 1))
+      .reduceByKey(_ + _)
   }
 
   def countWords(ds: DStream[String], windowLengthInMillis: Int, slideIntervalInMillis: Int): DStream[(String, Int)] = {
