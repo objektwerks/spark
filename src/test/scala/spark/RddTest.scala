@@ -248,7 +248,7 @@ class RddTest extends FunSuite with Matchers {
     codec.onMalformedInput(CodingErrorAction.REPLACE)
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
-    def countCoOccurences(line: String) = {
+    def countCoAppearances(line: String) = {
       val elements = line.split("\\s+")
       ( elements(0).toInt, elements.length - 1 )
     }
@@ -264,7 +264,7 @@ class RddTest extends FunSuite with Matchers {
 
     val marvelGraphData = Source.fromInputStream(this.getClass.getResourceAsStream("/marvel-graph.txt")).getLines.toSeq
     val marvelGraphLines = sparkContext.makeRDD(marvelGraphData)
-    val marvelGraph = marvelGraphLines.map(countCoOccurences)
+    val marvelGraph = marvelGraphLines.map(countCoAppearances)
 
     val heroByCoAppearances = marvelGraph.reduceByKey( (x, y) => x + y )
     val coAppearancesByHero = heroByCoAppearances.map( x => (x._2, x._1) )
