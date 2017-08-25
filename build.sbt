@@ -9,6 +9,7 @@ libraryDependencies ++= {
     "org.apache.spark" % "spark-streaming_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-sql_2.11" % sparkVersion % "provided",
     "org.apache.spark" % "spark-mllib_2.11" % sparkVersion % "provided",
+    "org.apache.spark" % "spark-graphx_2.11" % sparkVersion % "provided",
     "org.slf4j" % "slf4j-api" % "1.7.25" % "test",
     "org.scalatest" % "scalatest_2.11" % "3.0.3" % "test"
   )
