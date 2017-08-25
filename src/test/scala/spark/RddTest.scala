@@ -243,7 +243,7 @@ class RddTest extends FunSuite with Matchers {
     ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
 
-  test("marvel ~ analysis") {
+  test("marvel ~ graph analysis") {
     implicit val codec = Codec("UTF-8")
     codec.onMalformedInput(CodingErrorAction.REPLACE)
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
