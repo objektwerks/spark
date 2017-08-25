@@ -1,11 +1,13 @@
 package spark
 
+import java.nio.charset.CodingErrorAction
+
 import breeze.linalg.{max, min}
 import org.apache.spark.HashPartitioner
 import org.scalatest.{FunSuite, Matchers}
 
-import scala.collection.SortedSet
-import scala.io.Source
+import scala.collection.{SortedSet, mutable}
+import scala.io.{Codec, Source}
 
 class RddTest extends FunSuite with Matchers {
   import SparkInstance._
@@ -133,7 +135,7 @@ class RddTest extends FunSuite with Matchers {
     assert(word == "the" && count == 14)
   }
 
-  test("count by value") {
+  test("ratings ~ count by value") {
     val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
     val ratings = lines.map(line => line.split("\t")(2).toInt)
@@ -145,7 +147,7 @@ class RddTest extends FunSuite with Matchers {
     ratingsByCount(5) shouldBe 21201
   }
 
-  test("average") {
+  test("friends ~ average") {
     def parseLine(line: String): (Int, Int) = {
       val fields = line.split(",")
       val age = fields(2).toInt
@@ -163,7 +165,7 @@ class RddTest extends FunSuite with Matchers {
     (69, 235) shouldBe results.last
   }
 
-  test("min, max") {
+  test("weather ~ min, max") {
     def parseLine(line: String): (String, String, Float) = {
       val fields = line.split(",")
       val station = fields(0)
@@ -189,7 +191,7 @@ class RddTest extends FunSuite with Matchers {
     ("EZE00100082", 90.14F) shouldBe maxResults.head
   }
 
-  test("sorted key value analysis") {
+  test("orders ~ sorted by key") {
     def parseLine(line: String): (Int, Float) = {
       val fields = line.split(",")
       val customer = fields(0).toInt
@@ -211,5 +213,33 @@ class RddTest extends FunSuite with Matchers {
     3309.3804F shouldBe amounts.min
     6375.45F shouldBe amounts.max
     5004.8916F shouldBe amounts.sum / amounts.length // avg
+  }
+
+  test("ratings ~ broadcast, reduce by key") {
+    def loadMovies(): Map[Int, String] = {
+      implicit val codec = Codec("UTF-8")
+      codec.onMalformedInput(CodingErrorAction.REPLACE)
+      codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
+
+      val moviesById = mutable.Map[Int, String]()
+      val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.item")).getLines
+      for (line <- lines) {
+        val fields = line.split('|')
+        if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
+      }
+      moviesById.toMap
+    }
+
+    val broadcastMovies = sparkContext.broadcast(loadMovies())
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
+    val lines = sparkContext.makeRDD(data)
+    val movies = lines.map( line => ( line.split("\t")(1).toInt, 1 ) )
+    val movieCounts = movies.reduceByKey( (x, y) => x + y )
+    val countMovies = movieCounts.map( movieCount => (movieCount._2, movieCount._1) )
+    val sortedCountMovies = countMovies.sortByKey()
+    val sortedMovieNamesByCount = sortedCountMovies.map( countMovie  => (broadcastMovies.value(countMovie._2), countMovie._1) )
+    val results = sortedMovieNamesByCount.collect()
+    ("Mostro, Il (1994)", 1) shouldBe results.head  // least popular
+    ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
 }
