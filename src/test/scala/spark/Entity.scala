@@ -1,5 +1,5 @@
 package spark
 
-case class Data(n: Long)
+sealed trait Entity
 
-case class Person(age: Long, name: String)
+case class Person(age: Long, name: String) extends Entity
