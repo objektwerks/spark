@@ -31,7 +31,7 @@ class DatasetTest extends FunSuite with Matchers {
     avgAge.getDouble(0) shouldBe 22.5
 
     dataset.createOrReplaceTempView("persons")
-    val persons = sparkSession.sql("SELECT * FROM persons WHERE age >= 21 AND age <= 24").as[Person]
+    val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24").as[Person]
     persons.count shouldBe 4
   }
 }
