@@ -3,7 +3,7 @@ package spark
 import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
-  test("dataset") {
+  test("dataframe ~ dataset ~ sql") {
     import SparkInstance._
     import sparkSession.implicits._
 
@@ -19,5 +19,15 @@ class DatasetTest extends FunSuite with Matchers {
     val ages = dataset.select("age").orderBy("age").collect
     ages.length shouldBe 4
     ages.head.getLong(0) shouldBe 21
+
+    val fred = dataset.filter(dataset("age") > 23).first
+    fred.age shouldBe 24
+    fred.name shouldBe "fred"
+
+    val minAge = dataset.agg(Map("age" -> "min")).first
+    minAge.getLong(0) shouldBe 21
+
+    val avgAge = dataset.agg(Map("age" -> "avg")).first
+    avgAge.getDouble(0) shouldBe 22.5
   }
 }
