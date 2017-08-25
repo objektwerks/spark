@@ -242,4 +242,35 @@ class RddTest extends FunSuite with Matchers {
     ("Mostro, Il (1994)", 1) shouldBe results.head  // least popular
     ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
+
+  test("marvel ~ analysis") {
+    implicit val codec = Codec("UTF-8")
+    codec.onMalformedInput(CodingErrorAction.REPLACE)
+    codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
+
+    def countCoOccurences(line: String) = {
+      val elements = line.split("\\s+")
+      ( elements(0).toInt, elements.length - 1 )
+    }
+
+    def parseNames(line: String) : Option[(Int, String)] = {
+      val fields = line.split('\"')
+      if (fields.length > 1) Some( (fields(0).trim().toInt, fields(1)) ) else None
+    }
+
+    val marvelNameData = Source.fromInputStream(this.getClass.getResourceAsStream("/marvel-names.txt")).getLines.toSeq
+    val marvelNameLines = sparkContext.makeRDD(marvelNameData)
+    val marvelNames = marvelNameLines.flatMap(parseNames)
+
+    val marvelGraphData = Source.fromInputStream(this.getClass.getResourceAsStream("/marvel-graph.txt")).getLines.toSeq
+    val marvelGraphLines = sparkContext.makeRDD(marvelGraphData)
+    val marvelGraph = marvelGraphLines.map(countCoOccurences)
+
+    val heroByCoAppearances = marvelGraph.reduceByKey( (x, y) => x + y )
+    val coAppearancesByHero = heroByCoAppearances.map( x => (x._2, x._1) )
+    val maxCoAppearancesByHero = coAppearancesByHero.max
+    val heroWithMostCoAppearances = marvelNames.lookup(maxCoAppearancesByHero._2).head
+    heroWithMostCoAppearances shouldBe "CAPTAIN AMERICA"
+    maxCoAppearancesByHero._1 shouldBe 1933
+  }
 }
