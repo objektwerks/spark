@@ -3,12 +3,12 @@ package spark
 import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
-  test("dataframe ~ dataset ~ sql") {
-    import SparkInstance._
-    import sparkSession.implicits._
+  import SparkInstance._
+  import sparkSession.implicits._
 
-    val dataset = sparkSession.read.json(personJson.toDS()).as[Person]
+  val dataset = sparkSession.read.json(personJson.toDS()).as[Person].cache
 
+  test("dataset") {
     dataset.count shouldBe 4
     dataset.filter(_.age == 24).first.name shouldBe "fred"
 
@@ -23,13 +23,21 @@ class DatasetTest extends FunSuite with Matchers {
     val fred = dataset.filter(dataset("age") > 23).first
     fred.age shouldBe 24
     fred.name shouldBe "fred"
+  }
 
+  test("dataframe") {
     val minAge = dataset.agg(Map("age" -> "min")).first
     minAge.getLong(0) shouldBe 21
 
     val avgAge = dataset.agg(Map("age" -> "avg")).first
     avgAge.getDouble(0) shouldBe 22.5
 
+    dataset.createOrReplaceTempView("persons")
+    val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24").as[Person]
+    persons.count shouldBe 4
+  }
+
+  test("sql") {
     dataset.createOrReplaceTempView("persons")
     val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24").as[Person]
     persons.count shouldBe 4
