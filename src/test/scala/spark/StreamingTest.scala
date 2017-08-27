@@ -6,7 +6,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.mutable
 
-class DStreamTest extends FunSuite with Matchers {
+class StreamingTest extends FunSuite with Matchers {
   import SparkInstance._
   
   test("dstream") {
