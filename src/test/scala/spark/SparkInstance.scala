@@ -13,7 +13,7 @@ object SparkInstance {
     .appName("sparky")
     .getOrCreate()
   val sparkContext = sparkSession.sparkContext
-  val personJson = Source.fromInputStream(getClass.getResourceAsStream("/person.json.txt")).getLines.toSeq
+  val personJson = Source.fromInputStream(getClass.getResourceAsStream("/person.json")).getLines.toSeq
   val licenseText = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
   logger.info("*** Initialized spark instance.")
 

@@ -8,7 +8,8 @@ import scala.collection.mutable
 
 class StreamingTest extends FunSuite with Matchers {
   import SparkInstance._
-  
+  import sparkSession.implicits._
+
   test("dstream") {
     val streamingContext = new StreamingContext(sparkContext, Milliseconds(100))
     val queue = mutable.Queue[RDD[String]]()
@@ -39,5 +40,19 @@ class StreamingTest extends FunSuite with Matchers {
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
     count.sum shouldBe 169
+  }
+
+  test("structured") {
+    import Person._
+    val in = sparkSession.readStream
+      .option("basePath", "./data")
+      .schema(personStructType)
+      .json("./data")
+      .as[Person]
+    val out = in.writeStream
+      .option("checkpointLocation", "./target/output/test/ss/checkpoint")
+      .foreach(personForeachWriter)
+    val query = out.start()
+    query.awaitTermination(1000L)
   }
 }
