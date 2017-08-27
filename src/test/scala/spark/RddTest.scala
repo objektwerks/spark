@@ -136,7 +136,7 @@ class RddTest extends FunSuite with Matchers {
   }
 
   test("ratings ~ count by value") {
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings.txt")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
     val ratings = lines.map(line => line.split("\t")(2).toInt)
     val ratingsByCount = ratings.countByValue
@@ -222,7 +222,7 @@ class RddTest extends FunSuite with Matchers {
       codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
       val moviesById = mutable.Map[Int, String]()
-      val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.item")).getLines
+      val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/movies.txt")).getLines
       for (line <- lines) {
         val fields = line.split('|')
         if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
@@ -231,7 +231,7 @@ class RddTest extends FunSuite with Matchers {
     }
 
     val broadcastMovies = sparkContext.broadcast(loadMovies())
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings/u.data")).getLines.toSeq
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/ratings.txt")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
     val movies = lines.map( line => ( line.split("\t")(1).toInt, 1 ) )
     val movieCounts = movies.reduceByKey( (x, y) => x + y )
