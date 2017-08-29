@@ -6,7 +6,7 @@ import org.scalatest.FunSuite
 
 import scala.util.matching.Regex
 
-class RegexTest extends FunSuite {
+class ApacheAccessLogRegexTest extends FunSuite {
   def javaRegex: Pattern = {
     val ddd = "\\d{1,3}"
     val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"
@@ -24,8 +24,8 @@ class RegexTest extends FunSuite {
 
   def scalaRegex: Regex = {
     """
-      |(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) "(.*?)" (\d{3}) (\S+) "(.*?)" "(.*?)"
-    """.stripMargin.r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
+      |(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) (.*?) (\d{3}) (\S+) (.*?) (.*?)
+    """.r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
   }
 
   test ("regex") {
