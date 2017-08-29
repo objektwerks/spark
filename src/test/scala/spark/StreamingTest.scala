@@ -45,9 +45,9 @@ class StreamingTest extends FunSuite with Matchers {
   test("structured") {
     import Person._
     val in = sparkSession.readStream
-      .option("basePath", "./data")
+      .option("basePath", "./data/json")
       .schema(personStructType)
-      .json("./data")
+      .json("./data/json")
       .as[Person]
     val out = in.writeStream
       .option("checkpointLocation", "./target/output/test/ss/checkpoint")
