@@ -85,6 +85,6 @@ object LogEntryApp extends App {
   val logEntries = logs.flatMap(parseRow)
   val writer = logEntries.writeStream.foreach(logEntryForeachWriter)
   val query = writer.start()
-  query.awaitTermination(180000L) // 3 minutes
+  query.awaitTermination(60000)
   sparkSession.stop()
 }
