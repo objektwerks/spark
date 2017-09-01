@@ -1,16 +1,67 @@
 package spark
 
-import org.apache.spark.sql.SparkSession
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.regex.Pattern
+
+import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.functions.window
+
+case class LogEntry(ip: String,
+                    client: String,
+                    user: String,
+                    dateTime: Option[String],
+                    request :String,
+                    status: String,
+                    bytes: String,
+                    referer: String,
+                    agent: String)
 
 object LogEntryApp extends App {
   val sparkSession = SparkSession.builder
     .master("local[2]")
     .appName("sparky")
     .getOrCreate()
-  val sparkContext = sparkSession.sparkContext
+  import sparkSession.implicits._
 
-  run()
+  val logs = sparkSession.readStream.text("./data/log")
+  val logEntries = logs.flatMap(parseRow).select("status", "dateTime")
+  val dataset = logEntries.groupBy($"status", window($"dateTime", "1 hour")).count().orderBy("window")
+  val writer = dataset.writeStream.outputMode("complete").format("console")
+  val query = writer.start()
+  query.awaitTermination()
+  sparkSession.stop()
 
-  def run(): Unit = {
+  val logEntryPattern = """(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) (.*?) (\d{3}) (\S+) (.*?) (.*?)"""
+    .r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
+    .pattern
+  val dateTimePattern = Pattern.compile("\\[(.*?) .+]")
+
+  def parseRow(row: Row): Option[LogEntry] = {
+    val matcher = logEntryPattern.matcher(row.getString(0))
+    if (matcher.matches()) {
+      Some(LogEntry(
+        matcher.group(1),
+        matcher.group(2),
+        matcher.group(3),
+        parseDateTime(matcher.group(4)),
+        matcher.group(5),
+        matcher.group(6),
+        matcher.group(7),
+        matcher.group(8),
+        matcher.group(9)))
+    } else None
+  }
+
+  def parseDateTime(dateTime: String): Option[String] = {
+    val dateTimeMatcher = dateTimePattern.matcher(dateTime)
+    if (dateTimeMatcher.find) {
+      val dateTimeAsString = dateTimeMatcher.group(1)
+      val dateTimeFormat = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss", Locale.ENGLISH)
+      val date = dateTimeFormat.parse(dateTimeAsString)
+      val timestamp = new Timestamp(date.getTime)
+      Some(timestamp.toString)
+    } else None
   }
 }
