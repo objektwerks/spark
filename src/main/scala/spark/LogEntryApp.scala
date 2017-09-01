@@ -12,30 +12,17 @@ case class LogEntry(ip: String,
                     client: String,
                     user: String,
                     dateTime: Option[String],
-                    request :String,
+                    request: String,
                     status: String,
                     bytes: String,
                     referer: String,
                     agent: String)
 
-object LogEntryApp extends App {
-  val sparkSession = SparkSession.builder
-    .master("local[2]")
-    .appName("sparky")
-    .getOrCreate()
-  import sparkSession.implicits._
-
-  val logs = sparkSession.readStream.text("./data/log")
-  val logEntries = logs.flatMap(parseRow).select("status", "dateTime")
-  val dataset = logEntries.groupBy($"status", window($"dateTime", "1 hour")).count().orderBy("window")
-  val writer = dataset.writeStream.outputMode("complete").format("console")
-  val query = writer.start()
-  query.awaitTermination()
-  sparkSession.stop()
-
-  val logEntryPattern = """(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) (.*?) (\d{3}) (\S+) (.*?) (.*?)"""
-    .r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
-    .pattern
+object LogEntryParser {
+  val logEntryPattern =
+    """(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) (.*?) (\d{3}) (\S+) (.*?) (.*?)"""
+      .r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
+      .pattern
   val dateTimePattern = Pattern.compile("\\[(.*?) .+]")
 
   def parseRow(row: Row): Option[LogEntry] = {
@@ -64,4 +51,23 @@ object LogEntryApp extends App {
       Some(timestamp.toString)
     } else None
   }
+
+}
+
+object LogEntryApp extends App {
+  val sparkSession = SparkSession.builder
+    .master("local[2]")
+    .appName("sparky")
+    .getOrCreate()
+
+  import sparkSession.implicits._
+  import LogEntryParser._
+
+  val logs = sparkSession.readStream.text("./data/log")
+  val logEntries = logs.flatMap(parseRow).select("status", "dateTime")
+  val dataset = logEntries.groupBy($"status", window($"dateTime", "1 hour")).count().orderBy("window")
+  val writer = dataset.writeStream.outputMode("complete").format("console")
+  val query = writer.start()
+  query.awaitTermination()
+  sparkSession.stop()
 }
