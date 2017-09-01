@@ -5,8 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.regex.Pattern
 
-import org.apache.spark.sql.functions.window
-import org.apache.spark.sql.{Row, SparkSession}
+import org.apache.spark.sql.{ForeachWriter, Row, SparkSession}
 
 case class LogEntry(ip: String,
                     client: String,
@@ -17,6 +16,14 @@ case class LogEntry(ip: String,
                     bytes: String,
                     referer: String,
                     agent: String)
+
+object LogEntry {
+  val logEntryForeachWriter = new ForeachWriter[LogEntry] {
+    override def open(partitionId: Long, version: Long): Boolean = true
+    override def process(logEntry: LogEntry): Unit = println(logEntry)
+    override def close(errorOrNull: Throwable): Unit = println("Closing logEnty foreach writer...")
+  }
+}
 
 object LogEntryParser {
   val logEntryPattern = {
@@ -34,9 +41,6 @@ object LogEntryParser {
     Pattern.compile(regex)
   }
   val dateTimePattern = Pattern.compile("\\[(.*?) .+]")
-
-  println(s"log entry pattern: ${logEntryPattern.toString}")
-  println(s"date time pattern: ${dateTimePattern.toString}")
 
   def parseRow(row: Row): Option[LogEntry] = {
     val matcher = logEntryPattern.matcher(row.getString(0))
@@ -73,14 +77,14 @@ object LogEntryApp extends App {
     .appName("sparky")
     .getOrCreate()
 
+  import LogEntry._
   import LogEntryParser._
   import sparkSession.implicits._
 
   val logs = sparkSession.readStream.text("./data/log")
-  val logEntries = logs.flatMap(parseRow).select("status", "dateTime")
-  val dataset = logEntries.groupBy($"status", window($"dateTime", "1 hour")).count().orderBy("window")
-  val writer = dataset.writeStream.outputMode("complete").format("console")
+  val logEntries = logs.flatMap(parseRow)
+  val writer = logEntries.writeStream.foreach(logEntryForeachWriter)
   val query = writer.start()
-  query.awaitTermination()
+  query.awaitTermination(180000L) // 3 minutes
   sparkSession.stop()
 }
