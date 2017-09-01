@@ -8,7 +8,6 @@ Environment
 
 - export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk1.8.0_144.jdk/Contents/Home"
 - export SPARK_HOME="/Users/myself/workspace/apache/spark"
-- export SPARK_LAUNCHER="$SPARK_HOME/launcher/target"
 - export PATH=${JAVA_HOME}/bin:${SPARK_HOME}/bin:${SPARK_HOME}/sbin:/usr/local/bin:/usr/local/sbin:$PATH
 
 Configuration
@@ -17,11 +16,11 @@ Configuration
 
 Test
 ----
-1. sbt test
+1. sbt clean test
 
 Run
 ---
-1. sbt run
+1. sbt clean test run
 
 Output
 ------
