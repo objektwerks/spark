@@ -26,6 +26,7 @@ object LogEntry {
 }
 
 object LogEntryParser {
+  // TODO : Transale Java regex to Scala regex!
   val logEntryPattern = {
     val ddd = "\\d{1,3}"
     val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"
@@ -68,7 +69,6 @@ object LogEntryParser {
       Some(timestamp.toString)
     } else None
   }
-
 }
 
 object LogEntryApp extends App {
