@@ -5,15 +5,16 @@ scalaVersion := "2.11.11"
 libraryDependencies ++= {
   val sparkVersion = "2.2.0"
   Seq(
-    "org.apache.spark" % "spark-core_2.11" % sparkVersion % "provided",
-    "org.apache.spark" % "spark-streaming_2.11" % sparkVersion % "provided",
-    "org.apache.spark" % "spark-sql_2.11" % sparkVersion % "provided",
-    "org.apache.spark" % "spark-mllib_2.11" % sparkVersion % "provided",
-    "org.apache.spark" % "spark-graphx_2.11" % sparkVersion % "provided",
+    "org.apache.spark" % "spark-core_2.11" % sparkVersion,
+    "org.apache.spark" % "spark-streaming_2.11" % sparkVersion,
+    "org.apache.spark" % "spark-sql_2.11" % sparkVersion,
+    "org.apache.spark" % "spark-mllib_2.11" % sparkVersion,
+    "org.apache.spark" % "spark-graphx_2.11" % sparkVersion,
     "org.slf4j" % "slf4j-api" % "1.7.25" % "test",
     "org.scalatest" % "scalatest_2.11" % "3.0.3" % "test"
   )
 }
+unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
 scalacOptions ++= Seq(
   "-language:postfixOps",
   "-language:reflectiveCalls",
@@ -31,4 +32,3 @@ scalacOptions ++= Seq(
 )
 javaOptions += "-server -Xss1m -Xmx2g"
 fork in test := true
-unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
