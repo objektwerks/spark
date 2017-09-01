@@ -32,4 +32,3 @@ scalacOptions ++= Seq(
 javaOptions += "-server -Xss1m -Xmx2g"
 fork in test := true
 unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
-run in Compile <<= Defaults.runTask(fullClasspath in (Compile, run), mainClass in (Compile, run), runner in (Compile, run))
