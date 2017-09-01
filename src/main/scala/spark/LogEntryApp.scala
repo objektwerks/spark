@@ -72,17 +72,14 @@ object LogEntryParser {
 }
 
 object LogEntryApp extends App {
-  val sparkSession = SparkSession.builder
-    .master("local[2]")
-    .appName("sparky")
-    .getOrCreate()
+  val sparkSession = SparkSession.builder.master("local[2]").appName("sparky").getOrCreate()
 
   import LogEntry._
   import LogEntryParser._
   import sparkSession.implicits._
 
-  val logs = sparkSession.readStream.text("./data/log")
-  val logEntries = logs.flatMap(parseRow)
+  val reader = sparkSession.readStream.text("./data/log")
+  val logEntries = reader.flatMap(parseRow)
   val writer = logEntries.writeStream.foreach(logEntryForeachWriter)
   val query = writer.start()
   query.awaitTermination(60000)
