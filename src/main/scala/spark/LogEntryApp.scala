@@ -3,6 +3,7 @@ package spark
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
+import java.util.regex.Pattern
 
 import org.apache.spark.sql.functions.window
 import org.apache.spark.sql.{Row, SparkSession}
@@ -18,11 +19,21 @@ case class LogEntry(ip: String,
                     agent: String)
 
 object LogEntryParser {
-  val logEntryPattern =
-    """(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) (.*?) (\d{3}) (\S+) (.*?) (.*?)"""
-      .r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
-      .pattern
-  val dateTimePattern = """(\[(.*?) .+])""".r.pattern
+  val logEntryPattern = {
+    val ddd = "\\d{1,3}"
+    val ip = s"($ddd\\.$ddd\\.$ddd\\.$ddd)?"
+    val client = "(\\S+)"
+    val user = "(\\S+)"
+    val dateTime = "(\\[.+?\\])"
+    val request = "\"(.*?)\""
+    val status = "(\\d{3})"
+    val bytes = "(\\S+)"
+    val referer = "\"(.*?)\""
+    val agent = "\"(.*?)\""
+    val regex = s"$ip $client $user $dateTime $request $status $bytes $referer $agent"
+    Pattern.compile(regex)
+  }
+  val dateTimePattern = Pattern.compile("\\[(.*?) .+]")
 
   println(s"log entry pattern: ${logEntryPattern.toString}")
   println(s"date time pattern: ${dateTimePattern.toString}")
