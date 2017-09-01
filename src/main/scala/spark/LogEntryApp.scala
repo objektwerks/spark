@@ -3,10 +3,9 @@ package spark
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.regex.Pattern
 
-import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.functions.window
+import org.apache.spark.sql.{Row, SparkSession}
 
 case class LogEntry(ip: String,
                     client: String,
@@ -23,7 +22,10 @@ object LogEntryParser {
     """(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})? (\S+) (\S+) (\[.+?\]) (.*?) (\d{3}) (\S+) (.*?) (.*?)"""
       .r("ip", "client", "user", "dateTime", "request", "status", "bytes", "referer", "agent")
       .pattern
-  val dateTimePattern = Pattern.compile("\\[(.*?) .+]")
+  val dateTimePattern = """(\[(.*?) .+])""".r.pattern
+
+  println(s"log entry pattern: ${logEntryPattern.toString}")
+  println(s"date time pattern: ${dateTimePattern.toString}")
 
   def parseRow(row: Row): Option[LogEntry] = {
     val matcher = logEntryPattern.matcher(row.getString(0))
@@ -60,8 +62,8 @@ object LogEntryApp extends App {
     .appName("sparky")
     .getOrCreate()
 
-  import sparkSession.implicits._
   import LogEntryParser._
+  import sparkSession.implicits._
 
   val logs = sparkSession.readStream.text("./data/log")
   val logEntries = logs.flatMap(parseRow).select("status", "dateTime")
