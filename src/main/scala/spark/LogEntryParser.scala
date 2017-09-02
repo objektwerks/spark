@@ -1,7 +1,8 @@
 package spark
 
 import java.sql.Timestamp
-import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.regex.Pattern
 
@@ -24,6 +25,7 @@ object LogEntryParser {
     Pattern.compile(regex)
   }
   val dateTimePattern = Pattern.compile("\\[(.*?) .+]")
+  val dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss", Locale.ENGLISH)
 
   def parseRow(row: Row): Option[LogEntry] = {
     val matcher = logEntryPattern.matcher(row.getString(0))
@@ -45,9 +47,8 @@ object LogEntryParser {
     val dateTimeMatcher = dateTimePattern.matcher(dateTime)
     if (dateTimeMatcher.find) {
       val dateTimeAsString = dateTimeMatcher.group(1)
-      val dateTimeFormat = new SimpleDateFormat("dd/MMM/yyyy:HH:mm:ss", Locale.ENGLISH)
-      val date = dateTimeFormat.parse(dateTimeAsString)
-      val timestamp = new Timestamp(date.getTime)
+      val dateTime = LocalDateTime.parse(dateTimeAsString, dateTimeFormatter)
+      val timestamp = Timestamp.valueOf(dateTime)
       Some(timestamp.toString)
     } else None
   }
