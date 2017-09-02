@@ -31,7 +31,7 @@ object LogEntryApp extends App {
     .outputMode("complete")
     .foreach(rowForeachWriter)
     .start
-  writer.awaitTermination(60000)
+  writer.awaitTermination(33000)
 
   sparkSession.stop
 }
