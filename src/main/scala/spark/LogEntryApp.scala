@@ -20,9 +20,9 @@ object LogEntryApp extends App {
 
   val logEntries = reader
     .flatMap(rowToLogEntry)
-    .select("status", "dateTime", "client")
+    .select("status", "dateTime", "ip")
     .withWatermark("dateTime", "10 minutes")
-    .groupBy($"status", window($"dateTime", "1 hour"))
+    .groupBy($"ip", $"status", window($"dateTime", "1 hour"))
     .count
     .orderBy("window")
 
