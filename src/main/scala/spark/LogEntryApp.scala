@@ -10,7 +10,7 @@ import scala.io.Codec
 object LogEntryApp extends App {
   val sparkSession = SparkSession.builder.master("local[2]").appName("sparky").getOrCreate()
 
-  import LogEntryParser._
+  import LogEntry._
   import sparkSession.implicits._
 
   implicit val codec = Codec("UTF-8")
@@ -19,18 +19,19 @@ object LogEntryApp extends App {
   val reader = sparkSession.readStream.text("./data/log")
 
   val logEntries = reader
-    .flatMap(parseRow)
-    .select("status", "dateTime")
+    .flatMap(rowToLogEntry)
+    .select("status", "dateTime", "client")
+    .withWatermark("dateTime", "10 minutes")
     .groupBy($"status", window($"dateTime", "1 hour"))
     .count
     .orderBy("window")
 
-  val logEntryWriter = logEntries
+  val writer = logEntries
     .writeStream
     .outputMode("complete")
-    .format("console")
+    .foreach(rowForeachWriter)
     .start
-  logEntryWriter.awaitTermination()
+  writer.awaitTermination(60000)
 
   sparkSession.stop
 }
