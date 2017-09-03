@@ -9,37 +9,33 @@ class DatasetTest extends FunSuite with Matchers {
   val dataset = sparkSession.read.json(personJson.toDS()).as[Person].cache
 
   test("dataset") {
-    dataset.count shouldBe 4
-    dataset.filter(_.age == 24).first.name shouldBe "fred"
+    val personsByName = dataset.filter(_.name == "barney").as[Person]
+    personsByName.count shouldBe 1
+    personsByName.head.name shouldBe "barney"
 
-    val names = dataset.select("name").orderBy("name").collect
-    names.length shouldBe 4
-    names.head.mkString shouldBe "barney"
-
-    val ages = dataset.select("age").orderBy("age").collect
-    ages.length shouldBe 4
-    ages.head.getLong(0) shouldBe 21
-
-    val fred = dataset.filter(dataset("age") > 23).first
-    fred.age shouldBe 24
-    fred.name shouldBe "fred"
+    val personsByAge = dataset.filter(_.age > 23).as[Person]
+    personsByAge.count shouldBe 1
+    personsByAge.head.age shouldBe 24
   }
 
   test("dataframe") {
-    val minAge = dataset.agg(Map("age" -> "min")).first
-    minAge.getLong(0) shouldBe 21
+    val minAgeAsRow = dataset.agg(Map("age" -> "min")).first
+    minAgeAsRow.getLong(0) shouldBe 21
 
-    val avgAge = dataset.agg(Map("age" -> "avg")).first
-    avgAge.getDouble(0) shouldBe 22.5
+    val avgAgeAsRow = dataset.agg(Map("age" -> "avg")).first
+    avgAgeAsRow.getDouble(0) shouldBe 22.5
 
     dataset.createOrReplaceTempView("persons")
-    val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24").as[Person]
-    persons.count shouldBe 4
+    val personsAsDataframe = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24 order by age").cache
+    personsAsDataframe.count shouldBe 4
+    personsAsDataframe.head.getString(1) shouldBe "betty"
   }
 
   test("sql") {
     dataset.createOrReplaceTempView("persons")
-    val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24").as[Person]
+    val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24 order by age").as[Person].cache
     persons.count shouldBe 4
+    persons.head.name shouldBe "betty"
+    persons.head.age shouldBe 21
   }
 }
