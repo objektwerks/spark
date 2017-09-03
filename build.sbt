@@ -14,7 +14,6 @@ libraryDependencies ++= {
     "org.scalatest" % "scalatest_2.11" % "3.0.3" % "test"
   )
 }
-unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
 scalacOptions ++= Seq(
   "-language:postfixOps",
   "-language:reflectiveCalls",
