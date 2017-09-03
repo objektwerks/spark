@@ -9,13 +9,13 @@ class DatasetTest extends FunSuite with Matchers {
   val dataset = sparkSession.read.json(personJson.toDS()).as[Person].cache
 
   test("dataset") {
-    val personsByName = dataset.filter(_.name == "barney").as[Person]
-    personsByName.count shouldBe 1
-    personsByName.head.name shouldBe "barney"
+    val personByName = dataset.filter(_.name == "barney").as[Person]
+    personByName.count shouldBe 1
+    personByName.head.name shouldBe "barney"
 
-    val personsByAge = dataset.filter(_.age > 23).as[Person]
-    personsByAge.count shouldBe 1
-    personsByAge.head.age shouldBe 24
+    val personByAge = dataset.filter(_.age > 23).as[Person]
+    personByAge.count shouldBe 1
+    personByAge.head.age shouldBe 24
   }
 
   test("dataframe") {
