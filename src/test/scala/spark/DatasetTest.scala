@@ -28,7 +28,6 @@ class DatasetTest extends FunSuite with Matchers {
     val minAge = dataset.collect.map(p => Age(p.age)).min
     minAge.number shouldBe 21
 
-    import Age._
     val avgAge = dataset.map(p => Age(p.age)).collect.avg
     avgAge.number shouldBe 22
 
