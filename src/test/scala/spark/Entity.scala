@@ -18,3 +18,11 @@ object Person {
     override def close(errorOrNull: Throwable): Unit = logger.info("*** Closing person foreach writer...")
   }
 }
+
+case class Age(count: Long) extends Entity {
+  implicit def +(other: Age): Age = Age(count + other.count)
+}
+
+object Age {
+  implicit def ageOrdering: Ordering[Age] = Ordering.by(_.count)
+}
