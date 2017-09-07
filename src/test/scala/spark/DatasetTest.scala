@@ -20,15 +20,19 @@ class DatasetTest extends FunSuite with Matchers {
     filterPersonByAge.head.age shouldBe 24
 
     val selectNameByAge = dataset.select("name").where("age == 24").as[String]
+    selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
 
     val minAge = dataset.agg(Map("age" -> "min")).as[Long]
+    minAge.count shouldBe 1
     minAge.first shouldBe 21
 
     val meanAge = dataset.agg(Map("age" -> "mean")).as[Double]
+    meanAge.count shouldBe 1
     meanAge.first shouldBe 22.5
 
     val maxAge = dataset.agg(Map("age" -> "max")).as[Long]
+    maxAge.count shouldBe 1
     maxAge.first shouldBe 24
   }
 
@@ -36,14 +40,17 @@ class DatasetTest extends FunSuite with Matchers {
     val dataframe = dataset.toDF.cache
     dataframe.count shouldBe 4
 
-    val minAgeAsRow = dataframe.agg(Map("age" -> "min")).first
-    minAgeAsRow.getLong(0) shouldBe 21
+    val minAge = dataframe.agg(Map("age" -> "min"))
+    minAge.count shouldBe 1
+    minAge.first.getLong(0) shouldBe 21
 
-    val avgAgeAsRow = dataframe.agg(Map("age" -> "avg")).first
-    avgAgeAsRow.getDouble(0) shouldBe 22.5
+    val avgAge = dataframe.agg(Map("age" -> "avg"))
+    avgAge.count shouldBe 1
+    avgAge.first.getDouble(0) shouldBe 22.5
 
-    val maxAgeAsRow = dataframe.agg(Map("age" -> "max")).first
-    maxAgeAsRow.getLong(0) shouldBe 24
+    val maxAge = dataframe.agg(Map("age" -> "max"))
+    maxAge.count shouldBe 1
+    maxAge.first.getLong(0) shouldBe 24
   }
 
   test("sql") {
