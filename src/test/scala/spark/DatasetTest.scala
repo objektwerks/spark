@@ -33,7 +33,6 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("dataframe") {
-    dataset.createOrReplaceTempView("persons")
     val dataframe = dataset.toDF.cache
     dataframe.count shouldBe 4
 
