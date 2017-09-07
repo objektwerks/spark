@@ -17,11 +17,14 @@ object Person {
   }
 }
 
-case class Age(count: Long = 0) extends AnyVal {
-  implicit def +(other: Age): Age = Age(count + other.count)
+case class Age(number: Long = 0) extends AnyVal {
+  implicit def +(other: Age): Age = Age(number + other.number)
 }
 
 object Age {
-  implicit def ageOrdering: Ordering[Age] = Ordering.by(_.count)
-  def avg(ages: Array[Age]): Age = Age( ages.reduce( ( a, b ) => a + b ).count / ages.length )
+  class Average(ages: Array[Age]) {
+    def avg: Age = Age( ages.reduce( ( a, b ) => a + b ).number / ages.length )
+  }
+  implicit def ageOrdering: Ordering[Age] = Ordering.by(_.number)
+  implicit def average(ages: Array[Age]) = new Average(ages)
 }

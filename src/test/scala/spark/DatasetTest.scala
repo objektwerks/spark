@@ -10,6 +10,8 @@ class DatasetTest extends FunSuite with Matchers {
 
   test("dataset") {
     dataset.count shouldBe 4
+    val ages = dataset.map(p => Age(p.age)).collect
+    println(ages)
 
     val filterPersonByName = dataset.filter(_.name == "barney").as[Person]
     filterPersonByName.count shouldBe 1
@@ -24,16 +26,17 @@ class DatasetTest extends FunSuite with Matchers {
     selectNameByAge.head shouldBe "fred"
 
     val minAge = dataset.collect.map(p => Age(p.age)).min
-    minAge.count shouldBe 21
+    minAge.number shouldBe 21
 
-    val avgAge = Age.avg( dataset.collect.map(p => Age(p.age)) )
-    avgAge.count shouldBe 22
+    import Age._
+    val avgAge = dataset.map(p => Age(p.age)).collect.avg
+    avgAge.number shouldBe 22
 
     val maxAge = dataset.collect.map(p => Age(p.age)).max
-    maxAge.count shouldBe 24
+    maxAge.number shouldBe 24
 
     val sumAge = dataset.collect.map(p => Age(p.age)).reduce(_ + _)
-    sumAge.count shouldBe 90
+    sumAge.number shouldBe 90
   }
 
   test("dataframe") {
