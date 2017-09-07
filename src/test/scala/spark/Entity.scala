@@ -4,9 +4,7 @@ import org.apache.log4j.Logger
 import org.apache.spark.sql.ForeachWriter
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 
-sealed trait Entity
-
-case class Person(age: Long, name: String) extends Entity
+case class Person(age: Long, name: String)
 
 object Person {
   val logger = Logger.getLogger(this.getClass)
