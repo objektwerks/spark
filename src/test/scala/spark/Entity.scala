@@ -19,7 +19,7 @@ object Person {
   }
 }
 
-case class Age(count: Long = 0) extends Entity {
+case class Age(count: Long = 0) extends AnyVal {
   implicit def +(other: Age): Age = Age(count + other.count)
 }
 
