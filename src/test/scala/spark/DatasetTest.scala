@@ -19,8 +19,11 @@ class DatasetTest extends FunSuite with Matchers {
     filterPersonByAge.count shouldBe 1
     filterPersonByAge.head.age shouldBe 24
 
-    val selectPersonByAge = dataset.select("name").where("age == 24").as[String]
-    selectPersonByAge.head shouldBe "fred"
+    val selectNameByAge = dataset.select("name").where("age == 24").as[String]
+    selectNameByAge.head shouldBe "fred"
+
+    val avgAge = dataset.agg(Map("age" -> "mean")).as[Double]
+    avgAge.first shouldBe 22.5
   }
 
   test("dataframe") {
