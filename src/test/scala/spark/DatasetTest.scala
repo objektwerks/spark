@@ -11,13 +11,16 @@ class DatasetTest extends FunSuite with Matchers {
   test("dataset") {
     dataset.count shouldBe 4
 
-    val personByNameAsDataset = dataset.filter(_.name == "barney").as[Person]
-    personByNameAsDataset.count shouldBe 1
-    personByNameAsDataset.head.name shouldBe "barney"
+    val filterPersonByName = dataset.filter(_.name == "barney").as[Person]
+    filterPersonByName.count shouldBe 1
+    filterPersonByName.head.name shouldBe "barney"
 
-    val personByAgeAsDataset = dataset.filter(_.age > 23).as[Person]
-    personByAgeAsDataset.count shouldBe 1
-    personByAgeAsDataset.head.age shouldBe 24
+    val filterPersonByAge = dataset.filter(_.age > 23).as[Person]
+    filterPersonByAge.count shouldBe 1
+    filterPersonByAge.head.age shouldBe 24
+
+    val selectPersonByAge = dataset.select($"name".as[String]).where("age == 24")
+    selectPersonByAge.head shouldBe "fred"
   }
 
   test("dataframe") {
