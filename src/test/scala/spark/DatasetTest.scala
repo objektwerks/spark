@@ -27,16 +27,18 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("dataframe") {
+    dataset.createOrReplaceTempView("persons")
+    val personsAsDataframe = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24 order by age").cache
+    personsAsDataframe.count shouldBe 4
+    personsAsDataframe.head.getString(1) shouldBe "betty"
+  }
+
+  test("row") {
     val minAgeAsRow = dataset.agg(Map("age" -> "min")).first
     minAgeAsRow.getLong(0) shouldBe 21
 
     val avgAgeAsRow = dataset.agg(Map("age" -> "avg")).first
     avgAgeAsRow.getDouble(0) shouldBe 22.5
-
-    dataset.createOrReplaceTempView("persons")
-    val personsAsDataframe = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 24 order by age").cache
-    personsAsDataframe.count shouldBe 4
-    personsAsDataframe.head.getString(1) shouldBe "betty"
   }
 
   test("sql") {
