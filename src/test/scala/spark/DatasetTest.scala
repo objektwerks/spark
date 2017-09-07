@@ -34,16 +34,16 @@ class DatasetTest extends FunSuite with Matchers {
 
   test("dataframe") {
     dataset.createOrReplaceTempView("persons")
-    val personsAsDataframe = dataset.toDF.cache
-    personsAsDataframe.count shouldBe 4
+    val dataframe = dataset.toDF.cache
+    dataframe.count shouldBe 4
 
-    val minAgeAsRow = dataset.agg(Map("age" -> "min")).first
+    val minAgeAsRow = dataframe.agg(Map("age" -> "min")).first
     minAgeAsRow.getLong(0) shouldBe 21
 
-    val avgAgeAsRow = dataset.agg(Map("age" -> "avg")).first
+    val avgAgeAsRow = dataframe.agg(Map("age" -> "avg")).first
     avgAgeAsRow.getDouble(0) shouldBe 22.5
 
-    val maxAgeAsRow = dataset.agg(Map("age" -> "max")).first
+    val maxAgeAsRow = dataframe.agg(Map("age" -> "max")).first
     maxAgeAsRow.getLong(0) shouldBe 24
   }
 
