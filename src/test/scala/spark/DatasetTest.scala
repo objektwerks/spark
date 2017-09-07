@@ -34,6 +34,10 @@ class DatasetTest extends FunSuite with Matchers {
     val maxAge = dataset.agg(Map("age" -> "max")).as[Long]
     maxAge.count shouldBe 1
     maxAge.first shouldBe 24
+
+    val sumAge = dataset.agg(Map("age" -> "sum")).as[Long]
+    sumAge.count shouldBe 1
+    sumAge.first shouldBe 90
   }
 
   test("dataframe") {
@@ -51,6 +55,10 @@ class DatasetTest extends FunSuite with Matchers {
     val maxAge = dataframe.agg(Map("age" -> "max"))
     maxAge.count shouldBe 1
     maxAge.first.getLong(0) shouldBe 24
+
+    val sumAge = dataframe.agg(Map("age" -> "sum"))
+    sumAge.count shouldBe 1
+    sumAge.first.getLong(0) shouldBe 90
   }
 
   test("sql") {
