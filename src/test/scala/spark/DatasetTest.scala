@@ -6,7 +6,7 @@ class DatasetTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
-  val dataset = sparkSession.read.json(personJson.toDS()).as[Person].cache
+  val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
 
   test("dataset") {
     dataset.count shouldBe 4
