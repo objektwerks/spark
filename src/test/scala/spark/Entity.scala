@@ -19,10 +19,11 @@ object Person {
   }
 }
 
-case class Age(count: Long) extends Entity {
+case class Age(count: Long = 0) extends Entity {
   implicit def +(other: Age): Age = Age(count + other.count)
 }
 
 object Age {
   implicit def ageOrdering: Ordering[Age] = Ordering.by(_.count)
+  def avg(ages: Array[Age]): Age = Age( ages.reduce( ( a, b ) => a + b ).count / ages.length )
 }
