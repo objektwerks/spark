@@ -10,5 +10,4 @@ object Age {
   }
   implicit def ordering: Ordering[Age] = Ordering.by(_.age)
   implicit def avg(ages: Array[Age]) = new Average(ages)
-  implicit def sum(ages: Array[Age]) = ages.reduce(_ + _)
 }
