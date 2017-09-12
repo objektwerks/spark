@@ -25,10 +25,7 @@ object Age {
   class Average(ages: Array[Age]) {
     def avg: Age = Age( ages.reduce( ( a, b ) => a + b ).age / ages.length )
   }
-  class Total(ages: Array[Age]) {
-    def total: Age = ages.reduce(_ + _)
-  }
   implicit def ordering: Ordering[Age] = Ordering.by(_.age)
   implicit def avg(ages: Array[Age]) = new Average(ages)
-  implicit def total(ages: Array[Age]) = new Total(ages)
+  implicit def sum(ages: Array[Age]) = ages.reduce(_ + _)
 }

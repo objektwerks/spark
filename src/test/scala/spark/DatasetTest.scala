@@ -32,7 +32,7 @@ class DatasetTest extends FunSuite with Matchers {
     val maxAge = dataset.collect.map(p => Age(p.age)).max
     maxAge.age shouldBe 24
 
-    val sumAge = dataset.map(p => Age(p.age)).collect.total
+    val sumAge = dataset.map(p => Age(p.age)).collect.sum
     sumAge.age shouldBe 90
   }
 
