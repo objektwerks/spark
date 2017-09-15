@@ -5,6 +5,7 @@ import org.scalatest.{FunSuite, Matchers}
 class DatasetTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
+  import Person._
 
   val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
 
@@ -23,17 +24,17 @@ class DatasetTest extends FunSuite with Matchers {
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
 
-    val minAge = dataset.collect.map(p => Age(p.age)).min
-    minAge.age shouldBe 21
+    val minAge = dataset.map(_.age).collect.min
+    minAge shouldBe 21
 
-    val avgAge = dataset.map(p => Age(p.age)).collect.avg
-    avgAge.age shouldBe 22
+    val avgAge = dataset.map(_.age).collect.avg
+    avgAge shouldBe 22.5
 
-    val maxAge = dataset.collect.map(p => Age(p.age)).max
-    maxAge.age shouldBe 24
+    val maxAge = dataset.map(_.age).collect.max
+    maxAge shouldBe 24
 
-    val sumAge = dataset.map(p => Age(p.age)).collect.reduce(_ + _)
-    sumAge.age shouldBe 90
+    val sumAge = dataset.map(_.age).collect.sum
+    sumAge shouldBe 90
   }
 
   test("dataframe") {
