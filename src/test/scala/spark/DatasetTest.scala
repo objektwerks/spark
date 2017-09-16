@@ -34,21 +34,10 @@ class DatasetTest extends FunSuite with Matchers {
     val dataframe = dataset.toDF.cache
     dataframe.count shouldBe 4
 
-    val minAge = dataframe.agg(Map("age" -> "min"))
-    minAge.count shouldBe 1
-    minAge.first.getLong(0) shouldBe 21
-
-    val avgAge = dataframe.agg(Map("age" -> "avg"))
-    avgAge.count shouldBe 1
-    avgAge.first.getDouble(0) shouldBe 22.5
-
-    val maxAge = dataframe.agg(Map("age" -> "max"))
-    maxAge.count shouldBe 1
-    maxAge.first.getLong(0) shouldBe 24
-
-    val sumAge = dataframe.agg(Map("age" -> "sum"))
-    sumAge.count shouldBe 1
-    sumAge.first.getLong(0) shouldBe 90
+    dataframe.agg(Map("age" -> "min")).first.getLong(0) shouldBe 21
+    dataframe.agg(Map("age" -> "avg")).first.getDouble(0) shouldBe 22.5
+    dataframe.agg(Map("age" -> "max")).first.getLong(0) shouldBe 24
+    dataframe.agg(Map("age" -> "sum")).first.getLong(0) shouldBe 90
   }
 
   test("sql") {
