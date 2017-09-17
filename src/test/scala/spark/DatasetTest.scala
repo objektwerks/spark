@@ -21,7 +21,7 @@ class DatasetTest extends FunSuite with Matchers {
     filterPersonByAge.count shouldBe 1
     filterPersonByAge.head.age shouldBe 24
 
-    val groupPersonByRole = dataset.groupBy("role").avg("age").sort("role").cache
+    val groupPersonByRole = dataset.groupBy("role").avg("age").cache
     groupPersonByRole.count shouldBe 2
     groupPersonByRole.collect.map {
       case Row("husband", avgAge) => println(s"husband avg age: $avgAge"); avgAge shouldBe 23.0
