@@ -6,10 +6,6 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 
 case class Person(age: Long, name: String, role: String)
 
-class Average(ages: Array[Long]) {
-  def avg: Double = ages.sum / ages.length.toDouble
-}
-
 object Person {
   val logger = Logger.getLogger(this.getClass)
   val personStructType = new StructType().add("age", IntegerType).add("name", StringType).add("role", StringType)
@@ -19,5 +15,7 @@ object Person {
     override def close(errorOrNull: Throwable): Unit = logger.info("*** Closing person foreach writer...")
   }
   implicit def ordering: Ordering[Person] = Ordering.by(_.age)
-  implicit def avg(ages: Array[Long]) = new Average(ages)
+  implicit class Average(ages: Array[Long]) {
+    def avg: Double = ages.sum / ages.length.toDouble
+  }
 }
