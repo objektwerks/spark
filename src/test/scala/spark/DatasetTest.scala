@@ -1,5 +1,6 @@
 package spark
 
+import org.apache.spark.sql.Row
 import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
@@ -12,15 +13,22 @@ class DatasetTest extends FunSuite with Matchers {
   test("dataset") {
     dataset.count shouldBe 4
 
-    val filterPersonByName = dataset.filter(_.name == "barney")
+    val filterPersonByName = dataset.filter(_.name == "barney").cache
     filterPersonByName.count shouldBe 1
     filterPersonByName.head.name shouldBe "barney"
 
-    val filterPersonByAge = dataset.filter(_.age > 23)
+    val filterPersonByAge = dataset.filter(_.age > 23).cache
     filterPersonByAge.count shouldBe 1
     filterPersonByAge.head.age shouldBe 24
 
-    val selectNameByAge = dataset.select("name").where("age == 24").as[String]
+    val groupPersonByRole = dataset.groupBy("role").avg("age").sort("role").cache
+    groupPersonByRole.count shouldBe 2
+    groupPersonByRole.collect.map {
+      case Row("husband", avgAge) => println(s"husband avg age: $avgAge"); avgAge shouldBe 23.0
+      case Row("wife", avgAge) => println(s"wife avg age: $avgAge"); avgAge shouldBe 22.0
+    }
+
+    val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
 
