@@ -14,7 +14,7 @@ object Person {
     override def process(person: Person): Unit = logger.info(s"*** $person")
     override def close(errorOrNull: Throwable): Unit = logger.info("*** Closing person foreach writer...")
   }
-  implicit def ordering: Ordering[Person] = Ordering.by(_.age)
+  implicit def ordering: Ordering[Person] = Ordering.by(_.name)
   implicit class Average(ages: Array[Long]) {
     def avg: Double = ages.sum / ages.length.toDouble
   }
