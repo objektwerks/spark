@@ -35,10 +35,10 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.agg(Map("age" -> "sum")).first.getLong(0) shouldBe 90
 
     import org.apache.spark.sql.functions._
-    dataset.agg(min(dataset("age"))).first.getLong(0) shouldBe 21
-    dataset.agg(avg(dataset("age"))).first.getDouble(0) shouldBe 22.5
-    dataset.agg(max(dataset("age"))).first.getLong(0) shouldBe 24
-    dataset.agg(sum(dataset("age"))).first.getLong(0) shouldBe 90
+    dataset.agg(min(dataset("age"))).head.getLong(0) shouldBe 21
+    dataset.agg(avg(dataset("age"))).head.getDouble(0) shouldBe 22.5
+    dataset.agg(max(dataset("age"))).head.getLong(0) shouldBe 24
+    dataset.agg(sum(dataset("age"))).head.getLong(0) shouldBe 90
 
     val groupPersonByRole = dataset.groupBy("role").avg("age").cache
     val mapOfPersonByRole = groupPersonByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
