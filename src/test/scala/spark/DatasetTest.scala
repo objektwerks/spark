@@ -8,8 +8,6 @@ class DatasetTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dataset") {
-    import Person._
-
     val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
     dataset.count shouldBe 4
 
@@ -25,6 +23,7 @@ class DatasetTest extends FunSuite with Matchers {
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
 
+    import Person._
     dataset.map(_.age).collect.min shouldBe 21
     dataset.map(_.age).collect.avg shouldBe 22.5
     dataset.map(_.age).collect.max shouldBe 24
@@ -34,6 +33,12 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.agg(Map("age" -> "avg")).first.getDouble(0) shouldBe 22.5
     dataset.agg(Map("age" -> "max")).first.getLong(0) shouldBe 24
     dataset.agg(Map("age" -> "sum")).first.getLong(0) shouldBe 90
+
+    import org.apache.spark.sql.functions._
+    dataset.agg(min(dataset("age"))).first.getLong(0) shouldBe 21
+    dataset.agg(avg(dataset("age"))).first.getDouble(0) shouldBe 22.5
+    dataset.agg(max(dataset("age"))).first.getLong(0) shouldBe 24
+    dataset.agg(sum(dataset("age"))).first.getLong(0) shouldBe 90
 
     val groupPersonByRole = dataset.groupBy("role").avg("age").cache
     val mapOfPersonByRole = groupPersonByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
