@@ -29,6 +29,8 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.map(_.age).collect.max shouldBe 24
     dataset.map(_.age).collect.sum shouldBe 90
 
+    dataset.map(_.age).reduce(_ + _) shouldBe 90
+
     dataset.agg(Map("age" -> "min")).first.getLong(0) shouldBe 21
     dataset.agg(Map("age" -> "avg")).first.getDouble(0) shouldBe 22.5
     dataset.agg(Map("age" -> "max")).first.getLong(0) shouldBe 24
