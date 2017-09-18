@@ -40,15 +40,15 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.agg(max(dataset("age"))).head.getLong(0) shouldBe 24
     dataset.agg(sum(dataset("age"))).head.getLong(0) shouldBe 90
 
-    val groupPersonByRole = dataset.groupBy("role").avg("age").cache
-    val mapOfPersonByRole = groupPersonByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
-    mapOfPersonByRole.size shouldBe 2
-    mapOfPersonByRole("husband") shouldBe 23.0
-    mapOfPersonByRole("wife") shouldBe 22.0
-    groupPersonByRole.collect.map {
+    val groupByRole = dataset.groupBy("role").avg("age").cache
+    groupByRole.count shouldBe 2
+    groupByRole.collect.map {
       case Row("husband", avgAge) => avgAge shouldBe 23.0
       case Row("wife", avgAge) => avgAge shouldBe 22.0
     }
+    val groupByRoleMap = groupByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
+    groupByRoleMap("husband") shouldBe 23.0
+    groupByRoleMap("wife") shouldBe 22.0
 
     dataset.createOrReplaceTempView("persons")
     val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
