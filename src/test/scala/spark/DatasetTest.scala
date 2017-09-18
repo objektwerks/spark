@@ -23,9 +23,9 @@ class DatasetTest extends FunSuite with Matchers {
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
 
-    val orderByName = dataset.select("*").orderBy("name").as[Person].cache
+    val orderByName = dataset.select("name").orderBy("name").as[String].cache
     orderByName.count shouldBe 4
-    orderByName.head.name shouldBe "barney"
+    orderByName.head shouldBe "barney"
 
     import Person._
     dataset.map(_.age).collect.min shouldBe 21
