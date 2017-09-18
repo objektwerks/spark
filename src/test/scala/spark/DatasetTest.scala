@@ -13,8 +13,6 @@ class DatasetTest extends FunSuite with Matchers {
   test("dataset") {
     dataset.count shouldBe 4
 
-    val age = dataset("age")
-    age.as[Long]
     val filterPersonByName = dataset.filter(_.name == "barney").cache
     filterPersonByName.count shouldBe 1
     filterPersonByName.head.name shouldBe "barney"
