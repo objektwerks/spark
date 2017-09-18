@@ -30,11 +30,6 @@ class DatasetTest extends FunSuite with Matchers {
       case Row("wife", avgAge) => println(s"wife avg age: $avgAge"); avgAge shouldBe 22.0
     }
 
-    // dataset.groupByKey(_.role).agg(avg(dataset("role").as[Long]))
-    // not working with import org.apache.spark.sql.functions._
-    val groupByKey = dataset.groupByKey(_.role)
-    groupByKey.count.show
-
     val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
