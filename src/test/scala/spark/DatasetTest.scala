@@ -13,6 +13,8 @@ class DatasetTest extends FunSuite with Matchers {
   test("dataset") {
     dataset.count shouldBe 4
 
+    val age = dataset("age")
+    age.as[Long]
     val filterPersonByName = dataset.filter(_.name == "barney").cache
     filterPersonByName.count shouldBe 1
     filterPersonByName.head.name shouldBe "barney"
@@ -27,6 +29,11 @@ class DatasetTest extends FunSuite with Matchers {
       case Row("husband", avgAge) => println(s"husband avg age: $avgAge"); avgAge shouldBe 23.0
       case Row("wife", avgAge) => println(s"wife avg age: $avgAge"); avgAge shouldBe 22.0
     }
+
+    // dataset.groupByKey(_.role).agg(avg(dataset("role").as[Long]))
+    // not working with import org.apache.spark.sql.functions._
+    val groupByKey = dataset.groupByKey(_.role)
+    groupByKey.count.show
 
     val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
