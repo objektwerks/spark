@@ -3,13 +3,13 @@ package spark
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LabeledPoint, StreamingLinearRegressionWithSGD}
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.streaming.{Milliseconds, StreamingContext}
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-class RegressionMLibApp extends App {
+object RegressionMLibApp extends App {
   val sparkSession = SparkSession.builder.master("local[2]").appName("regression").getOrCreate()
   val sparkContext = sparkSession.sparkContext
 
-  val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
+  val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
   val regressionTrainingDStream = textFileToDStream("/regression.txt", sparkContext, streamingContext)
   val regressionTestingDStream = textFileToDStream("/regression.txt", sparkContext, streamingContext)
@@ -28,6 +28,7 @@ class RegressionMLibApp extends App {
 
   streamingContext.checkpoint("./target/output/test/regression/checkpoint")
   streamingContext.start
-  streamingContext.awaitTerminationOrTimeout(100)
+  streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+  sparkSession.stop
 }

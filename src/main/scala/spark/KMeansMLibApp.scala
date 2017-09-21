@@ -4,13 +4,13 @@ import org.apache.spark.mllib.clustering.StreamingKMeans
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.streaming.{Milliseconds, StreamingContext}
+import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-class KMeansMLibApp extends App {
+object KMeansMLibApp extends App {
   val sparkSession = SparkSession.builder.master("local[2]").appName("kmeans").getOrCreate()
   val sparkContext = sparkSession.sparkContext
 
-  val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
+  val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
   val kmeansTrainingDStream = textFileToDStream("/kmeans-training.txt", sparkContext, streamingContext)
   val kmeansTestingDStream = textFileToDStream("/kmeans-testing.txt", sparkContext, streamingContext)
@@ -30,6 +30,7 @@ class KMeansMLibApp extends App {
 
   streamingContext.checkpoint("./target/output/test/kmeans/checkpoint")
   streamingContext.start
-  streamingContext.awaitTerminationOrTimeout(100)
+  streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+  sparkSession.stop
 }
