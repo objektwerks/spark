@@ -6,7 +6,7 @@ import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
-object KMeansMLibApp extends App {
+object KMeansApp extends App {
   val sparkSession = SparkSession.builder.master("local[2]").appName("kmeans").getOrCreate()
   val sparkContext = sparkSession.sparkContext
 
@@ -32,5 +32,6 @@ object KMeansMLibApp extends App {
   streamingContext.start
   streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)
+
   sparkSession.stop
 }
