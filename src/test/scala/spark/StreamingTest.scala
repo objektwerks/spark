@@ -1,6 +1,7 @@
 package spark
 
 import org.apache.spark.rdd.RDD
+import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
 
@@ -11,10 +12,8 @@ class StreamingTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dstream") {
-    val streamingContext = new StreamingContext(sparkContext, Milliseconds(100))
-    val queue = mutable.Queue[RDD[String]]()
-    val dstream = streamingContext.queueStream(queue)
-    queue += sparkContext.makeRDD(licenseText)
+    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
+    val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
@@ -27,10 +26,8 @@ class StreamingTest extends FunSuite with Matchers {
   }
 
   test("window") {
-    val streamingContext = new StreamingContext(sparkContext, Milliseconds(100))
-    val queue = mutable.Queue[RDD[String]]()
-    val dstream = streamingContext.queueStream(queue)
-    queue += sparkContext.makeRDD(licenseText)
+    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
+    val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
@@ -54,5 +51,12 @@ class StreamingTest extends FunSuite with Matchers {
       .foreach(personForeachWriter)
     val query = out.start()
     query.awaitTermination(1000L)
+  }
+
+  def textToDStream(text: Seq[String], streamingContext: StreamingContext): InputDStream[String] = {
+    val queue = mutable.Queue[RDD[String]]()
+    val dstream = streamingContext.queueStream(queue)
+    queue += sparkContext.makeRDD(text)
+    dstream
   }
 }
