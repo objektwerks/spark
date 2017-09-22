@@ -53,6 +53,6 @@ object RecommendationApp extends App {
   def loadMovieRatings(movieRatingsTextFilePath: String): RDD[Rating] = {
     val lines = Source.fromInputStream(this.getClass.getResourceAsStream(movieRatingsTextFilePath)).getLines.toSeq
     val rdd = sparkContext.makeRDD(lines)
-    rdd.map(line => line.split('\t') ).map(lines => Rating(lines(0).toInt, lines(1).toInt, lines(2).toDouble)).cache()
+    rdd.map(line => line.split('\t')).map(lines => Rating(lines(0).toInt, lines(1).toInt, lines(2).toDouble)).cache
   }
 }
