@@ -23,15 +23,17 @@ object RecommendationApp extends App {
   val userId = 1
   val userMovieRatings = movieRatings.filter(rating => rating.user == userId)
   val userMovieRatingsAsArray = userMovieRatings.collect()
-  println(s"\nRatings for User [ $userId ]:\n")
-  userMovieRatingsAsArray.foreach { rating =>
-    println(movieIdToNameMap(rating.product.toInt) + ": " + rating.rating)
+  println(s"\nRatings for User [$userId]:\n")
+  for (i <- userMovieRatingsAsArray.indices) {
+    val rating = userMovieRatingsAsArray(i)
+    println(s"${i + 1}. ${movieIdToNameMap(rating.product.toInt)}: ${rating.rating}")
   }
 
-  val userMovieRecommendations = model.recommendProducts(userId, 10)
-  println(s"\nRecommendations for User [ $userId ]:\n")
-  userMovieRecommendations.foreach { recommendation =>
-    println(movieIdToNameMap(recommendation.product.toInt) + " score " + recommendation.rating)
+  val userMovieRecommendationsAsArray = model.recommendProducts(userId, 10)
+  println(s"\nRecommendations for User [$userId]:\n")
+  for (i <- userMovieRecommendationsAsArray.indices) {
+    val recommendation = userMovieRecommendationsAsArray(i)
+    println(s"${i + 1}. ${movieIdToNameMap(recommendation.product.toInt)} score ${recommendation.rating}")
   }
 
   sparkSession.stop()
