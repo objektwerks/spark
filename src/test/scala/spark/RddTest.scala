@@ -223,7 +223,7 @@ class RddTest extends FunSuite with Matchers {
 
       val moviesById = mutable.Map[Int, String]()
       val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/movies.txt")).getLines
-      for (line <- lines) {
+      lines foreach { line =>
         val fields = line.split('|')
         if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
       }

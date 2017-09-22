@@ -17,21 +17,21 @@ object RecommendationApp extends App {
   val movieRatings = loadMovieRatings("/movie.ratings.txt")
 
   val rank = 8
-  val numberOfIterations = 20
-  val model = ALS.train(movieRatings, rank, numberOfIterations)
+  val iterations = 20
+  val model = ALS.train(movieRatings, rank, iterations)
 
-  val userID = 1
-  val userMovieRatings = movieRatings.filter(rating => rating.user == userID)
+  val userId = 1
+  val userMovieRatings = movieRatings.filter(rating => rating.user == userId)
   val userMovieRatingsAsArray = userMovieRatings.collect()
-  println("Ratings:")
+  println(s"\nRatings for User [ $userId ]:")
   userMovieRatingsAsArray.foreach { rating =>
-    println(movieIdToNameMap(rating.product.toInt) + ": " + rating.rating.toString)
+    println(movieIdToNameMap(rating.product.toInt) + ": " + rating.rating)
   }
 
-  val recommendations = model.recommendProducts(userID, 10)
-  println("Recommendations:")
-  recommendations.foreach {
-    recommendation => println(movieIdToNameMap(recommendation.product.toInt) + " score " + recommendation.rating)
+  val userMovieRecommendations = model.recommendProducts(userId, 10)
+  println(s"\nRecommendations for User [ $userId ]:")
+  userMovieRecommendations.foreach { recommendation =>
+    println(movieIdToNameMap(recommendation.product.toInt) + " score " + recommendation.rating)
   }
 
   sparkSession.stop()
@@ -43,7 +43,7 @@ object RecommendationApp extends App {
 
     val moviesById = mutable.Map[Int, String]()
     val lines = Source.fromInputStream(this.getClass.getResourceAsStream(moviesTextFilePath)).getLines
-    for (line <- lines) {
+    lines foreach { line =>
       val fields = line.split('|')
       if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
     }
