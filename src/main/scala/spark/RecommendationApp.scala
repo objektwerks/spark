@@ -47,7 +47,7 @@ object RecommendationApp extends App {
       val fields = line.split('|')
       if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
     }
-    moviesById.toMap
+    moviesById.toMap[Int, String]
   }
 
   def loadMovieRatings(movieRatingsTextFilePath: String): RDD[Rating] = {
