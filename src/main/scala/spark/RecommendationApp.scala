@@ -23,13 +23,13 @@ object RecommendationApp extends App {
   val userId = 1
   val userMovieRatings = movieRatings.filter(rating => rating.user == userId)
   val userMovieRatingsAsArray = userMovieRatings.collect()
-  println(s"\nRatings for User [ $userId ]:")
+  println(s"\nRatings for User [ $userId ]:\n")
   userMovieRatingsAsArray.foreach { rating =>
     println(movieIdToNameMap(rating.product.toInt) + ": " + rating.rating)
   }
 
   val userMovieRecommendations = model.recommendProducts(userId, 10)
-  println(s"\nRecommendations for User [ $userId ]:")
+  println(s"\nRecommendations for User [ $userId ]:\n")
   userMovieRecommendations.foreach { recommendation =>
     println(movieIdToNameMap(recommendation.product.toInt) + " score " + recommendation.rating)
   }
