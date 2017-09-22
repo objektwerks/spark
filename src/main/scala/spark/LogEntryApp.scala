@@ -8,7 +8,7 @@ import org.apache.spark.sql.functions.window
 import scala.io.Codec
 
 object LogEntryApp extends App {
-  val sparkSession = SparkSession.builder.master("local[2]").appName("logentry").getOrCreate()
+  val sparkSession = SparkSession.builder.master("local[*]").appName("logentry").getOrCreate()
 
   import LogEntry._
   import sparkSession.implicits._

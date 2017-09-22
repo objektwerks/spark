@@ -10,8 +10,7 @@ import scala.collection.mutable
 import scala.io.{Codec, Source}
 
 object RecommendationApp extends App {
-  val sparkSession = SparkSession.builder.master("local[2]").appName("recommendation").getOrCreate()
-  val sparkContext = sparkSession.sparkContext
+  val sparkSession = SparkSession.builder.master("local[*]").appName("recommendation").getOrCreate()
 
   val movieIdToNameMap = loadMovieIdToNameMap("/movies.txt")
   val movieRatings = loadMovieRatings("/movie.ratings.txt")
@@ -54,7 +53,7 @@ object RecommendationApp extends App {
 
   def loadMovieRatings(movieRatingsTextFilePath: String): RDD[Rating] = {
     val lines = Source.fromInputStream(this.getClass.getResourceAsStream(movieRatingsTextFilePath)).getLines.toSeq
-    val rdd = sparkContext.makeRDD(lines)
+    val rdd = sparkSession.sparkContext.makeRDD(lines)
     rdd.map(line => line.split('\t')).map(lines => Rating(lines(0).toInt, lines(1).toInt, lines(2).toDouble)).cache
   }
 }

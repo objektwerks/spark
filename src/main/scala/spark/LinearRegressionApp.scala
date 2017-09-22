@@ -6,7 +6,7 @@ import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object LinearRegressionApp extends App {
-  val sparkSession = SparkSession.builder.master("local[2]").appName("regression").getOrCreate()
+  val sparkSession = SparkSession.builder.master("local[*]").appName("regression").getOrCreate()
   val sparkContext = sparkSession.sparkContext
 
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
