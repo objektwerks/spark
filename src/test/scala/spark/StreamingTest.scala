@@ -1,7 +1,5 @@
 package spark
 
-import java.util.concurrent.atomic.AtomicInteger
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
@@ -14,31 +12,31 @@ class StreamingTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("batch") {
-    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(1000))
+    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
     val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream)
-    val count = new AtomicInteger()
-    wordCountDstream foreachRDD { rdd => count.addAndGet(rdd.map(_._2).sum.toInt) }
-    println("Batch Word Count:")
-    wordCountDstream.print
+    val map = mutable.Map[String, Int]()
+    wordCountDstream foreachRDD { rdd => map ++= rdd.collect.toMap[String, Int] }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    count.get shouldBe 169
+    println("Batch Word Count:")
+    map.toSeq.sortBy(_._1).foreach(println)
+    map.size shouldBe 96
   }
 
   test("window") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(200))
     val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 200, slideIntervalInMillis = 200)
-    val count = new AtomicInteger()
-    wordCountDstream foreachRDD { rdd => count.addAndGet(rdd.map(_._2).sum.toInt) }
-    println("Window Word Count:")
-    wordCountDstream.print
+    val map = mutable.Map[String, Int]()
+    wordCountDstream foreachRDD { rdd => map ++= rdd.collect.toMap[String, Int] }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    count.get shouldBe 169
+    println("Window Word Count:")
+    map.toSeq.sortBy(_._1).foreach(println)
+    map.size shouldBe 96
   }
 
   test("structured") {
