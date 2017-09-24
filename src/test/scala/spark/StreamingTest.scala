@@ -1,5 +1,7 @@
 package spark
 
+import java.util.concurrent.atomic.AtomicInteger
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.streaming.dstream.InputDStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
@@ -12,31 +14,31 @@ class StreamingTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("batch") {
-    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
+    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(1000))
     val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream)
-    val count = mutable.ArrayBuffer[Int]()
-    wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
+    val count = new AtomicInteger()
+    wordCountDstream foreachRDD { rdd => count.addAndGet(rdd.map(_._2).sum.toInt) }
     println("Batch Word Count:")
     wordCountDstream.print
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    count.sum shouldBe 169
+    count.get shouldBe 169
   }
 
   test("window") {
-    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
+    val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(200))
     val dstream = textToDStream(licenseText, streamingContext)
-    val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
-    val count = mutable.ArrayBuffer[Int]()
-    wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
+    val wordCountDstream = countWords(dstream, windowLengthInMillis = 200, slideIntervalInMillis = 200)
+    val count = new AtomicInteger()
+    wordCountDstream foreachRDD { rdd => count.addAndGet(rdd.map(_._2).sum.toInt) }
     println("Window Word Count:")
     wordCountDstream.print
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    count.sum shouldBe 169
+    count.get shouldBe 169
   }
 
   test("structured") {
