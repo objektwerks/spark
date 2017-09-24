@@ -28,7 +28,6 @@ object KMeansApp extends App {
   model.trainOn(kmeansTrainingData)
   model.predictOnValues(kmeansTestingData.map(labeledPoint => (labeledPoint.label.toInt, labeledPoint.features))).print()
 
-  streamingContext.checkpoint("./target/output/test/kmeans/checkpoint")
   streamingContext.start
   streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)

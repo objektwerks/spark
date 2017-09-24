@@ -18,7 +18,6 @@ class StreamingTest extends FunSuite with Matchers {
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
     wordCountDstream.saveAsTextFiles("./target/output/test/ds")
-    streamingContext.checkpoint("./target/output/test/ds/checkpoint")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -32,7 +31,6 @@ class StreamingTest extends FunSuite with Matchers {
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
     wordCountDstream.saveAsTextFiles("./target/output/test/window")
-    streamingContext.checkpoint("./target/output/test/window/checkpoint")
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -41,13 +39,14 @@ class StreamingTest extends FunSuite with Matchers {
 
   test("structured") {
     import Person._
-    val in = sparkSession.readStream
+    val in = sparkSession
+      .readStream
       .option("basePath", "./data/json")
       .schema(personStructType)
       .json("./data/json")
       .as[Person]
-    val out = in.writeStream
-      .option("checkpointLocation", "./target/output/test/ss/checkpoint")
+    val out = in
+      .writeStream
       .foreach(personForeachWriter)
     val query = out.start()
     query.awaitTermination(1000L)

@@ -26,7 +26,6 @@ object LinearRegressionApp extends App {
   model.trainOn(regressionTrainingData)
   model.predictOnValues(regressionTestingData.map(labeledPoint => (labeledPoint.label, labeledPoint.features))).print()
 
-  streamingContext.checkpoint("./target/output/test/regression/checkpoint")
   streamingContext.start
   streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)
