@@ -126,15 +126,14 @@ class RddTest extends FunSuite with Matchers {
     val longestLine = rdd.map(l => l.length).reduce((a, b) => Math.max(a, b))
     assert(longestLine == 77)
 
-    val wordCountRdd = countWords(rdd).cache
-    val map = wordCountRdd.collect.toMap[String, Int]
-    println("RDD Word Count:")
-    map.toSeq.sortBy(_._1).foreach(println)
-    assert(map.size == 96)
-
-    val maxWordCount = wordCountRdd.values.max
-    val (word, count) = wordCountRdd.filter(_._2 == maxWordCount).first
+    val wordCounts = countWords(rdd).cache
+    assert(wordCounts.count == 96)
+    val maxWordCount = wordCounts.values.max
+    val (word, count) = wordCounts.filter(_._2 == maxWordCount).first
     assert(word == "the" && count == 14)
+
+    println("RDD Word Count:")
+    wordCounts.collect.sortBy(_._1).foreach(println)
   }
 
   test("movie ratings ~ count by value") {
