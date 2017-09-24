@@ -15,28 +15,28 @@ class StreamingTest extends FunSuite with Matchers {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
     val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream)
-    val map = mutable.Map[String, Int]()
-    wordCountDstream foreachRDD { rdd => map ++= rdd.collect.toMap[String, Int] }
+    val buffer = mutable.ArrayBuffer[(String, Int)]()
+    wordCountDstream foreachRDD { rdd => buffer ++= rdd.collect }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
     println("Batch Word Count:")
-    map.toSeq.sortBy(_._1).foreach(println)
-    map.size shouldBe 96
+    buffer.sortBy(_._1).foreach(println)
+    buffer.size shouldBe 96
   }
 
   test("window") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(200))
     val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 200, slideIntervalInMillis = 200)
-    val map = mutable.Map[String, Int]()
-    wordCountDstream foreachRDD { rdd => map ++= rdd.collect.toMap[String, Int] }
+    val buffer = mutable.ArrayBuffer[(String, Int)]()
+    wordCountDstream foreachRDD { rdd => buffer ++= rdd.collect }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
     println("Window Word Count:")
-    map.toSeq.sortBy(_._1).foreach(println)
-    map.size shouldBe 96
+    buffer.sortBy(_._1).foreach(println)
+    buffer.size shouldBe 96
   }
 
   test("structured") {
