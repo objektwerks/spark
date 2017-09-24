@@ -206,11 +206,11 @@ class RddTest extends FunSuite with Matchers {
     val totalByCustomer = customerByTotal.map(kv => (kv._2, kv._1))
     val totalByCustomerSorted = totalByCustomer.sortByKey()
     val results = totalByCustomerSorted.collect()
-    (3309.3804F, 45) shouldBe results.head // min
+    (3309.38F, 45) shouldBe results.head // min
     (6375.45F, 68) shouldBe results.last // max
     val amounts = results.map(kv => kv._1)
     500489.16F shouldBe amounts.sum
-    3309.3804F shouldBe amounts.min
+    3309.38F shouldBe amounts.min
     6375.45F shouldBe amounts.max
     5004.8916F shouldBe amounts.sum / amounts.length // avg
   }
@@ -222,7 +222,7 @@ class RddTest extends FunSuite with Matchers {
       codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
       val moviesById = mutable.Map[Int, String]()
-      val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/movies.txt")).getLines
+      val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/movie-data.txt")).getLines
       lines foreach { line =>
         val fields = line.split('|')
         if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
@@ -231,7 +231,7 @@ class RddTest extends FunSuite with Matchers {
     }
 
     val broadcastMovies = sparkContext.broadcast(loadMovies())
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/movie.ratings.txt")).getLines.toSeq
+    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/movie-ratings.txt")).getLines.toSeq
     val lines = sparkContext.makeRDD(data)
     val movies = lines.map( line => ( line.split("\t")(1).toInt, 1 ) )
     val movieCounts = movies.reduceByKey( (x, y) => x + y )
@@ -239,7 +239,7 @@ class RddTest extends FunSuite with Matchers {
     val sortedCountMovies = countMovies.sortByKey()
     val sortedMovieNamesByCount = sortedCountMovies.map( countMovie  => (broadcastMovies.value(countMovie._2), countMovie._1) )
     val results = sortedMovieNamesByCount.collect()
-    ("Mostro, Il (1994)", 1) shouldBe results.head  // least popular
+    ("Shadow of Angels (Schatten der Engel) (1976)", 1) shouldBe results.head  // least popular
     ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
 

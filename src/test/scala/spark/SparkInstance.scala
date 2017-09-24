@@ -1,23 +1,17 @@
 package spark
 
-import org.apache.log4j.Logger
 import org.apache.spark.sql.SparkSession
 
 import scala.io.Source
 
 object SparkInstance {
-  val logger = Logger.getLogger(this.getClass)
-
-  val sparkSession = SparkSession.builder
-    .master("local[2]")
-    .appName("sparky")
-    .getOrCreate()
+  val sparkSession = SparkSession.builder.master("local[*]").appName("test").getOrCreate()
   val sparkContext = sparkSession.sparkContext
   val licenseText = Source.fromInputStream(getClass.getResourceAsStream("/license.mit")).getLines.toSeq
-  logger.info("*** Initialized spark instance.")
+  println("Initialized spark instance.")
 
   sys.addShutdownHook {
     sparkSession.stop()
-    logger.info("*** Terminated spark instance.")
+    println("Terminated spark instance.")
   }
 }

@@ -42,7 +42,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.regex.Pattern
 
-import org.apache.log4j.Logger
 import org.apache.spark.sql.{ForeachWriter, Row}
 
 case class LogEntry(ip: String,
@@ -99,11 +98,9 @@ object LogEntry {
     } else None
   }
 
-  val logger = Logger.getLogger(this.getClass)
-
   val rowForeachWriter = new ForeachWriter[Row] {
     override def open(partitionId: Long, version: Long): Boolean = true
-    override def process(row: Row): Unit = logger.info(s"*** $row")
-    override def close(errorOrNull: Throwable): Unit = logger.info("*** Closing LogEntry row foreach writer...")
+    override def process(row: Row): Unit = println(s"$row")
+    override def close(errorOrNull: Throwable): Unit = println("Closing LogEntry row foreach writer...")
   }
 }
