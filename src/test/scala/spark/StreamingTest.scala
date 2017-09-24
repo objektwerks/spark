@@ -11,13 +11,14 @@ class StreamingTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
-  test("dstream") {
+  test("batch") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
     val dstream = textToDStream(licenseText, streamingContext)
     val wordCountDstream = countWords(dstream)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
-    wordCountDstream.saveAsTextFiles("./target/output/test/ds")
+    println("Batch Word Count:")
+    wordCountDstream.print
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
@@ -30,7 +31,8 @@ class StreamingTest extends FunSuite with Matchers {
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 100, slideIntervalInMillis = 100)
     val count = mutable.ArrayBuffer[Int]()
     wordCountDstream foreachRDD { rdd => count += rdd.map(_._2).sum.toInt }
-    wordCountDstream.saveAsTextFiles("./target/output/test/window")
+    println("Window Word Count:")
+    wordCountDstream.print
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
