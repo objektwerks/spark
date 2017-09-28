@@ -8,6 +8,13 @@ class DataSourceTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
+  test("csv") {
+    val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
+    dataframe.count shouldBe 500
+    val uniqueNames = dataframe.map(row => row.getString(1)).distinct
+    uniqueNames.count shouldBe 30
+  }
+
   test("text") {
     val lines: RDD[String] = sparkContext.textFile("./data/txt/license.txt")
     lines.count shouldBe 19
