@@ -117,10 +117,8 @@ class RddTest extends FunSuite with Matchers {
   }
 
   test("count") {
-    val wordRegex = "\\W+"
-
     def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
-      rdd.flatMap(l => l.split(wordRegex))
+      rdd.flatMap(l => l.split("\\W+"))
         .filter(_.nonEmpty)
         .map(_.toLowerCase)
         .map(w => (w, 1))
