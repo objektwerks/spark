@@ -11,7 +11,7 @@ class DataSourceTest extends FunSuite with Matchers {
   test("csv") {
     val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
     dataframe.count shouldBe 500
-    val uniqueNames = dataframe.map(row => row.getString(1)).distinct
+    val uniqueNames: Dataset[String] = dataframe.map(row => row.getString(1)).distinct
     uniqueNames.count shouldBe 30
   }
 
@@ -41,7 +41,7 @@ class DataSourceTest extends FunSuite with Matchers {
     val personsAsParquet: Dataset[Person] = persons.sqlContext.read.parquet("./target/persons.parquet").as[Person]
     personsAsParquet.createOrReplaceTempView("persons")
 
-    val selectedPersons = personsAsParquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
+    val selectedPersons: Dataset[Person] = personsAsParquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
     selectedPersons.count shouldBe 2
     selectedPersons.head.name shouldBe "betty"
     selectedPersons.head.age shouldBe 21
