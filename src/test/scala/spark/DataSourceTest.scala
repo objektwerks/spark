@@ -16,15 +16,21 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("text") {
-    val lines: RDD[String] = sparkContext.textFile("./data/txt/license.txt")
-    lines.count shouldBe 19
+    val rdd: RDD[String] = sparkContext.textFile("./data/txt/license.txt")
+    rdd.count shouldBe 19
+
+    val dataframe: Dataset[Row] = sparkSession.read.text("./data/txt/license.txt")
+    dataframe.count shouldBe 19
+
+    val dataset: Dataset[String] = sparkSession.read.textFile("./data/txt/license.txt")
+    dataset.count shouldBe 19
   }
 
   test("json") {
-    val dataset: Dataset[Person] = sparkSession.read.json("./data/json/person.json").as[Person]
-    dataset.count shouldBe 4
-
     val dataframe: Dataset[Row] = sparkSession.read.json("./data/json/person.json")
     dataframe.count shouldBe 4
+
+    val dataset: Dataset[Person] = sparkSession.read.json("./data/json/person.json").as[Person]
+    dataset.count shouldBe 4
   }
 }
