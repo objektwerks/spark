@@ -11,6 +11,7 @@ class DataSourceTest extends FunSuite with Matchers {
   test("csv") {
     val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
     dataframe.count shouldBe 500
+
     val uniqueNames: Dataset[String] = dataframe.map(row => row.getString(1)).distinct
     uniqueNames.count shouldBe 30
   }
