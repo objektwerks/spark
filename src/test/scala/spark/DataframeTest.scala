@@ -8,7 +8,7 @@ class DataframeTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dataframe") {
-    val dataframe = sparkSession.read.json("./data/json/person.json")
+    val dataframe = sparkSession.read.json("./data/json/person.json").cache
     dataframe.count shouldBe 4
 
     val selectByName = dataframe.select("name").where("name == 'barney'").cache
@@ -47,11 +47,5 @@ class DataframeTest extends FunSuite with Matchers {
     val groupByRoleMap = groupByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
-
-    dataframe.createOrReplaceTempView("persons")
-    val rows = dataframe.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age")
-    rows.count shouldBe 2
-    rows.head.getString(1) shouldBe "betty"
-    rows.head.getLong(0) shouldBe 21
   }
 }

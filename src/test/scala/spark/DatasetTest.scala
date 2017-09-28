@@ -11,13 +11,13 @@ class DatasetTest extends FunSuite with Matchers {
     val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
     dataset.count shouldBe 4
 
-    val filterPersonByName = dataset.filter(_.name == "barney").cache
-    filterPersonByName.count shouldBe 1
-    filterPersonByName.head.name shouldBe "barney"
+    val filterByName = dataset.filter(_.name == "barney").cache
+    filterByName.count shouldBe 1
+    filterByName.head.name shouldBe "barney"
 
-    val filterPersonByAge = dataset.filter(_.age > 23).cache
-    filterPersonByAge.count shouldBe 1
-    filterPersonByAge.head.age shouldBe 24
+    val filterByAge = dataset.filter(_.age > 23).cache
+    filterByAge.count shouldBe 1
+    filterByAge.head.age shouldBe 24
 
     val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
@@ -55,11 +55,5 @@ class DatasetTest extends FunSuite with Matchers {
     val groupByRoleMap = groupByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
-
-    dataset.createOrReplaceTempView("persons")
-    val persons = dataset.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
-    persons.count shouldBe 2
-    persons.head.name shouldBe "betty"
-    persons.head.age shouldBe 21
   }
 }
