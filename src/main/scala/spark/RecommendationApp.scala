@@ -11,9 +11,8 @@ import scala.io.{Codec, Source}
 
 object RecommendationApp extends App {
   val sparkSession = SparkSession.builder.master("local[*]").appName("recommendation").getOrCreate()
-
-  val movieIdToNameMap = loadMovieIdToNameMap("/movies.txt")
-  val movieRatings = loadMovieRatings("/movie.ratings.txt")
+  val movieIdToNameMap = loadMovieIdToNameMap("./data/txt/movie-data.txt")
+  val movieRatings = loadMovieRatings("./data/txt/movie-ratings.txt")
 
   val rank = 8
   val iterations = 20
@@ -37,13 +36,13 @@ object RecommendationApp extends App {
 
   sparkSession.stop()
 
-  def loadMovieIdToNameMap(moviesTextFilePath: String): Map[Int, String] = {
+  def loadMovieIdToNameMap(filePath: String): Map[Int, String] = {
     implicit val codec = Codec("UTF-8")
     codec.onMalformedInput(CodingErrorAction.REPLACE)
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
     val moviesById = mutable.Map[Int, String]()
-    val lines = Source.fromInputStream(this.getClass.getResourceAsStream(moviesTextFilePath)).getLines
+    val lines = Source.fromFile(filePath).getLines()
     lines foreach { line =>
       val fields = line.split('|')
       if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
@@ -51,9 +50,8 @@ object RecommendationApp extends App {
     moviesById.toMap[Int, String]
   }
 
-  def loadMovieRatings(movieRatingsTextFilePath: String): RDD[Rating] = {
-    val lines = Source.fromInputStream(this.getClass.getResourceAsStream(movieRatingsTextFilePath)).getLines.toSeq
-    val rdd = sparkSession.sparkContext.makeRDD(lines)
-    rdd.map(line => line.split('\t')).map(lines => Rating(lines(0).toInt, lines(1).toInt, lines(2).toDouble)).cache
+  def loadMovieRatings(filePath: String): RDD[Rating] = {
+    val lines = sparkSession.sparkContext.textFile(filePath)
+    lines.map(line => line.split('\t')).map(lines => Rating(lines(0).toInt, lines(1).toInt, lines(2).toDouble)).cache
   }
 }

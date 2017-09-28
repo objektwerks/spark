@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.streaming.dstream.InputDStream
+import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
 
@@ -13,7 +13,7 @@ class StreamingTest extends FunSuite with Matchers {
 
   test("batch") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
-    val dstream = textToDStream(licenseText, streamingContext)
+    val dstream = textToDStream("./data/txt/license.txt", streamingContext)
     val wordCountDstream = countWords(dstream)
     val buffer = mutable.ArrayBuffer[(String, Int)]()
     wordCountDstream foreachRDD { rdd => buffer ++= rdd.collect }
@@ -27,7 +27,7 @@ class StreamingTest extends FunSuite with Matchers {
 
   test("window") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(200))
-    val dstream = textToDStream(licenseText, streamingContext)
+    val dstream = textToDStream("./data/txt/license.txt", streamingContext)
     val wordCountDstream = countWords(dstream, windowLengthInMillis = 200, slideIntervalInMillis = 200)
     val buffer = mutable.ArrayBuffer[(String, Int)]()
     wordCountDstream foreachRDD { rdd => buffer ++= rdd.collect }
@@ -54,10 +54,27 @@ class StreamingTest extends FunSuite with Matchers {
     query.awaitTermination(1000L)
   }
 
-  def textToDStream(text: Seq[String], streamingContext: StreamingContext): InputDStream[String] = {
+  def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
-    queue += sparkContext.makeRDD(text)
+    val lines = sparkContext.textFile(filePath)
+    queue += lines
     dstream
+  }
+
+  def countWords(ds: DStream[String]): DStream[(String, Int)] = {
+    ds.flatMap(l => l.split("\\W+"))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .map(w => (w, 1))
+      .reduceByKey(_ + _)
+  }
+
+  def countWords(ds: DStream[String], windowLengthInMillis: Int, slideIntervalInMillis: Int): DStream[(String, Int)] = {
+    ds.flatMap(l => l.split("\\W+"))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .map(w => (w, 1))
+      .reduceByKeyAndWindow((x:Int, y:Int) => x + y, Milliseconds(windowLengthInMillis), Milliseconds(slideIntervalInMillis))
   }
 }

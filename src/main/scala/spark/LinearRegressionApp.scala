@@ -11,8 +11,8 @@ object LinearRegressionApp extends App {
 
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
-  val regressionTrainingDStream = textFileToDStream("/regression.txt", sparkContext, streamingContext)
-  val regressionTestingDStream = textFileToDStream("/regression.txt", sparkContext, streamingContext)
+  val regressionTrainingDStream = textFileToDStream("./data/txt/regression.txt", sparkContext, streamingContext)
+  val regressionTestingDStream = textFileToDStream("./data/txt/regression.txt", sparkContext, streamingContext)
 
   val regressionTrainingData = regressionTrainingDStream.map(LabeledPoint.parse).cache()
   val regressionTestingData = regressionTestingDStream.map(LabeledPoint.parse)

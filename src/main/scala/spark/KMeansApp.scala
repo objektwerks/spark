@@ -12,8 +12,8 @@ object KMeansApp extends App {
 
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
-  val kmeansTrainingDStream = textFileToDStream("/kmeans-training.txt", sparkContext, streamingContext)
-  val kmeansTestingDStream = textFileToDStream("/kmeans-testing.txt", sparkContext, streamingContext)
+  val kmeansTrainingDStream = textFileToDStream("./data/txt/kmeans-training.txt", sparkContext, streamingContext)
+  val kmeansTestingDStream = textFileToDStream("./data/txt/kmeans-testing.txt", sparkContext, streamingContext)
 
   val kmeansTrainingData = kmeansTrainingDStream.map(Vectors.parse).cache()
   val kmeansTestingData = kmeansTestingDStream.map(LabeledPoint.parse)

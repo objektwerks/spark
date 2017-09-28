@@ -4,6 +4,7 @@ import java.nio.charset.CodingErrorAction
 
 import breeze.linalg.{max, min}
 import org.apache.spark.HashPartitioner
+import org.apache.spark.rdd.RDD
 import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.{SortedSet, mutable}
@@ -116,7 +117,17 @@ class RddTest extends FunSuite with Matchers {
   }
 
   test("count") {
-    val rdd = sparkContext.makeRDD(SparkInstance.licenseText).cache
+    val wordRegex = "\\W+"
+
+    def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
+      rdd.flatMap(l => l.split(wordRegex))
+        .filter(_.nonEmpty)
+        .map(_.toLowerCase)
+        .map(w => (w, 1))
+        .reduceByKey(_ + _)
+    }
+
+    val rdd = sparkContext.textFile("./data/txt/license.txt")
     val totalLines = rdd.count
     assert(totalLines == 19)
 
@@ -137,8 +148,7 @@ class RddTest extends FunSuite with Matchers {
   }
 
   test("movie ratings ~ count by value") {
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/movie.ratings.txt")).getLines.toSeq
-    val lines = sparkContext.makeRDD(data)
+    val lines = sparkContext.textFile("./data/txt/movie-ratings.txt")
     val ratings = lines.map(line => line.split("\t")(2).toInt)
     val ratingsByCount = ratings.countByValue
     ratingsByCount(1) shouldBe 6110
@@ -156,8 +166,7 @@ class RddTest extends FunSuite with Matchers {
       (age, friends)
     }
 
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/friends.txt")).getLines.toSeq
-    val lines = sparkContext.makeRDD(data)
+    val lines = sparkContext.textFile("./data/txt/friends.txt")
     val parsedLines = lines.map(parseLine)
     val totalsByAge = parsedLines.mapValues(x => (x, 1)).reduceByKey((x, y) => (x._1 + y._1, x._2 + y._2)) // (age, (friends, 1))
     val averagesByAge = totalsByAge.mapValues(x => x._1 / x._2) // (age, friends)
@@ -175,8 +184,7 @@ class RddTest extends FunSuite with Matchers {
       (station, entry, temp)
     }
 
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/weather.txt")).getLines.toSeq
-    val lines = sparkContext.makeRDD(data)
+    val lines = sparkContext.textFile("./data/txt/weather.txt")
     val parsedLines = lines.map(parseLine)
 
     val minTemps = parsedLines.filter(x => x._2 == "TMIN")
@@ -200,18 +208,17 @@ class RddTest extends FunSuite with Matchers {
       (customer, amount)
     }
 
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/orders.txt")).getLines.toSeq
-    val lines = sparkContext.makeRDD(data)
+    val lines = sparkContext.textFile("./data/txt/orders.txt")
     val parsedLines = lines.map(parseLine)
     val customerByTotal = parsedLines.reduceByKey((x,y) => x + y)
     val totalByCustomer = customerByTotal.map(kv => (kv._2, kv._1))
     val totalByCustomerSorted = totalByCustomer.sortByKey()
     val results = totalByCustomerSorted.collect()
-    (3309.38F, 45) shouldBe results.head // min
+    (3309.3804F, 45) shouldBe results.head // min
     (6375.45F, 68) shouldBe results.last // max
     val amounts = results.map(kv => kv._1)
     500489.16F shouldBe amounts.sum
-    3309.38F shouldBe amounts.min
+    3309.3804F shouldBe amounts.min
     6375.45F shouldBe amounts.max
     5004.8916F shouldBe amounts.sum / amounts.length // avg
   }
@@ -223,7 +230,7 @@ class RddTest extends FunSuite with Matchers {
       codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
       val moviesById = mutable.Map[Int, String]()
-      val lines = Source.fromInputStream(this.getClass.getResourceAsStream("/movie-data.txt")).getLines
+      val lines = Source.fromFile("./data/txt//movie-data.txt").getLines()
       lines foreach { line =>
         val fields = line.split('|')
         if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
@@ -232,15 +239,14 @@ class RddTest extends FunSuite with Matchers {
     }
 
     val broadcastMovies = sparkContext.broadcast(loadMovies())
-    val data = Source.fromInputStream(this.getClass.getResourceAsStream("/movie-ratings.txt")).getLines.toSeq
-    val lines = sparkContext.makeRDD(data)
+    val lines = sparkContext.textFile("./data/txt/movie-ratings.txt")
     val movies = lines.map( line => ( line.split("\t")(1).toInt, 1 ) )
     val movieCounts = movies.reduceByKey( (x, y) => x + y )
     val countMovies = movieCounts.map( movieCount => (movieCount._2, movieCount._1) )
     val sortedCountMovies = countMovies.sortByKey()
     val sortedMovieNamesByCount = sortedCountMovies.map( countMovie  => (broadcastMovies.value(countMovie._2), countMovie._1) )
-    val results = sortedMovieNamesByCount.collect()
-    ("Shadow of Angels (Schatten der Engel) (1976)", 1) shouldBe results.head  // least popular
+    val results = sortedMovieNamesByCount.collect
+    ("Mostro, Il (1994)", 1) shouldBe results.head  // least popular
     ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
 
@@ -259,12 +265,10 @@ class RddTest extends FunSuite with Matchers {
       if (fields.length > 1) Some( (fields(0).trim().toInt, fields(1)) ) else None
     }
 
-    val marvelNameData = Source.fromInputStream(this.getClass.getResourceAsStream("/marvel-names.txt")).getLines.toSeq
-    val marvelNameLines = sparkContext.makeRDD(marvelNameData)
+    val marvelNameLines = sparkContext.textFile("./data/txt/marvel-names.txt")
     val marvelNames = marvelNameLines.flatMap(parseNames)
 
-    val marvelGraphData = Source.fromInputStream(this.getClass.getResourceAsStream("/marvel-graph.txt")).getLines.toSeq
-    val marvelGraphLines = sparkContext.makeRDD(marvelGraphData)
+    val marvelGraphLines = sparkContext.textFile("./data/txt/marvel-graph.txt")
     val marvelGraph = marvelGraphLines.map(countCoAppearances)
 
     val heroByCoAppearances = marvelGraph.reduceByKey( (x, y) => x + y )
