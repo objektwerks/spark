@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
 
 class DataframeTest extends FunSuite with Matchers {
@@ -9,6 +9,7 @@ class DataframeTest extends FunSuite with Matchers {
 
   test("dataframe") {
     val dataframe = sparkSession.read.json("./data/json/person.json").cache
+    assert(dataframe.isInstanceOf[Dataset[Row]])
     dataframe.count shouldBe 4
 
     val selectByName = dataframe.select("name").where("name == 'barney'").cache

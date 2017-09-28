@@ -1,5 +1,6 @@
 package spark
 
+import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
 
 class SqlTest extends FunSuite with Matchers {
@@ -8,6 +9,7 @@ class SqlTest extends FunSuite with Matchers {
 
   test("dataframe sql") {
     val dataframe = sparkSession.read.json("./data/json/person.json").cache
+    assert(dataframe.isInstanceOf[Dataset[Row]])
     dataframe.count shouldBe 4
 
     dataframe.createOrReplaceTempView("persons")
