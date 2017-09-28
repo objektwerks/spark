@@ -35,15 +35,15 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("parquet") {
-    val persons: Dataset[Person] = sparkSession.read.json("./data/json/person.json").as[Person]
-    persons.write.parquet("./target/persons.parquet")
+    val dataset: Dataset[Person] = sparkSession.read.json("./data/json/person.json").as[Person]
+    dataset.write.parquet("./target/person.parquet")
 
-    val personsAsParquet: Dataset[Person] = persons.sqlContext.read.parquet("./target/persons.parquet").as[Person]
-    personsAsParquet.createOrReplaceTempView("persons")
+    val parquet: Dataset[Person] = dataset.sqlContext.read.parquet("./target/person.parquet").as[Person]
+    parquet.createOrReplaceTempView("persons")
 
-    val selectedPersons: Dataset[Person] = personsAsParquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
-    selectedPersons.count shouldBe 2
-    selectedPersons.head.name shouldBe "betty"
-    selectedPersons.head.age shouldBe 21
+    val resultset: Dataset[Person] = parquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
+    resultset.count shouldBe 2
+    resultset.head.name shouldBe "betty"
+    resultset.head.age shouldBe 21
   }
 }
