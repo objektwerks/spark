@@ -1,6 +1,5 @@
 package spark
 
-import org.apache.spark.sql.Row
 import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
@@ -32,7 +31,6 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.map(_.age).collect.avg shouldBe 22.5
     dataset.map(_.age).collect.max shouldBe 24
     dataset.map(_.age).collect.sum shouldBe 90
-
     dataset.map(_.age).reduce(_ + _) shouldBe 90
 
     dataset.agg(Map("age" -> "min")).first.getLong(0) shouldBe 21
@@ -46,13 +44,13 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.agg(max(dataset("age"))).head.getLong(0) shouldBe 24
     dataset.agg(sum(dataset("age"))).head.getLong(0) shouldBe 90
 
-    val groupByRole = dataset.groupBy("role").avg("age").cache
+    val groupByRole = dataset.groupBy("role").avg("age").as[(String, Double)].cache
     groupByRole.count shouldBe 2
     groupByRole.collect.map {
-      case Row("husband", avgAge) => avgAge shouldBe 23.0
-      case Row("wife", avgAge) => avgAge shouldBe 22.0
+      case ("husband", avgAge) => avgAge shouldBe 23.0
+      case ("wife", avgAge) => avgAge shouldBe 22.0
     }
-    val groupByRoleMap = groupByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
+    val groupByRoleMap = groupByRole.collect.map(roleAvgAge => roleAvgAge._1 -> roleAvgAge._2).toMap[String, Double]
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
   }
