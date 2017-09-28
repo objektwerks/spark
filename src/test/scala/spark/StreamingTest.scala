@@ -9,7 +9,6 @@ import scala.collection.mutable
 
 class StreamingTest extends FunSuite with Matchers {
   import SparkInstance._
-  import sparkSession.implicits._
 
   test("batch") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
@@ -37,21 +36,6 @@ class StreamingTest extends FunSuite with Matchers {
     println("Window Word Count:")
     buffer.sortBy(_._1).foreach(println)
     buffer.size shouldBe 96
-  }
-
-  test("structured") {
-    import Person._
-    val in = sparkSession
-      .readStream
-      .option("basePath", "./data/json")
-      .schema(personStructType)
-      .json("./data/json")
-      .as[Person]
-    val out = in
-      .writeStream
-      .foreach(personForeachWriter)
-    val query = out.start()
-    query.awaitTermination(1000L)
   }
 
   def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
