@@ -64,7 +64,7 @@ class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("jdbc") {
-    val dataframe: Dataset[Row] = sparkSession.sqlContext
+    val dataframe: Dataset[Row] = sqlContext
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
