@@ -32,4 +32,4 @@ scalacOptions ++= Seq(
   "-Xlint"
 )
 javaOptions += "-server -Xss1m -Xmx2g"
-fork in test := true
+fork in test := false
