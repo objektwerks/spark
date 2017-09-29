@@ -2,11 +2,26 @@ package spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
 
-class DataSourceTest extends FunSuite with Matchers {
+class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
+
+  override protected def beforeAll(): Unit = {
+    import scalikejdbc._
+    Class.forName("org.h2.Driver")
+    ConnectionPool.singleton("jdbc:h2:./target/db", "", "")
+    implicit val session = AutoSession
+    sql"""
+          drop table persons if exists;
+          create table persons (age int, name varchar(64), role varchar(64));
+          insert into persons values (24, 'fred', 'husband');
+          insert into persons values (23, 'wilma', 'wife');
+          insert into persons values (22, 'barney', 'husband');
+          insert into persons values (21, 'betty', 'wife');
+      """.execute.apply()
+  }
 
   test("csv") {
     val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
