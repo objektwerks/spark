@@ -11,11 +11,11 @@ class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
   override protected def beforeAll(): Unit = {
     import scalikejdbc._
     Class.forName("org.h2.Driver")
-    ConnectionPool.singleton("jdbc:h2:./target/db", "", "")
+    ConnectionPool.singleton("jdbc:h2:./target/testdb", "test", "test")
     implicit val session = AutoSession
     sql"""
           drop table persons if exists;
-          create table persons (age int, name varchar(64), role varchar(64));
+          create table persons (age int not null, name varchar(64) not null, role varchar(64) not null);
           insert into persons values (24, 'fred', 'husband');
           insert into persons values (23, 'wilma', 'wife');
           insert into persons values (22, 'barney', 'husband');
@@ -61,5 +61,25 @@ class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
     resultset.count shouldBe 2
     resultset.head.name shouldBe "betty"
     resultset.head.age shouldBe 21
+  }
+
+  test("jdbc") {
+    val dataframe: Dataset[Row] = sparkSession.sqlContext
+      .read
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:./target/testdb")
+      .option("user", "test")
+      .option("password", "test")
+      .option("dbtable", "persons")
+      .load()
+    dataframe.printSchema
+    dataframe.show
+    val groupByRole = dataframe.groupBy("role").avg("age").cache
+    groupByRole.count shouldBe 2
+    groupByRole.collect.map {
+      case Row("husband", avgAge) => println(s"Husband average age: $avgAge"); avgAge shouldBe 23.0
+      case Row("wife", avgAge) => println(s"Wife average age: $avgAge"); avgAge shouldBe 22.0
+    }
   }
 }
