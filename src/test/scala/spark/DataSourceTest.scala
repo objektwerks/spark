@@ -2,13 +2,11 @@ package spark
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row}
-import org.scalatest.{BeforeAndAfterAll, FunSuite, Matchers}
+import org.scalatest.{FunSuite, Matchers}
 
-class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
+class DataSourceTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
-
-  override protected def beforeAll(): Unit = prepareJdbcTestDatabase()
 
   test("csv") {
     val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
@@ -51,6 +49,7 @@ class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
   }
 
   test("jdbc") {
+    prepareJdbcTestDatabase()
     val dataframe: Dataset[Row] = sqlContext
       .read
       .format("jdbc")
