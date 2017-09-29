@@ -8,20 +8,7 @@ class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
-  override protected def beforeAll(): Unit = {
-    import scalikejdbc._
-    Class.forName("org.h2.Driver")
-    ConnectionPool.singleton("jdbc:h2:./target/testdb", "test", "test")
-    implicit val session = AutoSession
-    sql"""
-          drop table persons if exists;
-          create table persons (age int not null, name varchar(64) not null, role varchar(64) not null);
-          insert into persons values (24, 'fred', 'husband');
-          insert into persons values (23, 'wilma', 'wife');
-          insert into persons values (22, 'barney', 'husband');
-          insert into persons values (21, 'betty', 'wife');
-      """.execute.apply()
-  }
+  override protected def beforeAll(): Unit = prepareJdbcTestDatabase()
 
   test("csv") {
     val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
@@ -81,5 +68,20 @@ class DataSourceTest extends FunSuite with BeforeAndAfterAll with Matchers {
       case Row("husband", avgAge) => println(s"Husband average age: $avgAge"); avgAge shouldBe 23.0
       case Row("wife", avgAge) => println(s"Wife average age: $avgAge"); avgAge shouldBe 22.0
     }
+  }
+
+  def prepareJdbcTestDatabase(): Unit = {
+    import scalikejdbc._
+    Class.forName("org.h2.Driver")
+    ConnectionPool.singleton("jdbc:h2:./target/testdb", "test", "test")
+    implicit val session = AutoSession
+    sql"""
+          drop table persons if exists;
+          create table persons (age int not null, name varchar(64) not null, role varchar(64) not null);
+          insert into persons values (24, 'fred', 'husband');
+          insert into persons values (23, 'wilma', 'wife');
+          insert into persons values (22, 'barney', 'husband');
+          insert into persons values (21, 'betty', 'wife');
+      """.execute.apply()
   }
 }
