@@ -8,6 +8,7 @@ class DatasetTest extends FunSuite with Matchers {
 
   test("dataset") {
     val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
+    dataset.printSchema
     dataset.count shouldBe 4
 
     val filterByName = dataset.filter(_.name == "barney").cache
