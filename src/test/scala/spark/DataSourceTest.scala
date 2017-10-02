@@ -67,6 +67,7 @@ class DataSourceTest extends FunSuite with Matchers {
       case Row("husband", avgAge) => println(s"Husband average age: $avgAge"); avgAge shouldBe 23.0
       case Row("wife", avgAge) => println(s"Wife average age: $avgAge"); avgAge shouldBe 22.0
     }
+    groupByRole.write.partitionBy("role").format("json").save("./target/jdbc")
   }
 
   def prepareJdbcTestDatabase(): Unit = {
