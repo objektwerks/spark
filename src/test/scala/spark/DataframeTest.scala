@@ -55,5 +55,7 @@ class DataframeTest extends FunSuite with Matchers {
     val groupByRoleMap = groupByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
+
+    dataframe.describe("age").collect.foreach(println)
   }
 }

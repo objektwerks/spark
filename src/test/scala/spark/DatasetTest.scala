@@ -54,5 +54,7 @@ class DatasetTest extends FunSuite with Matchers {
     val groupByRoleMap = groupByRole.collect.map(roleAvgAge => roleAvgAge._1 -> roleAvgAge._2).toMap[String, Double]
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
+
+    dataset.describe("age").collect.foreach(println)
   }
 }
