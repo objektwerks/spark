@@ -13,6 +13,12 @@ class DataframeTest extends FunSuite with Matchers {
     assert(dataframe.isInstanceOf[Dataset[Row]])
     dataframe.count shouldBe 4
 
+    val filterByName = dataframe.filter("name == 'barney'").cache
+    filterByName.count shouldBe 1
+    filterByName.first.getLong(0) shouldBe 22
+    filterByName.first.getString(1) shouldBe "barney"
+    filterByName.first.getString(2) shouldBe "husband"
+
     val selectByName = dataframe.select("name").where("name == 'barney'").cache
     selectByName.count shouldBe 1
     selectByName.first.getString(0) shouldBe "barney"
