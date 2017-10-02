@@ -11,6 +11,7 @@ class DataframeTest extends FunSuite with Matchers {
     val dataframe = sparkSession.read.json("./data/json/person.json").cache
     dataframe.printSchema
     assert(dataframe.isInstanceOf[Dataset[Row]])
+    assert(dataframe.toDF.as[Person].isInstanceOf[Dataset[Person]])
     dataframe.count shouldBe 4
 
     val filterByName = dataframe.filter("name == 'barney'").cache

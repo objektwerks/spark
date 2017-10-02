@@ -13,6 +13,7 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.printSchema
     dataset.count shouldBe 4
     assert(dataset.toDF.isInstanceOf[Dataset[Row]])
+    assert(dataset.toDF.as[Person].isInstanceOf[Dataset[Person]])
     assert(dataset.rdd.isInstanceOf[RDD[Person]])
 
     val filterByName = dataset.filter(_.name == "barney").cache
