@@ -1,5 +1,7 @@
 package spark
 
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
@@ -10,6 +12,8 @@ class DatasetTest extends FunSuite with Matchers {
     val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
     dataset.printSchema
     dataset.count shouldBe 4
+    assert(dataset.toDF.isInstanceOf[Dataset[Row]])
+    assert(dataset.rdd.isInstanceOf[RDD[Person]])
 
     val filterByName = dataset.filter(_.name == "barney").cache
     filterByName.count shouldBe 1
