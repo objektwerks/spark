@@ -20,6 +20,12 @@ class DataframeTest extends FunSuite with Matchers {
     filterByName.first.getString(1) shouldBe "barney"
     filterByName.first.getString(2) shouldBe "husband"
 
+    val sortByName = dataframe.sort("name").cache
+    sortByName.count shouldBe 4
+    sortByName.first.getLong(0) shouldBe 22
+    sortByName.first.getString(1) shouldBe "barney"
+    sortByName.first.getString(2) shouldBe "husband"
+
     val selectByName = dataframe.select("name").where("name == 'barney'").cache
     selectByName.count shouldBe 1
     selectByName.first.getString(0) shouldBe "barney"
