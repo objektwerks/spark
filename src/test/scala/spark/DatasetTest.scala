@@ -24,6 +24,10 @@ class DatasetTest extends FunSuite with Matchers {
     filterByAge.count shouldBe 1
     filterByAge.head.age shouldBe 24
 
+    val sortByName = dataset.sort("name").cache
+    sortByName.count shouldBe 4
+    sortByName.head.name shouldBe "barney"
+
     val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
