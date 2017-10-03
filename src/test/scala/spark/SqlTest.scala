@@ -13,10 +13,14 @@ class SqlTest extends FunSuite with Matchers {
     dataframe.count shouldBe 4
 
     dataframe.createOrReplaceTempView("persons")
+
     val rows = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
     rows.count shouldBe 2
     rows.head.getString(1) shouldBe "betty"
     rows.head.getLong(0) shouldBe 21
+
+    sqlContext.sql("select min(age) from persons").take(1)(0).getLong(0) shouldBe 21
+    sqlContext.sql("select max(age) from persons").take(1)(0).getLong(0) shouldBe 24
   }
 
   test("dataset sql") {
@@ -24,9 +28,13 @@ class SqlTest extends FunSuite with Matchers {
     dataset.count shouldBe 4
 
     dataset.createOrReplaceTempView("persons")
+
     val persons = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
     persons.count shouldBe 2
     persons.head.name shouldBe "betty"
     persons.head.age shouldBe 21
+
+    sqlContext.sql("select min(age) from persons").as[Long].take(1)(0) shouldBe 21
+    sqlContext.sql("select max(age) from persons").as[Long].take(1)(0) shouldBe 24
   }
 }
