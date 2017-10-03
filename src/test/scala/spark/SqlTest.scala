@@ -20,7 +20,9 @@ class SqlTest extends FunSuite with Matchers {
     rows.head.getLong(0) shouldBe 21
 
     sqlContext.sql("select min(age) from persons").take(1)(0).getLong(0) shouldBe 21
+    sqlContext.sql("select avg(age) from persons").take(1)(0).getDouble(0) shouldBe 22.5
     sqlContext.sql("select max(age) from persons").take(1)(0).getLong(0) shouldBe 24
+    sqlContext.sql("select sum(age) from persons").take(1)(0).getLong(0) shouldBe 90
   }
 
   test("dataset sql") {
@@ -35,6 +37,8 @@ class SqlTest extends FunSuite with Matchers {
     persons.head.age shouldBe 21
 
     sqlContext.sql("select min(age) from persons").as[Long].take(1)(0) shouldBe 21
+    sqlContext.sql("select avg(age) from persons").as[Double].take(1)(0) shouldBe 22.5
     sqlContext.sql("select max(age) from persons").as[Long].take(1)(0) shouldBe 24
+    sqlContext.sql("select sum(age) from persons").as[Long].take(1)(0) shouldBe 90
   }
 }
