@@ -4,13 +4,13 @@ import java.nio.charset.CodingErrorAction
 
 import org.apache.spark.mllib.recommendation.{ALS, Rating}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
 
 import scala.collection.mutable
 import scala.io.{Codec, Source}
 
 object RecommendationApp extends App {
-  val sparkSession = SparkSession.builder.master("local[*]").appName("recommendation").getOrCreate()
+  import SparkInstance._
+
   val movieIdToNameMap = loadMovieIdToNameMap("./data/txt/movie-data.txt")
   val movieRatings = loadMovieRatings("./data/txt/movie-ratings.txt")
 

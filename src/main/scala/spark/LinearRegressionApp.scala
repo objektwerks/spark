@@ -2,13 +2,10 @@ package spark
 
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.{LabeledPoint, StreamingLinearRegressionWithSGD}
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object LinearRegressionApp extends App {
-  val sparkSession = SparkSession.builder.master("local[*]").appName("regression").getOrCreate()
-  val sparkContext = sparkSession.sparkContext
-
+  import SparkInstance._
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
   val regressionTrainingDStream = textFileToDStream("./data/txt/regression.txt", sparkContext, streamingContext)

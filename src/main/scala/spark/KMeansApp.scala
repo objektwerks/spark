@@ -3,13 +3,10 @@ package spark
 import org.apache.spark.mllib.clustering.StreamingKMeans
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 
 object KMeansApp extends App {
-  val sparkSession = SparkSession.builder.master("local[*]").appName("kmeans").getOrCreate()
-  val sparkContext = sparkSession.sparkContext
-
+  import SparkInstance._
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
   val kmeansTrainingDStream = textFileToDStream("./data/txt/kmeans-training.txt", sparkContext, streamingContext)

@@ -2,16 +2,14 @@ package spark
 
 import java.nio.charset.CodingErrorAction
 
-import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions.window
 
 import scala.io.Codec
 
 object LogEntryApp extends App {
-  val sparkSession = SparkSession.builder.master("local[*]").appName("logentry").getOrCreate()
-
-  import LogEntry._
+  import SparkInstance._
   import sparkSession.implicits._
+  import LogEntry._
 
   implicit val codec = Codec("UTF-8")
   codec.onMalformedInput(CodingErrorAction.REPLACE)

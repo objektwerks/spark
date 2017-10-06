@@ -2,13 +2,11 @@ package spark
 
 import org.apache.spark.graphx.{Edge, Graph, VertexId}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.SparkSession
 
 import scala.util.hashing.MurmurHash3
 
 object FlightDataApp extends App {
-  val sparkSession = SparkSession.builder.master("local[*]").appName("flight-data").getOrCreate()
-  val sparkContext = sparkSession.sparkContext
+  import SparkInstance._
   import sparkSession.implicits._
 
   val dataframe = sparkSession.read.format("csv").option("header", "true").load("./data/csv/*.csv")
