@@ -21,7 +21,7 @@ class SparkAppListener extends SparkListener {
   def taskInfoToString(taskInfo: TaskInfo): String = {
     val info = ListBuffer[String]()
     info += s"status: ${taskInfo.status} "
-    info += s"duration: ${taskInfo.duration} "
+    info += s"duration: ${taskInfo.duration}"
     info.mkString
   }
 
