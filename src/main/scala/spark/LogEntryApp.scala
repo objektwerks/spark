@@ -31,7 +31,8 @@ object LogEntryApp extends App {
     .start
   writer.awaitTermination(33000)
 
-  sparkSession.stop
+  sparkListener.log()
+  sparkSession.stop()
 }
 
 import java.sql.Timestamp

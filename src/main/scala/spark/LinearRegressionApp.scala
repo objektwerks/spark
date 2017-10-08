@@ -27,5 +27,6 @@ object LinearRegressionApp extends App {
   streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)
 
-  sparkSession.stop
+  sparkListener.log()
+  sparkSession.stop()
 }

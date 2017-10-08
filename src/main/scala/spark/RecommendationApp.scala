@@ -34,6 +34,7 @@ object RecommendationApp extends App {
     println(s"${i + 1}. ${movieIdToNameMap(recommendation.product.toInt)} score ${recommendation.rating}")
   }
 
+  sparkListener.log()
   sparkSession.stop()
 
   def loadMovieIdToNameMap(filePath: String): Map[Int, String] = {
