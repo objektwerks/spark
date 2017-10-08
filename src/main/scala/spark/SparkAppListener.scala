@@ -35,21 +35,10 @@ class SparkAppListener extends SparkListener {
 
   def taskInfoToString(taskInfo: TaskInfo): String = {
     val info = ListBuffer[String]()
-    info += s"host: ${taskInfo.host}"
-    info += s"executor id: ${taskInfo.executorId}"
-    info += s"task id: ${taskInfo.taskId}"
-    info += s"running?: ${taskInfo.running}"
-    info += s"status: ${taskInfo.status}"
-    info += s"attempt number: ${taskInfo.attemptNumber}"
-    info += s"launch time: ${taskInfo.launchTime}"
-    info += s"finish time: ${taskInfo.finishTime}"
-    info += s"result time: ${taskInfo.gettingResultTime}"
-    info += s"duration: ${taskInfo.duration}"
-    info += s"getting result?: ${taskInfo.gettingResult}"
-    info += s"successful?: ${taskInfo.successful}"
-    info += s"failed?: ${taskInfo.failed}"
-    info += s"killed?: ${taskInfo.killed}"
-    info += s"accumuables: ${taskInfo.accumulables.foreach(println)}"
+    info += s"status: ${taskInfo.status} "
+    info += s"duration: ${taskInfo.duration} "
+    info += s"successful: ${taskInfo.successful}"
+    info += s"accumuables: ${taskInfo.accumulables.foreach(info += _.toString)}"
     info.mkString
   }
 
