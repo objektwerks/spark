@@ -37,14 +37,11 @@ class SparkAppListener extends SparkListener {
     val info = ListBuffer[String]()
     info += s"status: ${taskInfo.status} "
     info += s"duration: ${taskInfo.duration} "
-    info += s"successful: ${taskInfo.successful}"
-    info += s"accumuables: ${taskInfo.accumulables.foreach(info += _.toString)}"
     info.mkString
   }
 
   def taskMetricsToString(taskMetrics: TaskMetrics): String = {
     val info = ListBuffer[String]()
-    info += s"executor cpu time: ${taskMetrics.executorCpuTime} "
     info += s"executor run time: ${taskMetrics.executorRunTime} "
     info += s"peak execution memory: ${taskMetrics.peakExecutionMemory} "
     info += s"result size: ${taskMetrics.resultSize} "
