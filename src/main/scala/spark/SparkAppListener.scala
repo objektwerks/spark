@@ -14,11 +14,11 @@ class SparkAppListener extends SparkListener {
     events foreach { event => logger.info(event) }
   }
 
-  override def onJobEnd(end: SparkListenerJobEnd): Unit = events += s"*** Job end: ${end.jobResult}"
+  override def onJobEnd(end: SparkListenerJobEnd): Unit = events += s"*** Job result: ${end.jobResult}"
 
   override def onTaskEnd(end: SparkListenerTaskEnd): Unit = {
-    events += s"*** Task end info: ${taskInfoToString(end.taskInfo)}"
-    events += s"*** Task end metrics: ${taskMetricsToString(end.taskMetrics)}"
+    events += s"*** Task result info: ${taskInfoToString(end.taskInfo)}"
+    events += s"*** Task result metrics: ${taskMetricsToString(end.taskMetrics)}"
   }
 
   def taskInfoToString(taskInfo: TaskInfo): String = {
