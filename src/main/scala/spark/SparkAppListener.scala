@@ -28,38 +28,10 @@ class SparkAppListener extends SparkListener {
 
   override def onExecutorMetricsUpdate(update: SparkListenerExecutorMetricsUpdate): Unit = events += s"*** On executor update: ${update.toString}"
 
-  override def onExecutorAdded(added: SparkListenerExecutorAdded): Unit = events += s"*** On executor added: ${added.toString}"
-
-  override def onExecutorRemoved(removed: SparkListenerExecutorRemoved): Unit = events += s"*** On executor removed: ${removed.toString}"
-
-  override def onExecutorBlacklisted(blacklisted: SparkListenerExecutorBlacklisted): Unit = events += s"*** On executor blacklisted: ${blacklisted.toString}"
-
-  override def onExecutorUnblacklisted(unblacklisted: SparkListenerExecutorUnblacklisted): Unit = events += s"*** On executor unblacklisted: ${unblacklisted.toString}"
-
-  override def onBlockManagerAdded(added: SparkListenerBlockManagerAdded): Unit = events += s"*** On block manager added: ${added.toString}"
-
-  override def onBlockManagerRemoved(removed: SparkListenerBlockManagerRemoved): Unit = events += s"*** On block manager removed: ${removed.toString}"
-
-  override def onBlockUpdated(updated: SparkListenerBlockUpdated): Unit = events += s"*** On block updated: ${updated.toString}"
-
-  override def onTaskStart(start: SparkListenerTaskStart): Unit = events += s"*** On task start - task info: ${taskInfoToString(start.taskInfo)}"
-
   override def onTaskEnd(end: SparkListenerTaskEnd): Unit = {
-    events += s"*** On task start - task info: ${taskInfoToString(end.taskInfo)}"
-    events += s"*** On task start - task metrics: ${taskMetricsToString(end.taskMetrics)}"
+    events += s"*** On task end - task info: ${taskInfoToString(end.taskInfo)}"
+    events += s"*** On task end - task metrics: ${taskMetricsToString(end.taskMetrics)}"
   }
-
-  override def onTaskGettingResult(result: SparkListenerTaskGettingResult): Unit = events += s"*** On task result: ${taskInfoToString(result.taskInfo)}"
-
-  override def onUnpersistRDD(unpersist: SparkListenerUnpersistRDD): Unit = events += s"*** On rdd unpersisted: ${unpersist.toString}"
-
-  override def onNodeBlacklisted(blacklisted: SparkListenerNodeBlacklisted): Unit = events += s"*** On node blacklisted: ${blacklisted.toString}"
-
-  override def onNodeUnblacklisted(unblacklisted: SparkListenerNodeUnblacklisted): Unit = events += s"*** On node unblacklisted: ${unblacklisted.toString}"
-
-  override def onEnvironmentUpdate(update: SparkListenerEnvironmentUpdate): Unit = events += s"*** On env update: ${update.toString}"
-
-  override def onOtherEvent(event: SparkListenerEvent): Unit = events += s"*** On other event: ${event.toString}"
 
   def taskInfoToString(taskInfo: TaskInfo): String = {
     val info = ListBuffer[String]()
