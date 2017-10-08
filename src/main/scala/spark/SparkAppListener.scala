@@ -14,12 +14,9 @@ class SparkAppListener extends SparkListener {
     events foreach { event => logger.info(event) }
   }
 
-  override def onJobEnd(end: SparkListenerJobEnd): Unit = events += s"*** Job result: ${end.jobResult}"
+  override def onJobEnd(end: SparkListenerJobEnd): Unit = events += s"*** Job result - ${end.jobResult}"
 
-  override def onTaskEnd(end: SparkListenerTaskEnd): Unit = {
-    events += s"*** Task result info: ${taskInfoToString(end.taskInfo)}"
-    events += s"*** Task result metrics: ${taskMetricsToString(end.taskMetrics)}"
-  }
+  override def onTaskEnd(end: SparkListenerTaskEnd): Unit = events += s"*** Task result - ${taskInfoToString(end.taskInfo)} ${taskMetricsToString(end.taskMetrics)}"
 
   def taskInfoToString(taskInfo: TaskInfo): String = {
     val info = ListBuffer[String]()
@@ -32,7 +29,7 @@ class SparkAppListener extends SparkListener {
     val info = ListBuffer[String]()
     info += s"executor run time: ${taskMetrics.executorRunTime} "
     info += s"peak execution memory: ${taskMetrics.peakExecutionMemory} "
-    info += s"result size: ${taskMetrics.resultSize} "
+    info += s"result size: ${taskMetrics.resultSize}"
     info.mkString
   }
 }
