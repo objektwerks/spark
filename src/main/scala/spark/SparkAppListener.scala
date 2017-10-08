@@ -44,8 +44,10 @@ class SparkAppListener extends SparkListener {
 
   def taskMetricsToString(taskMetrics: TaskMetrics): String = {
     val info = ListBuffer[String]()
-    info += s"executor cpu time: ${taskMetrics.executorCpuTime}"
-    info += s"result size: ${taskMetrics.resultSize}"
+    info += s"executor cpu time: ${taskMetrics.executorCpuTime} "
+    info += s"executor run time: ${taskMetrics.executorRunTime} "
+    info += s"peak execution memory: ${taskMetrics.peakExecutionMemory} "
+    info += s"result size: ${taskMetrics.resultSize} "
     info.mkString
   }
 }
