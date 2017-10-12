@@ -125,7 +125,7 @@ class RddTest extends FunSuite with Matchers {
         .reduceByKey(_ + _)
     }
 
-    val rdd = sparkContext.textFile("./data/txt/license.txt")
+    val rdd = sparkContext.textFile("./data/txt/license.txt").cache
     val totalLines = rdd.count
     assert(totalLines == 19)
 
