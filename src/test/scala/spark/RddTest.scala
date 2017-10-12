@@ -118,10 +118,10 @@ class RddTest extends FunSuite with Matchers {
 
   test("count") {
     def countWords(rdd: RDD[String]): RDD[(String, Int)] = {
-      rdd.flatMap(l => l.split("\\W+"))
+      rdd.flatMap(line => line.split("\\W+"))
         .filter(_.nonEmpty)
         .map(_.toLowerCase)
-        .map(w => (w, 1))
+        .map(word => (word, 1))
         .reduceByKey(_ + _)
     }
 
@@ -132,7 +132,7 @@ class RddTest extends FunSuite with Matchers {
     val selectedWordCount = rdd.filter(_.contains("Permission")).count
     assert(selectedWordCount == 1)
 
-    val longestLine = rdd.map(l => l.length).reduce((a, b) => Math.max(a, b))
+    val longestLine = rdd.map(line => line.length).reduce((a, b) => Math.max(a, b))
     assert(longestLine == 77)
 
     val wordCounts = countWords(rdd).cache
