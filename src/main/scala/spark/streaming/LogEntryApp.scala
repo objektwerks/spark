@@ -1,15 +1,16 @@
-package spark
+package spark.streaming
 
 import java.nio.charset.CodingErrorAction
 
 import org.apache.spark.sql.functions.window
+import spark.SparkInstance
 
 import scala.io.Codec
 
 object LogEntryApp extends App {
+  import LogEntry._
   import SparkInstance._
   import sparkSession.implicits._
-  import LogEntry._
 
   implicit val codec = Codec("UTF-8")
   codec.onMalformedInput(CodingErrorAction.REPLACE)

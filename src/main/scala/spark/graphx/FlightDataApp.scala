@@ -1,7 +1,8 @@
-package spark
+package spark.graphx
 
 import org.apache.spark.graphx.{Edge, Graph, VertexId}
 import org.apache.spark.rdd.RDD
+import spark.SparkInstance
 
 import scala.util.hashing.MurmurHash3
 

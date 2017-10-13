@@ -1,9 +1,10 @@
-package spark
+package spark.mlib
 
 import java.nio.charset.CodingErrorAction
 
 import org.apache.spark.mllib.recommendation.{ALS, Rating}
 import org.apache.spark.rdd.RDD
+import spark.SparkInstance
 
 import scala.collection.mutable
 import scala.io.{Codec, Source}

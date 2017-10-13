@@ -1,9 +1,10 @@
-package spark
+package spark.mlib
 
 import org.apache.spark.mllib.clustering.StreamingKMeans
 import org.apache.spark.mllib.linalg.Vectors
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+import spark.{SparkInstance, textFileToDStream}
 
 object KMeansApp extends App {
   import SparkInstance._
