@@ -5,7 +5,6 @@ import org.apache.spark.ml.evaluation.RegressionEvaluator
 import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 import org.apache.spark.ml.regression.GBTRegressor
 import org.apache.spark.sql.types.{DoubleType, StringType, StructField, StructType}
-
 import spark.SparkInstance
 
 /*
