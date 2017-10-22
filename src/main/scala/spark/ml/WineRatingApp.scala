@@ -75,8 +75,8 @@ object WineRatingApp extends App {
 
   // Evaluate!
   val error = evaluator.evaluate(predictions)
-
   println(error)
+
   sparkListener.log()
   sparkSession.stop()
 }
