@@ -28,7 +28,7 @@ import spark.SparkInstance
 object WineRatingApp extends App {
   import SparkInstance._
 
-  // Data.
+  // Data. TODO!
   val schemaStruct = StructType(
     StructField("points", DoubleType) ::
       StructField("country", StringType) ::
