@@ -1,6 +1,8 @@
 package spark.ml
 
-import org.apache.spark.sql.Encoders
+import org.apache.log4j.Logger
+import org.apache.spark.sql.{Encoders, ForeachWriter}
+import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructType}
 
 case class Wine(id: Int,
                 country: String,
@@ -15,6 +17,24 @@ case class Wine(id: Int,
                 winery: String)
 
 object Wine {
+  val logger = Logger.getLogger(this.getClass)
   val wineSchema = Encoders.product[Wine].schema
+  val wineStructType = new StructType()
+    .add("id", IntegerType)
+    .add("country", StringType)
+    .add("description", StringType)
+    .add("points", IntegerType)
+    .add("price", DoubleType)
+    .add("province", StringType)
+    .add("region_1", StringType)
+    .add("region_2", StringType)
+    .add("variety", StringType)
+    .add("winery", StringType)
+  val wineForeachWriter = new ForeachWriter[Wine] {
+    override def open(partitionId: Long, version: Long): Boolean = true
+    override def process(wine: Wine): Unit = logger.info(s"*** $wine")
+    override def close(errorOrNull: Throwable): Unit = logger.info("*** Closing wine foreach writer...")
+  }
+
   implicit def wineOrdering: Ordering[Wine] = Ordering.by(_.variety)
 }

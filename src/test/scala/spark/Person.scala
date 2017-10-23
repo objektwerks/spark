@@ -9,7 +9,10 @@ case class Person(age: Long, name: String, role: String)
 object Person {
   val logger = Logger.getLogger(this.getClass)
   val personSchema = Encoders.product[Person].schema
-  val personStructType = new StructType().add("age", IntegerType).add("name", StringType).add("role", StringType)
+  val personStructType = new StructType()
+    .add("age", IntegerType)
+    .add("name", StringType)
+    .add("role", StringType)
   val personForeachWriter = new ForeachWriter[Person] {
     override def open(partitionId: Long, version: Long): Boolean = true
     override def process(person: Person): Unit = logger.info(s"*** $person")
