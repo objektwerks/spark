@@ -54,13 +54,12 @@ object WineRatingApp extends App {
   val predictions = model.transform(testData)
   predictions.show()
 
-  // Evaluator - evaluate the error/deviation of the regression using the Root Mean Squared deviation.
+  // Evaluator.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(labelColumn)
     .setPredictionCol("Predicted " + labelColumn)
     .setMetricName("rmse")
-  val error = evaluator.evaluate(predictions)
-  println(s"Error: $error")
+  println(s"Regression Root Mean Squared Deviation: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
   sparkSession.stop()
