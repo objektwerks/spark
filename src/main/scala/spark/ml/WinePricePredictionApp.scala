@@ -6,7 +6,7 @@ import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
-object WineRatingApp extends App {
+object WinePricePredictionApp extends App {
   import SparkInstance._
   import Wine._
 
