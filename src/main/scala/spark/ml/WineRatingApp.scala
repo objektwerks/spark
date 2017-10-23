@@ -11,7 +11,14 @@ object WineRatingApp extends App {
   import Wine._
 
   // Data.
-  val dataframe = sparkSession.read.format("csv").option("header", "true").schema(wineSchema).load("./data/wine/*.csv").na.drop()
+  val dataframe = sparkSession
+    .read
+    .format("csv")
+    .option("header", "true")
+    .schema(wineSchema)
+    .load("./data/wine/*.csv")
+    .na
+    .drop()
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
   // Label.
@@ -45,16 +52,15 @@ object WineRatingApp extends App {
 
   // Predictions.
   val predictions = model.transform(testData)
+  predictions.show()
 
   // Evaluator - evaluate the error/deviation of the regression using the Root Mean Squared deviation.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(labelColumn)
     .setPredictionCol("Predicted " + labelColumn)
     .setMetricName("rmse")
-
-  // Evaluate!
   val error = evaluator.evaluate(predictions)
-  println(error)
+  println(s"Error: $error")
 
   sparkListener.log()
   sparkSession.stop()
