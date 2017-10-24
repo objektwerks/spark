@@ -52,7 +52,7 @@ object WinePricePredictionApp extends App {
 
   // Predictions Dataframe.
   val predictions = model.transform(testData)
-  predictions.show()
+  predictions.show(10)
 
   // Predictions Evaluator.
   val evaluator = new RegressionEvaluator()
