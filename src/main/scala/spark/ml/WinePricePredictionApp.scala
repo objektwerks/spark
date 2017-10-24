@@ -10,7 +10,7 @@ object WinePricePredictionApp extends App {
   import SparkInstance._
   import Wine._
 
-  // Dataframe.
+  // Load data files into dataframe.
   val dataframe = sparkSession
     .read
     .format("csv")
@@ -20,45 +20,47 @@ object WinePricePredictionApp extends App {
     .na
     .drop()
 
-  // Training and Test Datasets.
+  // Split dataframe into training and test datasets.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Country Indexer.
+  // Create country indexer.
   val countryIndexer = new StringIndexer()
     .setInputCol("country")
     .setOutputCol("countryIndex")
 
-  // Points and CountryIndex Features.
+  // Create points and country index features.
   val featuresAssembler = new VectorAssembler()
     .setInputCols(Array("points", "countryIndex"))
     .setOutputCol("features")
 
-  // Label.
+  // Create label.
   val labelColumn = "price"
 
-  // Estimator - gradient-boosted tree estimator.
+  // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
     .setLabelCol(labelColumn)
     .setFeaturesCol("features")
     .setPredictionCol("Predicted " + labelColumn)
-    .setMaxIter(50)
+    .setMaxIter(100)
 
-  // Pipeline.
+  // Create stages and pipeline.
   val stages = Array(countryIndexer, featuresAssembler, gradientBoostedTreeEstimator)
   val pipeline = new Pipeline().setStages(stages)
 
-  // Model.
+  // Create model via pipeline and training dataset.
   val model = pipeline.fit(trainingData)
 
-  // Predictions Dataframe.
+  // Create predictions dataframe via model and test dataset.
   val predictions = model.transform(testData)
   predictions.show(10)
 
-  // Predictions Evaluator.
+  // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(labelColumn)
     .setPredictionCol("Predicted " + labelColumn)
     .setMetricName("rmse")
+
+  // Evaluate predictions via regression evaluator.
   println(s"Regression Root Mean Squared Deviation: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
