@@ -33,7 +33,7 @@ object WinePricePredictionApp extends App {
     .setInputCols(Array("points", "countryIndex"))
     .setOutputCol("features")
 
-  // Create label.
+  // Create label - or target value.
   val labelColumn = "price"
 
   // Create GBT regressor - or gradient-boosted tree estimator.
