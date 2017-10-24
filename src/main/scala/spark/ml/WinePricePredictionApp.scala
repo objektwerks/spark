@@ -19,20 +19,22 @@ object WinePricePredictionApp extends App {
     .load("./data/wine/*.csv")
     .na
     .drop()
+
+  // Training and Test Data.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Label.
-  val labelColumn = "price"
-
-  // Category Indexer.
+  // Country Indexer.
   val countryIndexer = new StringIndexer()
     .setInputCol("country")
     .setOutputCol("countryIndex")
 
-  // Features assembler.
+  // Points and CountryIndex Features.
   val featuresAssembler = new VectorAssembler()
     .setInputCols(Array("points", "countryIndex"))
     .setOutputCol("features")
+
+  // Label.
+  val labelColumn = "price"
 
   // Estimator - gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
@@ -41,20 +43,18 @@ object WinePricePredictionApp extends App {
     .setPredictionCol("Predicted " + labelColumn)
     .setMaxIter(50)
 
-  // Stages.
-  val stages = Array(countryIndexer, featuresAssembler, gradientBoostedTreeEstimator)
-
   // Pipeline.
+  val stages = Array(countryIndexer, featuresAssembler, gradientBoostedTreeEstimator)
   val pipeline = new Pipeline().setStages(stages)
 
   // Model.
   val model = pipeline.fit(trainingData)
 
-  // Predictions.
+  // Predictions Dataframe.
   val predictions = model.transform(testData)
   predictions.show()
 
-  // Evaluator.
+  // Predictions Evaluator.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(labelColumn)
     .setPredictionCol("Predicted " + labelColumn)
