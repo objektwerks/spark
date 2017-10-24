@@ -10,7 +10,7 @@ object WinePricePredictionApp extends App {
   import SparkInstance._
   import Wine._
 
-  // Data.
+  // Dataframe.
   val dataframe = sparkSession
     .read
     .format("csv")
@@ -20,7 +20,7 @@ object WinePricePredictionApp extends App {
     .na
     .drop()
 
-  // Training and Test Data.
+  // Training and Test Datasets.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
   // Country Indexer.
