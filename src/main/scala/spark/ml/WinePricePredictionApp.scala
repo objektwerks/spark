@@ -41,7 +41,7 @@ object WinePricePredictionApp extends App {
     .setLabelCol(labelColumn)
     .setFeaturesCol("features")
     .setPredictionCol("Predicted " + labelColumn)
-    .setMaxIter(100)
+    .setMaxIter(50)
 
   // Create stages and pipeline.
   val stages = Array(countryIndexer, featuresAssembler, gradientBoostedTreeEstimator)
