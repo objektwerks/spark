@@ -27,7 +27,7 @@ object WinePricePredictionApp extends App {
   val countryIndexColumn = "country_index"
 
   // Features column for price and country index.
-  val featuresColumn = "features[price, country_index]"
+  val featuresColumnForPriceAndCountryIndex = "features[price, country_index]"
 
   // Label column for price.
   val labelColumnForPrice = "price"
@@ -43,12 +43,12 @@ object WinePricePredictionApp extends App {
   // Create points and country index features vector.
   val featuresVector = new VectorAssembler()
     .setInputCols(Array("points", countryIndexColumn))
-    .setOutputCol(featuresColumn)
+    .setOutputCol(featuresColumnForPriceAndCountryIndex)
 
   // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
     .setLabelCol(labelColumnForPrice)
-    .setFeaturesCol(featuresColumn)
+    .setFeaturesCol(featuresColumnForPriceAndCountryIndex)
     .setPredictionCol(predictionColumnForPrice)
     .setMaxIter(50)
 
