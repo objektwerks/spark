@@ -23,37 +23,37 @@ object WinePricePredictionApp extends App {
   // Split dataframe into training and test datasets.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Country Index column.
+  // Country index column.
   val countryIndexColumn = "country_index"
 
-  // Features column.
+  // Features column for price and country index.
   val featuresColumn = "features[price, country_index]"
 
-  // Label column - or target value.
-  val labelColumn = "price"
+  // Label column for price.
+  val labelColumnForPrice = "price"
 
-  // Prediction column.
-  val predictionColumn = s"predicted $labelColumn"
+  // Prediction column for price.
+  val predictionColumnForPrice = s"predicted $labelColumnForPrice"
 
   // Create country indexer.
   val countryIndexer = new StringIndexer()
     .setInputCol("country")
     .setOutputCol(countryIndexColumn)
 
-  // Create points and country index features - or attributes.
-  val featuresAssembler = new VectorAssembler()
+  // Create points and country index features.
+  val featuresVector = new VectorAssembler()
     .setInputCols(Array("points", countryIndexColumn))
     .setOutputCol(featuresColumn)
 
   // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
-    .setLabelCol(labelColumn)
+    .setLabelCol(labelColumnForPrice)
     .setFeaturesCol(featuresColumn)
-    .setPredictionCol(predictionColumn)
+    .setPredictionCol(predictionColumnForPrice)
     .setMaxIter(50)
 
   // Create stages and pipeline.
-  val stages = Array(countryIndexer, featuresAssembler, gradientBoostedTreeEstimator)
+  val stages = Array(countryIndexer, featuresVector, gradientBoostedTreeEstimator)
   val pipeline = new Pipeline().setStages(stages)
 
   // Create model via pipeline and training dataset.
@@ -65,8 +65,8 @@ object WinePricePredictionApp extends App {
 
   // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
-    .setLabelCol(labelColumn)
-    .setPredictionCol(predictionColumn)
+    .setLabelCol(labelColumnForPrice)
+    .setPredictionCol(predictionColumnForPrice)
     .setMetricName("rmse")
 
   // Evaluate predictions via regression evaluator.
