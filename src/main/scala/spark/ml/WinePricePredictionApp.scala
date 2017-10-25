@@ -24,10 +24,10 @@ object WinePricePredictionApp extends App {
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
   // Country Index column.
-  val countryIndexColumn = "countryIndex"
+  val countryIndexColumn = "country_index"
 
   // Features column.
-  val featuresColumn = "features[price, country index]"
+  val featuresColumn = "features[price, country_index]"
 
   // Label column - or target value.
   val labelColumn = "price"
