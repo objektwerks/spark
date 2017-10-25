@@ -40,7 +40,7 @@ object WinePricePredictionApp extends App {
     .setInputCol("country")
     .setOutputCol(countryIndexColumn)
 
-  // Create points and country index features.
+  // Create points and country index features vector.
   val featuresVector = new VectorAssembler()
     .setInputCols(Array("points", countryIndexColumn))
     .setOutputCol(featuresColumn)
