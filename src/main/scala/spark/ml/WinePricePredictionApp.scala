@@ -23,26 +23,32 @@ object WinePricePredictionApp extends App {
   // Split dataframe into training and test datasets.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Create country indexer.
-  val countryIndexer = new StringIndexer()
-    .setInputCol("country")
-    .setOutputCol("countryIndex")
+  // Country Index column.
+  val countryIndexColumn = "countryIndex"
 
-  // Create points and country index features - or attributes.
-  val featuresAssembler = new VectorAssembler()
-    .setInputCols(Array("points", "countryIndex"))
-    .setOutputCol("features")
+  // Features column.
+  val featuresColumn = "features[price, country index]"
 
-  // Create label - or target value.
+  // Label column - or target value.
   val labelColumn = "price"
 
   // Prediction column.
   val predictionColumn = s"predicted $labelColumn"
 
+  // Create country indexer.
+  val countryIndexer = new StringIndexer()
+    .setInputCol("country")
+    .setOutputCol(countryIndexColumn)
+
+  // Create points and country index features - or attributes.
+  val featuresAssembler = new VectorAssembler()
+    .setInputCols(Array("points", countryIndexColumn))
+    .setOutputCol(featuresColumn)
+
   // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
     .setLabelCol(labelColumn)
-    .setFeaturesCol("features")
+    .setFeaturesCol(featuresColumn)
     .setPredictionCol(predictionColumn)
     .setMaxIter(50)
 
