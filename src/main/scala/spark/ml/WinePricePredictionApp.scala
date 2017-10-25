@@ -36,14 +36,14 @@ object WinePricePredictionApp extends App {
   // Create label - or target value.
   val labelColumn = "price"
 
-  // Predicted column.
-  val predictedColumn = "predicted " + labelColumn
+  // Prediction column.
+  val predictionColumn = s"predicted $labelColumn"
 
   // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
     .setLabelCol(labelColumn)
     .setFeaturesCol("features")
-    .setPredictionCol(predictedColumn)
+    .setPredictionCol(predictionColumn)
     .setMaxIter(50)
 
   // Create stages and pipeline.
@@ -60,7 +60,7 @@ object WinePricePredictionApp extends App {
   // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(labelColumn)
-    .setPredictionCol(predictedColumn)
+    .setPredictionCol(predictionColumn)
     .setMetricName("rmse")
 
   // Evaluate predictions via regression evaluator.
