@@ -8,7 +8,7 @@ import spark.SparkInstance
 
 /**
   * Features: points, country
-  * Target: price -> predicted price
+  * Target: price -> predicted price increase?
   */
 object WinePricePredictionApp extends App {
   import SparkInstance._
@@ -25,7 +25,7 @@ object WinePricePredictionApp extends App {
     .drop()
 
   // Split dataframe into training and test datasets.
-  val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.6, 0.4))
+  val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.7, 0.3))
 
   // Country and country index column.
   val countryColumn = "country"
@@ -41,7 +41,7 @@ object WinePricePredictionApp extends App {
   val labelColumnForPrice = "price"
 
   // Prediction column for price.
-  val predictionColumnForPrice = s"predicted $labelColumnForPrice"
+  val predictionColumnForPrice = s"predicted $labelColumnForPrice increase?"
 
   // Create country indexer.
   val countryIndexer = new StringIndexer()
