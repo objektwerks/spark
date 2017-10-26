@@ -2,13 +2,14 @@ package spark.ml
 
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.evaluation.RegressionEvaluator
-import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
+import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
-  * Features: points, country
-  * Target: price -> predicted price increase?
+  * Features: points
+  * Label: price
+  * Target: price increase
   */
 object WinePricePredictionApp extends App {
   import SparkInstance._
@@ -27,41 +28,32 @@ object WinePricePredictionApp extends App {
   // Split dataframe into training and test datasets.
   val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Country and country index column.
-  val countryColumn = "country"
-  val countryIndexColumn = "country_index"
-
   // Points column.
   val pointsColumn = "points"
 
-  // Features column for points and country index.
-  val featuresColumnForPointsAndCountryIndex = "features[points, country_index]"
+  // Features column for points.
+  val featuresColumnForPoints = "features[points]"
 
   // Label column for price.
   val labelColumnForPrice = "price"
 
-  // Prediction column for price.
-  val predictionColumnForPrice = s"predicted $labelColumnForPrice increase?"
-
-  // Create country indexer.
-  val countryIndexer = new StringIndexer()
-    .setInputCol(countryColumn)
-    .setOutputCol(countryIndexColumn)
+  // Prediction column for price increase.
+  val predictionColumnForPriceIncrease = s"predicted $labelColumnForPrice increase"
 
   // Create points and country index features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array(pointsColumn, countryIndexColumn))
-    .setOutputCol(featuresColumnForPointsAndCountryIndex)
+    .setInputCols(Array(pointsColumn))
+    .setOutputCol(featuresColumnForPoints)
 
   // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
     .setLabelCol(labelColumnForPrice)
-    .setFeaturesCol(featuresColumnForPointsAndCountryIndex)
-    .setPredictionCol(predictionColumnForPrice)
+    .setFeaturesCol(featuresColumnForPoints)
+    .setPredictionCol(predictionColumnForPriceIncrease)
     .setMaxIter(10)
 
   // Create stages and pipeline.
-  val stages = Array(countryIndexer, featuresVector, gradientBoostedTreeEstimator)
+  val stages = Array(featuresVector, gradientBoostedTreeEstimator)
   val pipeline = new Pipeline().setStages(stages)
 
   // Create model via pipeline and training dataset.
@@ -69,17 +61,17 @@ object WinePricePredictionApp extends App {
 
   // Create predictions dataframe via model and test dataset.
   val predictions = model.transform(testDataset)
-  predictions.createOrReplaceTempView("predictions")
-  sqlContext.sql("select * from predictions order by price desc").show(10)
+  predictions.createOrReplaceTempView("price_increase_predictions")
+  sqlContext.sql("select * from price_increase_predictions order by price desc").show(10)
 
   // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(labelColumnForPrice)
-    .setPredictionCol(predictionColumnForPrice)
+    .setPredictionCol(predictionColumnForPriceIncrease)
     .setMetricName("rmse")
 
   // Evaluate predictions via regression evaluator.
-  println(s"Regression Root Mean Squared Error: ${evaluator.evaluate(predictions)}")
+  println(s"Root Mean Squared Error in terms of Price Increase: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
   sparkSession.stop()
