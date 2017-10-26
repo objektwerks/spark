@@ -7,7 +7,7 @@ import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
-  * Features: price, points
+  * Features: points, price
   * Target: price increase
   */
 object WinePricePredictionApp extends App {
@@ -28,14 +28,14 @@ object WinePricePredictionApp extends App {
   val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.8, 0.2))
 
   // Columns.
-  val priceColumn = "price"
   val pointsColumn = "points"
-  val featuresColumn = s"features[$priceColumn, $pointsColumn]"
+  val priceColumn = "price"
+  val featuresColumn = s"features[$pointsColumn, $priceColumn]"
   val predictionColumn = s"$priceColumn increase prediction"
 
   // Features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array(priceColumn, pointsColumn))
+    .setInputCols(Array(pointsColumn, priceColumn))
     .setOutputCol(featuresColumn)
 
   // Gradient-boosted tree regressor.
