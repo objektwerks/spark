@@ -7,7 +7,7 @@ import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
-  * Features: country, points, price
+  * Features: country, points
   * Target: price increase
   */
 object WinePricePredictionApp extends App {
@@ -32,7 +32,7 @@ object WinePricePredictionApp extends App {
   val countryIndexColumn = "country_index"
   val pointsColumn = "points"
   val priceColumn = "price"
-  val featuresColumn = s"features[$countryIndexColumn, $pointsColumn, $priceColumn]"
+  val featuresColumn = s"features[$countryIndexColumn, $pointsColumn]"
   val predictionColumn = s"$priceColumn increase prediction"
 
   // Country indexer.
@@ -42,7 +42,7 @@ object WinePricePredictionApp extends App {
 
   // Features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array(countryIndexColumn, pointsColumn, priceColumn))
+    .setInputCols(Array(countryIndexColumn, pointsColumn))
     .setOutputCol(featuresColumn)
 
   // GBT regressor.
