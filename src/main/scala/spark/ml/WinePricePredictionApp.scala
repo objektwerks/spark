@@ -58,7 +58,7 @@ object WinePricePredictionApp extends App {
     .setLabelCol(labelColumnForPrice)
     .setFeaturesCol(featuresColumnForPointsAndCountryIndex)
     .setPredictionCol(predictionColumnForPrice)
-    .setMaxIter(10)
+    .setMaxIter(33)
 
   // Create stages and pipeline.
   val stages = Array(countryIndexer, featuresVector, gradientBoostedTreeEstimator)
@@ -69,7 +69,8 @@ object WinePricePredictionApp extends App {
 
   // Create predictions dataframe via model and test dataset.
   val predictions = model.transform(testData)
-  predictions.show(10)
+  predictions.createOrReplaceTempView("predictions")
+  sqlContext.sql("select * from predictions order by points desc").show(10)
 
   // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
