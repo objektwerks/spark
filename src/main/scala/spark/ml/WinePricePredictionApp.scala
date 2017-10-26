@@ -27,7 +27,7 @@ object WinePricePredictionApp extends App {
   // Split dataframe into training and test datasets.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Country column and country index column.
+  // Country and country index column.
   val countryColumn = "country"
   val countryIndexColumn = "country_index"
 
