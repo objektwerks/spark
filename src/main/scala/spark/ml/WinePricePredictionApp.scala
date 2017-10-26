@@ -25,7 +25,7 @@ object WinePricePredictionApp extends App {
     .drop()
 
   // Split dataframe into training and test datasets.
-  val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
+  val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.7, 0.3))
 
   // Country and country index column.
   val countryColumn = "country"
@@ -65,10 +65,10 @@ object WinePricePredictionApp extends App {
   val pipeline = new Pipeline().setStages(stages)
 
   // Create model via pipeline and training dataset.
-  val model = pipeline.fit(trainingData)
+  val model = pipeline.fit(trainingDataset)
 
   // Create predictions dataframe via model and test dataset.
-  val predictions = model.transform(testData)
+  val predictions = model.transform(testDataset)
   predictions.createOrReplaceTempView("predictions")
   sqlContext.sql("select * from predictions order by points desc").show(10)
 
