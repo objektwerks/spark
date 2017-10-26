@@ -24,7 +24,7 @@ object WinePricePredictionApp extends App {
     .na
     .drop()
 
-  // Training and test datasets.
+  // Training and Test datasets.
   val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.8, 0.2))
 
   // Columns.
@@ -45,7 +45,7 @@ object WinePricePredictionApp extends App {
     .setInputCols(Array(countryIndexColumn, pointsColumn))
     .setOutputCol(featuresColumn)
 
-  // GBT regressor.
+  // Regression.
   val gradientBoostedTreeRegressor = new GBTRegressor()
     .setLabelCol(priceColumn)
     .setFeaturesCol(featuresColumn)
