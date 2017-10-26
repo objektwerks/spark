@@ -25,7 +25,7 @@ object WinePricePredictionApp extends App {
     .drop()
 
   // Split dataframe into training and test datasets.
-  val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.7, 0.3))
+  val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.6, 0.4))
 
   // Country and country index column.
   val countryColumn = "country"
@@ -70,7 +70,7 @@ object WinePricePredictionApp extends App {
   // Create predictions dataframe via model and test dataset.
   val predictions = model.transform(testDataset)
   predictions.createOrReplaceTempView("predictions")
-  sqlContext.sql("select * from predictions order by points desc").show(10)
+  sqlContext.sql("select * from predictions order by price desc").show(10)
 
   // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
