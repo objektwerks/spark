@@ -7,8 +7,7 @@ import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
-  * Features: points
-  * Label: price
+  * Features: price, points
   * Target: price increase
   */
 object WinePricePredictionApp extends App {
@@ -28,32 +27,26 @@ object WinePricePredictionApp extends App {
   // Split dataframe into training and test datasets.
   val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Points column.
+  // Columns.
+  val priceColumn = "price"
   val pointsColumn = "points"
+  val featuresColumn = s"features[$priceColumn, $pointsColumn]"
+  val predictionColumn = s"$priceColumn increase prediction"
 
-  // Features column for points.
-  val featuresColumnForPoints = "features[points]"
-
-  // Label column for price.
-  val labelColumnForPrice = "price"
-
-  // Prediction column for price increase.
-  val predictionColumnForPriceIncrease = s"predicted $labelColumnForPrice increase"
-
-  // Create points and country index features vector.
+  // Features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array(pointsColumn))
-    .setOutputCol(featuresColumnForPoints)
+    .setInputCols(Array(priceColumn, pointsColumn))
+    .setOutputCol(featuresColumn)
 
-  // Create GBT regressor - or gradient-boosted tree estimator.
-  val gradientBoostedTreeEstimator = new GBTRegressor()
-    .setLabelCol(labelColumnForPrice)
-    .setFeaturesCol(featuresColumnForPoints)
-    .setPredictionCol(predictionColumnForPriceIncrease)
+  // Gradient-boosted tree regressor.
+  val gradientBoostedTreeRegressor = new GBTRegressor()
+    .setLabelCol(priceColumn)
+    .setFeaturesCol(featuresColumn)
+    .setPredictionCol(predictionColumn)
     .setMaxIter(10)
 
   // Create stages and pipeline.
-  val stages = Array(featuresVector, gradientBoostedTreeEstimator)
+  val stages = Array(featuresVector, gradientBoostedTreeRegressor)
   val pipeline = new Pipeline().setStages(stages)
 
   // Create model via pipeline and training dataset.
@@ -66,8 +59,8 @@ object WinePricePredictionApp extends App {
 
   // Create regression evaluator.
   val evaluator = new RegressionEvaluator()
-    .setLabelCol(labelColumnForPrice)
-    .setPredictionCol(predictionColumnForPriceIncrease)
+    .setLabelCol(priceColumn)
+    .setPredictionCol(predictionColumn)
     .setMetricName("rmse")
 
   // Evaluate predictions via regression evaluator.
