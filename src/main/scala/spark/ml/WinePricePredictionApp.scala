@@ -6,6 +6,10 @@ import org.apache.spark.ml.feature.{StringIndexer, VectorAssembler}
 import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
+/**
+  * Features: points, country
+  * Target: price -> predicted price
+  */
 object WinePricePredictionApp extends App {
   import SparkInstance._
   import Wine._
@@ -23,11 +27,15 @@ object WinePricePredictionApp extends App {
   // Split dataframe into training and test datasets.
   val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
 
-  // Country index column.
+  // Country column and country index column.
+  val countryColumn = "country"
   val countryIndexColumn = "country_index"
 
-  // Features column for price and country index.
-  val featuresColumnForPriceAndCountryIndex = "features[price, country_index]"
+  // Points column.
+  val pointsColumn = "points"
+
+  // Features column for points and country index.
+  val featuresColumnForPointsAndCountryIndex = "features[points, country_index]"
 
   // Label column for price.
   val labelColumnForPrice = "price"
@@ -37,18 +45,18 @@ object WinePricePredictionApp extends App {
 
   // Create country indexer.
   val countryIndexer = new StringIndexer()
-    .setInputCol("country")
+    .setInputCol(countryColumn)
     .setOutputCol(countryIndexColumn)
 
   // Create points and country index features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array("points", countryIndexColumn))
-    .setOutputCol(featuresColumnForPriceAndCountryIndex)
+    .setInputCols(Array(pointsColumn, countryIndexColumn))
+    .setOutputCol(featuresColumnForPointsAndCountryIndex)
 
   // Create GBT regressor - or gradient-boosted tree estimator.
   val gradientBoostedTreeEstimator = new GBTRegressor()
     .setLabelCol(labelColumnForPrice)
-    .setFeaturesCol(featuresColumnForPriceAndCountryIndex)
+    .setFeaturesCol(featuresColumnForPointsAndCountryIndex)
     .setPredictionCol(predictionColumnForPrice)
     .setMaxIter(50)
 
