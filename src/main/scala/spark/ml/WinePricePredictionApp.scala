@@ -81,12 +81,13 @@ object WinePricePredictionApp extends App {
   predictions.createOrReplaceTempView("price_increase_predictions")
   sqlContext.sql("select * from price_increase_predictions order by price desc").show(10)
 
-  // Evaluate.
+  // Evaluator.
   val evaluator = new RegressionEvaluator()
     .setLabelCol(priceColumn)
     .setPredictionCol(predictionColumn)
     .setMetricName("rmse")
 
+  // Evaluate.
   println(s"*** Number of predictions: ${predictions.count}")
   println(s"*** Root Mean Squared Error in terms of Price Deviation: ${evaluator.evaluate(predictions)}")
 
