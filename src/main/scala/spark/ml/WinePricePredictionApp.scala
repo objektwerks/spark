@@ -8,7 +8,7 @@ import spark.SparkInstance
 
 /**
   * Features: country, points
-  * Target: price increase
+  * Prediction: price increase
   */
 object WinePricePredictionApp extends App {
   import SparkInstance._
@@ -17,10 +17,9 @@ object WinePricePredictionApp extends App {
   // Data.
   val dataframe = sparkSession
     .read
-    .format("csv")
     .option("header", "true")
     .schema(wineSchema)
-    .load("./data/wine/*.csv")
+    .csv("./data/wine/*.csv")
     .na
     .drop()
 
@@ -33,7 +32,7 @@ object WinePricePredictionApp extends App {
   val pointsColumn = "points"
   val priceColumn = "price"
   val featuresColumn = s"features[$countryIndexColumn, $pointsColumn]"
-  val predictionColumn = s"$priceColumn increase prediction"
+  val predictionColumn = "prediction[price increase]"
 
   // Country indexer.
   val countryIndexer = new StringIndexer()
