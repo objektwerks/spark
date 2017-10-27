@@ -9,6 +9,8 @@ import spark.SparkInstance
 /**
   * Features: points, variety, province, region
   * Prediction: price
+  *
+  * Credit: Marcin Gorczynski ( https://blog.scalac.io/scala-spark-ml.html ) for the foundation of this app!
   */
 object WinePricePredictionApp extends App {
   import SparkInstance._
