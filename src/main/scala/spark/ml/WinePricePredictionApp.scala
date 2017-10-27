@@ -17,8 +17,8 @@ object WinePricePredictionApp extends App {
   // Data.
   val dataframe = sparkSession
     .read
-    .option("header", "true")
     .schema(wineSchema)
+    .option("header", "true")
     .csv("./data/wine/*.csv")
     .na
     .drop()
