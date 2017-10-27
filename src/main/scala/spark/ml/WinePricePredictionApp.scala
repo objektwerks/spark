@@ -77,7 +77,7 @@ object WinePricePredictionApp extends App {
   val model = pipeline.fit(trainingDataset)
 
   // Predictions.
-  val predictions = model.transform(testDataset)
+  val predictions = model.transform(testDataset).cache
   predictions.createOrReplaceTempView("price_increase_predictions")
   sqlContext.sql("select * from price_increase_predictions order by price desc").show(10)
 
@@ -86,7 +86,9 @@ object WinePricePredictionApp extends App {
     .setLabelCol(priceColumn)
     .setPredictionCol(predictionColumn)
     .setMetricName("rmse")
-  println(s"Root Mean Squared Error in terms of Price Deviation: ${evaluator.evaluate(predictions)}")
+
+  println(s"*** Number of predictions: ${predictions.count}")
+  println(s"*** Root Mean Squared Error in terms of Price Deviation: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
   sparkSession.stop()
