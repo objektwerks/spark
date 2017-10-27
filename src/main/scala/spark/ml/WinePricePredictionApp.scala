@@ -26,7 +26,9 @@ object WinePricePredictionApp extends App {
     .drop()
 
   // Training and Test datasets.
-  val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.8, 0.2))
+  val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
+  val trainingDataset = trainingData.cache
+  val testDataset = testData.cache
 
   // Columns.
   val pointsColumn = "points"
@@ -79,7 +81,7 @@ object WinePricePredictionApp extends App {
   val model = pipeline.fit(trainingDataset)
 
   // Predictions.
-  val predictions = model.transform(testDataset).cache
+  val predictions = model.transform(testDataset)
   predictions.createOrReplaceTempView("price_increase_predictions")
   sqlContext.sql("select * from price_increase_predictions order by price desc").show(10)
 
@@ -90,8 +92,14 @@ object WinePricePredictionApp extends App {
     .setMetricName("mae")
 
   // Evaluate.
-  println(s"*** Number of predictions: ${predictions.count}")
-  println(s"*** Mean Absolute Error: ${evaluator.evaluate(predictions)}")
+  val trainingCount = trainingDataset.count
+  val testCount = testDataset.count
+  val trainingTestCountRatio = testCount.toDouble / trainingCount.toDouble
+  println(s"1. Training count: $trainingCount")
+  println(s"2. Test count: $testCount")
+  println(s"3. Training / Test ratio: $trainingTestCountRatio")
+  println(s"4. Predictions count: ${predictions.count}")
+  println(s"5. Mean Absolute Error: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
   sparkSession.stop()
