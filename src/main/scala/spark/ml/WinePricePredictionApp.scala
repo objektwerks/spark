@@ -97,10 +97,9 @@ object WinePricePredictionApp extends App {
   val trainingTestCountRatio = testCount.toDouble / trainingCount.toDouble
   println(s"1. Training count: $trainingCount")
   println(s"2. Test count: $testCount")
-  println(s"3. Training / Test ratio: $trainingTestCountRatio")
+  println(f"3. Training / Test ratio: $trainingTestCountRatio%1.2f")
   println(s"4. Predictions count: ${predictions.count}")
-  println(s"5. Mean Absolute Error: ${evaluator.evaluate(predictions)}")
-
+  println(f"5. Mean Absolute Error: ${evaluator.evaluate(predictions)}%1.2f\n")
   sparkListener.log()
   sparkSession.stop()
 }
