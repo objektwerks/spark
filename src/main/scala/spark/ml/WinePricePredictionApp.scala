@@ -66,7 +66,7 @@ object WinePricePredictionApp extends App {
     .setLabelCol(priceColumn)
     .setFeaturesCol(featuresColumn)
     .setPredictionCol(predictionColumn)
-    .setMaxBins(207)
+    .setMaxBins(209)
     .setMaxIter(10)
 
   // Pipeline.
