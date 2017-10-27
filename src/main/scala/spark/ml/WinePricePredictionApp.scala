@@ -7,7 +7,7 @@ import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
-  * Features: points, variety, country, province, region
+  * Features: points, variety, province, region
   * Prediction: price
   */
 object WinePricePredictionApp extends App {
@@ -30,14 +30,12 @@ object WinePricePredictionApp extends App {
   val pointsColumn = "points"
   val varietyColumn = "variety"
   val varietyIndexColumn = "variety_idx"
-  val countryColumn = "country"
-  val countryIndexColumn = "country_idx"
   val provinceColumn = "province"
   val provinceIndexColumn = "province_idx"
-  val regionColumn = "region_2"
-  val regionIndexColumn = "region_2_idx"
+  val regionColumn = "region_1"
+  val regionIndexColumn = "region_1_idx"
   val priceColumn = "price"
-  val featuresColumn = s"features[points, variety, country, province, region]"
+  val featuresColumn = s"features[points, variety, province, region]"
   val predictionColumn = "prediction[price]"
 
   // Variety indexer.
@@ -45,11 +43,6 @@ object WinePricePredictionApp extends App {
     .setInputCol(varietyColumn)
     .setOutputCol(varietyIndexColumn)
     .setHandleInvalid("keep")
-
-  // Country indexer.
-  val countryIndexer = new StringIndexer()
-    .setInputCol(countryColumn)
-    .setOutputCol(countryIndexColumn)
 
   // Province indexer.
   val provinceIndexer = new StringIndexer()
@@ -65,7 +58,7 @@ object WinePricePredictionApp extends App {
 
   // Features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array(pointsColumn, varietyIndexColumn, countryIndexColumn, provinceIndexColumn, regionIndexColumn))
+    .setInputCols(Array(pointsColumn, varietyIndexColumn, provinceIndexColumn, regionIndexColumn))
     .setOutputCol(featuresColumn)
 
   // Regression.
@@ -73,11 +66,11 @@ object WinePricePredictionApp extends App {
     .setLabelCol(priceColumn)
     .setFeaturesCol(featuresColumn)
     .setPredictionCol(predictionColumn)
-    .setMaxBins(176)
+    .setMaxBins(207)
     .setMaxIter(10)
 
   // Pipeline.
-  val stages = Array(varietyIndexer, countryIndexer, provinceIndexer, regionIndexer, featuresVector, gradientBoostedTreeRegressor)
+  val stages = Array(varietyIndexer, provinceIndexer, regionIndexer, featuresVector, gradientBoostedTreeRegressor)
   val pipeline = new Pipeline().setStages(stages)
 
   // Model.
