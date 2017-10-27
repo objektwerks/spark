@@ -7,8 +7,8 @@ import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
-  * Features: country, points
-  * Prediction: price increase
+  * Features: points, variety, country, province, region
+  * Prediction: price
   */
 object WinePricePredictionApp extends App {
   import SparkInstance._
@@ -27,21 +27,45 @@ object WinePricePredictionApp extends App {
   val Array(trainingDataset, testDataset) = dataframe.randomSplit(Array(0.8, 0.2))
 
   // Columns.
-  val countryColumn = "country"
-  val countryIndexColumn = "country_index"
   val pointsColumn = "points"
+  val varietyColumn = "variety"
+  val varietyIndexColumn = "variety_idx"
+  val countryColumn = "country"
+  val countryIndexColumn = "country_idx"
+  val provinceColumn = "province"
+  val provinceIndexColumn = "province_idx"
+  val regionColumn = "region_2"
+  val regionIndexColumn = "region_2_idx"
   val priceColumn = "price"
-  val featuresColumn = s"features[$countryIndexColumn, $pointsColumn]"
-  val predictionColumn = "prediction[price increase]"
+  val featuresColumn = s"features[points, variety, country, province, region]"
+  val predictionColumn = "prediction[price]"
+
+  // Variety indexer.
+  val varietyIndexer = new StringIndexer()
+    .setInputCol(varietyColumn)
+    .setOutputCol(varietyIndexColumn)
+    .setHandleInvalid("keep")
 
   // Country indexer.
   val countryIndexer = new StringIndexer()
     .setInputCol(countryColumn)
     .setOutputCol(countryIndexColumn)
 
+  // Province indexer.
+  val provinceIndexer = new StringIndexer()
+    .setInputCol(priceColumn)
+    .setOutputCol(provinceIndexColumn)
+    .setHandleInvalid("keep")
+
+  // Region indexer.
+  val regionIndexer = new StringIndexer()
+    .setInputCol(regionColumn)
+    .setOutputCol(regionIndexColumn)
+    .setHandleInvalid("keep")
+
   // Features vector.
   val featuresVector = new VectorAssembler()
-    .setInputCols(Array(countryIndexColumn, pointsColumn))
+    .setInputCols(Array(pointsColumn, varietyIndexColumn, countryIndexColumn, provinceIndexColumn, regionIndexColumn))
     .setOutputCol(featuresColumn)
 
   // Regression.
@@ -49,10 +73,11 @@ object WinePricePredictionApp extends App {
     .setLabelCol(priceColumn)
     .setFeaturesCol(featuresColumn)
     .setPredictionCol(predictionColumn)
+    .setMaxBins(176)
     .setMaxIter(10)
 
   // Pipeline.
-  val stages = Array(countryIndexer, featuresVector, gradientBoostedTreeRegressor)
+  val stages = Array(varietyIndexer, countryIndexer, provinceIndexer, regionIndexer, featuresVector, gradientBoostedTreeRegressor)
   val pipeline = new Pipeline().setStages(stages)
 
   // Model.
@@ -68,7 +93,7 @@ object WinePricePredictionApp extends App {
     .setLabelCol(priceColumn)
     .setPredictionCol(predictionColumn)
     .setMetricName("rmse")
-  println(s"Root Mean Squared Error in terms of Price Increase: ${evaluator.evaluate(predictions)}")
+  println(s"Root Mean Squared Error in terms of Price Deviation: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
   sparkSession.stop()
