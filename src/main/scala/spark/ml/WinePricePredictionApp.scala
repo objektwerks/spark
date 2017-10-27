@@ -85,11 +85,11 @@ object WinePricePredictionApp extends App {
   val evaluator = new RegressionEvaluator()
     .setLabelCol(priceColumn)
     .setPredictionCol(predictionColumn)
-    .setMetricName("rmse")
+    .setMetricName("mae")
 
   // Evaluate.
   println(s"*** Number of predictions: ${predictions.count}")
-  println(s"*** Root Mean Squared Error in terms of Price Deviation: ${evaluator.evaluate(predictions)}")
+  println(s"*** Mean Absolute Error: ${evaluator.evaluate(predictions)}")
 
   sparkListener.log()
   sparkSession.stop()
