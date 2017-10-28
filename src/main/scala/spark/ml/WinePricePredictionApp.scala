@@ -81,7 +81,7 @@ object WinePricePredictionApp extends App {
   val model = pipeline.fit(trainingDataset)
 
   // Predictions.
-  val predictions = model.transform(testDataset)
+  val predictions = model.transform(testDataset).cache
   predictions.createOrReplaceTempView("price_increase_predictions")
   sqlContext.sql("select * from price_increase_predictions order by price desc").show(10)
 
