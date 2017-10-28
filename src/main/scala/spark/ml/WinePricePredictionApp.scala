@@ -7,10 +7,11 @@ import org.apache.spark.ml.regression.GBTRegressor
 import spark.SparkInstance
 
 /**
+  * Data: https://www.kaggle.com/zynicide/wine-reviews Kaggle account required.
   * Features: points, variety, province, region
   * Prediction: price
   *
-  * Credit: Marcin Gorczynski ( https://blog.scalac.io/scala-spark-ml.html ) for the foundation of this app!
+  * See: https://blog.scalac.io/scala-spark-ml.html for details on this app's foundation.
   */
 object WinePricePredictionApp extends App {
   import SparkInstance._
