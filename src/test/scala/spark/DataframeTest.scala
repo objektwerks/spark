@@ -63,6 +63,6 @@ class DataframeTest extends FunSuite with Matchers {
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
 
-    dataframe.describe("age").show(10)
+    dataframe.describe("age").show
   }
 }
