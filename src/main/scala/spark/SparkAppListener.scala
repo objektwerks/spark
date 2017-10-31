@@ -6,6 +6,9 @@ import org.apache.spark.scheduler._
 
 import scala.collection.mutable.ArrayBuffer
 
+/**
+  * WARNING: SparkListener yields false results! Just read the natural Spark log statements.
+  */
 class SparkAppListener extends SparkListener {
   val events = ArrayBuffer[String]()
 
