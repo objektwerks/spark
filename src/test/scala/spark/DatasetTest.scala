@@ -64,6 +64,6 @@ class DatasetTest extends FunSuite with Matchers {
     groupByRoleMap("husband") shouldBe 23.0
     groupByRoleMap("wife") shouldBe 22.0
 
-    dataset.describe("age").collect.foreach(println)
+    dataset.describe("age").show(10)
   }
 }
