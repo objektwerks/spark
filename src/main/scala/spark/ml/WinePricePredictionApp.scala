@@ -105,6 +105,5 @@ object WinePricePredictionApp extends App {
   println(s"4. Predictions count: ${predictions.count}")
   println(f"5. Mean Absolute Error: ${evaluator.evaluate(predictions)}%1.2f\n")
 
-  sparkListener.log()
   sparkSession.stop()
 }

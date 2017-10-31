@@ -32,6 +32,5 @@ object LogEntryApp extends App {
     .start
   writer.awaitTermination(33000)
 
-  sparkListener.log()
   sparkSession.stop()
 }
