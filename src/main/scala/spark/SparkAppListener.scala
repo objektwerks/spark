@@ -10,7 +10,7 @@ class SparkAppListener extends SparkListener {
   val events = ArrayBuffer[String]()
 
   def log(): Unit = {
-    val logger = Logger.getLogger("SparkAppListener")
+    val logger = Logger.getLogger(getClass.getName)
     events foreach { event => logger.info(event) }
   }
 
