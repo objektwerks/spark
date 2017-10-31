@@ -8,7 +8,7 @@ class DataframeTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dataframe") {
-    val dataframe = sparkSession.read.json("./data/json/person.json").cache
+    val dataframe = sparkSession.read.json("./data/person/person.json").cache
     dataframe.printSchema
     assert(dataframe.isInstanceOf[Dataset[Row]])
     assert(dataframe.toDF.as[Person].isInstanceOf[Dataset[Person]])

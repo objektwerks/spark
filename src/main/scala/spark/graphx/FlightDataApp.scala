@@ -10,7 +10,7 @@ object FlightDataApp extends App {
   import SparkInstance._
   import sparkSession.implicits._
 
-  val dataframe = sparkSession.read.format("csv").option("header", "true").load("./data/csv/*.csv")
+  val dataframe = sparkSession.read.format("csv").option("header", "true").load("./data/flights/*.csv")
   val flightsFromTo = dataframe.select($"Origin", $"Dest").rdd
   val airportCodes = dataframe.select($"Origin", $"Dest").flatMap( originDest => Iterable( originDest(0).toString, originDest(1).toString ) ).rdd
 

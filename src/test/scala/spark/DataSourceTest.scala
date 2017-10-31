@@ -28,15 +28,15 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("json") {
-    val dataframe: Dataset[Row] = sparkSession.read.json("./data/json/person.json")
+    val dataframe: Dataset[Row] = sparkSession.read.json("./data/person/person.json")
     dataframe.count shouldBe 4
 
-    val dataset: Dataset[Person] = sparkSession.read.json("./data/json/person.json").as[Person]
+    val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
     dataset.count shouldBe 4
   }
 
   test("parquet") {
-    val dataset: Dataset[Person] = sparkSession.read.json("./data/json/person.json").as[Person]
+    val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
     dataset.write.parquet("./target/person.parquet")
 
     val parquet: Dataset[Person] = dataset.sqlContext.read.parquet("./target/person.parquet").as[Person]

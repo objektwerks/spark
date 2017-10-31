@@ -8,7 +8,7 @@ class SqlTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dataframe sql") {
-    val dataframe = sparkSession.read.json("./data/json/person.json").cache
+    val dataframe = sparkSession.read.json("./data/person/person.json").cache
     assert(dataframe.isInstanceOf[Dataset[Row]])
     dataframe.count shouldBe 4
 
@@ -26,7 +26,7 @@ class SqlTest extends FunSuite with Matchers {
   }
 
   test("dataset sql") {
-    val dataset = sparkSession.read.json("./data/json/person.json").as[Person].cache
+    val dataset = sparkSession.read.json("./data/person/person.json").as[Person].cache
     dataset.count shouldBe 4
 
     dataset.createOrReplaceTempView("persons")

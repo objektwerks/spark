@@ -10,9 +10,9 @@ class StructuredStreamingTest extends FunSuite with Matchers {
     import Person._
     val in = sparkSession
       .readStream
-      .option("basePath", "./data/json")
+      .option("basePath", "./data/person")
       .schema(personStructType)
-      .json("./data/json")
+      .json("./data/person")
       .as[Person]
     val out = in
       .writeStream
