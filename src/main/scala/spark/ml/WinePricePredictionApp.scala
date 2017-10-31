@@ -40,8 +40,8 @@ object WinePricePredictionApp extends App {
   val regionColumn = "region_1"
   val regionIndexColumn = "region_1_idx"
   val priceColumn = "price"
-  val featuresColumn = "features[points, variety, province, region]"
-  val predictionColumn = "prediction[price]"
+  val featuresColumn = "points_variety_province_region"
+  val predictionColumn = "predicted_price"
 
   // Variety indexer.
   val varietyIndexer = new StringIndexer()
