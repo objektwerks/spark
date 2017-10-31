@@ -22,7 +22,8 @@ class SparkAppListener extends SparkListener {
     val info = ArrayBuffer[String]()
     info += s"${taskInfo.status} "
     info += s"time-ms: ${taskInfo.duration} "
-    info += s"mem-kb: ${taskMetrics.peakExecutionMemory}"
+    info += s"mem-kb: ${taskMetrics.peakExecutionMemory} "
+    info += s"records: ${taskMetrics.inputMetrics.recordsRead}"
     info.mkString
   }
 }
