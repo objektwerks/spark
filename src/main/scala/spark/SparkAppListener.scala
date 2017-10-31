@@ -4,10 +4,10 @@ import org.apache.log4j.Logger
 import org.apache.spark.executor.TaskMetrics
 import org.apache.spark.scheduler._
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 class SparkAppListener extends SparkListener {
-  val events = ListBuffer[String]()
+  val events = ArrayBuffer[String]()
 
   def log(): Unit = {
     val logger = Logger.getLogger("SparkAppListener")
@@ -16,19 +16,14 @@ class SparkAppListener extends SparkListener {
 
   override def onJobEnd(end: SparkListenerJobEnd): Unit = events += s"*** Job result - ${end.jobResult}"
 
-  override def onTaskEnd(end: SparkListenerTaskEnd): Unit = events += s"*** Task result - ${taskInfoToString(end.taskInfo)} ${taskMetricsToString(end.taskMetrics)}"
+  override def onTaskEnd(end: SparkListenerTaskEnd): Unit = events += s"*** Task result - ${taskEndToString(end.taskInfo, end.taskMetrics)}"
 
-  def taskInfoToString(taskInfo: TaskInfo): String = {
-    val info = ListBuffer[String]()
+  def taskEndToString(taskInfo: TaskInfo, taskMetrics: TaskMetrics): String = {
+    val info = ArrayBuffer[String]()
     info += s"status: ${taskInfo.status} "
     info += s"duration: ${taskInfo.duration}"
-    info.mkString
-  }
-
-  def taskMetricsToString(taskMetrics: TaskMetrics): String = {
-    val info = ListBuffer[String]()
-    info += s"executor run time: ${taskMetrics.executorRunTime} "
-    info += s"peak execution memory: ${taskMetrics.peakExecutionMemory} "
+    info += s"executor time: ${taskMetrics.executorRunTime} "
+    info += s"peak executor mem: ${taskMetrics.peakExecutionMemory} "
     info += s"result size: ${taskMetrics.resultSize}"
     info.mkString
   }
