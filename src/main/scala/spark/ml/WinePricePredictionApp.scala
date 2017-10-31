@@ -85,7 +85,7 @@ object WinePricePredictionApp extends App {
   val predictions = model.transform(testDataset).cache
   predictions.createOrReplaceTempView("price_predictions")
   sqlContext.sql("select points, price, region_1, variety, predicted_price from price_predictions order by price desc")
-      .coalesce(1).write.option("header", "true").mode("append").csv("./target/wine.price.predictions.csv")
+      .coalesce(1).write.option("header", "true").mode("append").csv("./target/wine.price.predictions")
   sqlContext.sql("select * from price_predictions order by price desc").show(10)
 
   // Evaluator.
