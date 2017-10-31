@@ -21,10 +21,10 @@ class SparkAppListener extends SparkListener {
   def taskEndToString(taskInfo: TaskInfo, taskMetrics: TaskMetrics): String = {
     val info = ArrayBuffer[String]()
     info += s"status: ${taskInfo.status} "
-    info += s"duration: ${taskInfo.duration}"
-    info += s"executor time: ${taskMetrics.executorRunTime} "
-    info += s"peak executor mem: ${taskMetrics.peakExecutionMemory} "
-    info += s"result size: ${taskMetrics.resultSize}"
+    info += s"duration: ${taskInfo.duration} "
+    info += s"time: ${taskMetrics.executorRunTime} "
+    info += s"memory: ${taskMetrics.peakExecutionMemory} "
+    info += s"size: ${taskMetrics.resultSize}"
     info.mkString
   }
 }
