@@ -93,7 +93,7 @@ object WinePricePredictionApp extends App {
   val evaluator = new RegressionEvaluator()
     .setLabelCol(priceColumn)
     .setPredictionCol(predictionColumn)
-    .setMetricName("mae")
+    .setMetricName("rmse")
 
   // Evaluate.
   val trainingCount = trainingDataset.count
@@ -103,7 +103,7 @@ object WinePricePredictionApp extends App {
   println(s"2. Test count: $testCount")
   println(f"3. Training / Test ratio: $trainingTestCountRatio%1.2f")
   println(s"4. Predictions count: ${predictions.count}")
-  println(f"5. Mean Absolute Error: ${evaluator.evaluate(predictions)}%1.2f\n")
+  println(f"5. Root Mean Squared Error: ${evaluator.evaluate(predictions)}%1.2f\n")
 
   sparkSession.stop()
 }
