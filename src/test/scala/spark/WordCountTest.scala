@@ -1,5 +1,6 @@
 package spark
 
+import org.apache.spark.sql.Dataset
 import org.scalatest.{FunSuite, Matchers}
 
 class WordCountTest extends FunSuite with Matchers {
@@ -8,9 +9,10 @@ class WordCountTest extends FunSuite with Matchers {
 
   test("rdd") {
     val lines = sparkContext.textFile("./data/words/getttyburg.address.txt").cache
+    lines.count shouldBe 5
     println(s"line count: ${lines.count}")
 
-    val count = lines.flatMap(line => line.split("\\W+"))
+    val words = lines.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
       .map(word => (word, 1))
@@ -18,8 +20,27 @@ class WordCountTest extends FunSuite with Matchers {
       .collect
       .toMap
 
-    println(s"unique word count: ${count.keys.size} ")
-    for( (word, count) <- count) println(s"work: $word, count: $count")
+    words.keys.size shouldBe 138
+    println(s"unique word count: ${words.keys.size} ")
+    for( (word, count) <- words) println(s"work: $word, count: $count")
+  }
+
+  test("dataset") {
+    val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").cache
+    lines.count shouldBe 5
+    println(s"line count: ${lines.count}")
+
+    val words = lines
+      .flatMap(line => line.split("\\W+"))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .groupBy("value")
+      .count
+      .collect
+
+    words.length shouldBe 138
+    println(s"unique word count: ${words.length} ")
+    words foreach println
   }
 
   test("structured streaming") {
@@ -30,10 +51,9 @@ class WordCountTest extends FunSuite with Matchers {
     val words = lines
       .as[String]
       .flatMap(_.split("\\W+"))
-    val count = words
       .groupBy("value")
       .count
-    val query = count
+    val query = words
       .writeStream
       .outputMode("complete")
       .format("console")
