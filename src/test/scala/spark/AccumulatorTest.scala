@@ -7,7 +7,7 @@ class AccumulatorTest extends FunSuite with Matchers {
 
   test("accumulator") {
     val accumulator = sparkContext.longAccumulator
-    sparkContext.parallelize(1 to 1000, 4).foreach(x => accumulator.add(x))
+    sparkContext.parallelize(seq = 1 to 1000, numSlices = 4).foreach(x => accumulator.add(x))
     accumulator.value shouldBe 500500
   }
 }

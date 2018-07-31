@@ -8,7 +8,7 @@ class BroadcastTest extends FunSuite with Matchers {
   test("broadcast") {
     val map = Map("fred" -> "wilma", "barney" -> "betty")
     val broadcastMap = sparkContext.broadcast(map)
-    val wives = sparkContext.parallelize(Seq("fred", "barney")).map(broadcastMap.value).collect
+    val wives = sparkContext.parallelize(seq = Seq("fred", "barney")).map(broadcastMap.value).collect
     wives(0) shouldBe "wilma"
     wives(1) shouldBe "betty"
   }
