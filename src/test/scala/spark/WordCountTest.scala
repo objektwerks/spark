@@ -6,6 +6,22 @@ class WordCountTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
+  test("rdd") {
+    val lines = sparkContext.textFile("./data/words/getttyburg.address.txt").cache
+    println(s"line count: ${lines.count}")
+
+    val count = lines.flatMap(line => line.split("\\W+"))
+      .filter(_.nonEmpty)
+      .map(_.toLowerCase)
+      .map(word => (word, 1))
+      .reduceByKey(_ + _)
+      .collect
+      .toMap
+
+    println(s"unique word count: ${count.keys.size} ")
+    for( (word, count) <- count) println(s"work: $word, count: $count")
+  }
+
   test("structured streaming") {
     val lines = sparkSession
       .readStream
