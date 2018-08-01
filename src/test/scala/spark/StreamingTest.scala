@@ -38,7 +38,7 @@ class StreamingTest extends FunSuite with Matchers {
     buffer.size shouldBe 96
   }
 
-  def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
+  private def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
     val lines = sparkContext.textFile(filePath)
@@ -46,7 +46,7 @@ class StreamingTest extends FunSuite with Matchers {
     dstream
   }
 
-  def countWords(ds: DStream[String]): DStream[(String, Int)] = {
+  private def countWords(ds: DStream[String]): DStream[(String, Int)] = {
     ds.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
@@ -54,7 +54,7 @@ class StreamingTest extends FunSuite with Matchers {
       .reduceByKey(_ + _)
   }
 
-  def countWords(ds: DStream[String], windowLengthInMillis: Int, slideIntervalInMillis: Int): DStream[(String, Int)] = {
+  private def countWords(ds: DStream[String], windowLengthInMillis: Int, slideIntervalInMillis: Int): DStream[(String, Int)] = {
     ds.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
