@@ -1,8 +1,8 @@
 package spark.ml
 
 import org.apache.log4j.Logger
-import org.apache.spark.sql.{Encoders, ForeachWriter}
 import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.{Encoders, ForeachWriter}
 
 case class Wine(id: Int,
                 country: String,
