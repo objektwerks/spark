@@ -28,8 +28,7 @@ Run
  [5] spark.mlib.RecommendationApp
  [6] spark.streaming.LogEntryApp
  
-Output
-------
+Logs
+----
 1. ./target/test.log
 2. ./target/app.log
-3. ./target/testdb.mv.db
