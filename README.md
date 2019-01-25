@@ -11,7 +11,7 @@ Here's a few examples:
 * sbt run -java-home /Library/Java/JavaVirtualMachines/jdk1.8.0_192.jdk/Contents/Home
 
 >There's a way around this using .jvmopts or .sbtopts, placed in the root directory of this project, but I've
-yet to figure that out yet.;)
+yet to figure that out yet.;) **Breaking News** .sbtopts appears to work with sbt clean test!
 
 Test
 ----
