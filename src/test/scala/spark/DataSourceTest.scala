@@ -38,10 +38,11 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("parquet") {
+    val parquetFileName = s"${UUID.randomUUID.toString}.person.parquet"
     val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
-    dataset.write.parquet(s"./target/${UUID.randomUUID.toString}.person.parquet")
+    dataset.write.parquet(s"./target/$parquetFileName")
 
-    val parquet: Dataset[Person] = dataset.sqlContext.read.parquet("./target/person.parquet").as[Person]
+    val parquet: Dataset[Person] = dataset.sqlContext.read.parquet(s"./target/$parquetFileName").as[Person]
     parquet.createOrReplaceTempView("persons")
 
     val resultset: Dataset[Person] = parquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
