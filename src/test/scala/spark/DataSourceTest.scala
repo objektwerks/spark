@@ -1,5 +1,7 @@
 package spark
 
+import java.util.UUID
+
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
@@ -37,7 +39,7 @@ class DataSourceTest extends FunSuite with Matchers {
 
   test("parquet") {
     val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
-    dataset.write.parquet("./target/person.parquet")
+    dataset.write.parquet(s"./target/${UUID.randomUUID.toString}.person.parquet")
 
     val parquet: Dataset[Person] = dataset.sqlContext.read.parquet("./target/person.parquet").as[Person]
     parquet.createOrReplaceTempView("persons")
@@ -54,7 +56,7 @@ class DataSourceTest extends FunSuite with Matchers {
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:./target/testdb")
+      .option("url", "jdbc:h2:mem:test")
       .option("user", "test")
       .option("password", "test")
       .option("dbtable", "persons")
@@ -67,13 +69,13 @@ class DataSourceTest extends FunSuite with Matchers {
       case Row("husband", avgAge) => println(s"Husband average age: $avgAge"); avgAge shouldBe 23.0
       case Row("wife", avgAge) => println(s"Wife average age: $avgAge"); avgAge shouldBe 22.0
     }
-    groupByRole.write.partitionBy("role").format("json").save("./target/jdbc")
+    groupByRole.write.partitionBy("role").format("json").save(s"./target/${UUID.randomUUID.toString}")
   }
 
   def prepareJdbcTestDatabase(): Unit = {
     import scalikejdbc._
     Class.forName("org.h2.Driver")
-    ConnectionPool.singleton("jdbc:h2:./target/testdb", "test", "test")
+    ConnectionPool.singleton("jdbc:h2:mem:test", "test", "test")
     implicit val session = AutoSession
     sql"""
           drop table persons if exists;
