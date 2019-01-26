@@ -54,7 +54,7 @@ class StreamingTest extends FunSuite with Matchers {
       .reduceByKey(_ + _)
   }
 
-  private def countWords(ds: DStream[String], windowLengthInMillis: Int, slideIntervalInMillis: Int): DStream[(String, Int)] = {
+  private def countWords(ds: DStream[String], windowLengthInMillis: Long, slideIntervalInMillis: Long): DStream[(String, Int)] = {
     ds.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)

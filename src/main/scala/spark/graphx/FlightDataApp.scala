@@ -14,11 +14,11 @@ object FlightDataApp extends App {
   val flightsFromTo = dataframe.select($"Origin", $"Dest").rdd
   val airportCodes = dataframe.select($"Origin", $"Dest").flatMap( originDest => Iterable( originDest(0).toString, originDest(1).toString ) ).rdd
 
-  val airportVertices: RDD[(VertexId, String)] = airportCodes.distinct.map(airportCode => ( MurmurHash3.stringHash(airportCode), airportCode) )
+  val airportVertices: RDD[(VertexId, String)] = airportCodes.distinct.map(airportCode => ( MurmurHash3.stringHash(airportCode).toLong, airportCode) )
   val flightEdges = flightsFromTo
     .map(originDest => ( (MurmurHash3.stringHash( originDest(0).toString ), MurmurHash3.stringHash( originDest(1).toString ) ), 1))
     .reduceByKey(_ + _)
-    .map(airportIds => Edge(airportIds._1._1, airportIds._1._2, airportIds._2))
+    .map(airportIds => Edge(airportIds._1._1.toLong, airportIds._1._2.toLong, airportIds._2))
 
   val graph = Graph(airportVertices, flightEdges, "default-airport").persist()
   println(s"Graph vertices: ${graph.numVertices}")

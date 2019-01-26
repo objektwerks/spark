@@ -16,18 +16,3 @@ libraryDependencies ++= {
     "org.scalatest" %% "scalatest" % "3.0.5" % Test
   )
 }
-scalacOptions ++= Seq(
-  "-language:postfixOps",
-  "-language:reflectiveCalls",
-  "-language:implicitConversions",
-  "-language:higherKinds",
-  "-feature",
-  "-Ywarn-unused-import",
-  "-Ywarn-unused",
-  "-Ywarn-dead-code",
-  "-unchecked",
-  "-deprecation",
-  "-Xfatal-warnings",
-  "-Xlint:missing-interpolator",
-  "-Xlint"
-)

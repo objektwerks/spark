@@ -85,6 +85,7 @@ class DataSourceTest extends FunSuite with Matchers {
           insert into persons values (23, 'wilma', 'wife');
           insert into persons values (22, 'barney', 'husband');
           insert into persons values (21, 'betty', 'wife');
-      """.execute.apply()
+      """.execute.apply
+    ()
   }
 }
