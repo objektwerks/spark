@@ -20,7 +20,6 @@ class WordCountTest extends FunSuite with Matchers {
   test("dataset") {
     val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
     lines.count shouldBe 5
-
     val counts = lines
       .flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
@@ -28,7 +27,6 @@ class WordCountTest extends FunSuite with Matchers {
       .count
       .collect
       .map{ case (line, count) => Count(line, count) }
-
     counts.length shouldBe 138
     println(s"Dataset unique word -> count: ${counts.length}")
   }
@@ -36,14 +34,12 @@ class WordCountTest extends FunSuite with Matchers {
   test("dataframe") {
     val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line").cache
     lines.count shouldBe 5
-
     val counts = lines
       .flatMap(row => row.getString(0).split("\\W+"))
       .filter(_.nonEmpty)
       .groupByKey(_.toLowerCase)
       .count
       .collect
-
     counts.length shouldBe 138
     println(s"Dataframe unique word -> count: ${counts.length}")
   }
@@ -51,14 +47,12 @@ class WordCountTest extends FunSuite with Matchers {
   test("rdd") {
     val lines = sparkContext.textFile("./data/words/getttyburg.address.txt").cache
     lines.count shouldBe 5
-
     val counts = lines.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
       .map(word => (word, 1))
       .reduceByKey(_ + _)
       .collect
-
     counts.length shouldBe 138
     println(s"RDD unique word -> count: ${counts.length}")
   }
