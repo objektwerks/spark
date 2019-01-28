@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Encoders
+import org.apache.spark.sql.{Dataset, Encoders, Row}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
@@ -17,7 +17,7 @@ class WordCountTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dataset") {
-    val lines = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
+    val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
     lines.count shouldBe 5
     println(s"line count: ${lines.count}")
 
@@ -34,22 +34,21 @@ class WordCountTest extends FunSuite with Matchers {
     counts foreach println
   }
 
-  test("structured streaming") {
-    val lines = sparkSession
-      .readStream
-      .option("basePath", "./data/words")
-      .text("./data/words")
-    val words = lines
-      .as[String]
-      .flatMap(_.split("\\W+"))
-      .groupBy("value")
+  test("dataframe") {
+    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line")
+    lines.count shouldBe 5
+    println(s"line count: ${lines.count}")
+
+    val counts = lines
+      .flatMap(row => row.getString(0).split("\\W+"))
+      .filter(_.nonEmpty)
+      .groupByKey(_.toLowerCase)
       .count
-    val query = words
-      .writeStream
-      .outputMode("complete")
-      .format("console")
-      .start()
-    query.awaitTermination(6000L)
+      .collect
+
+    counts.length shouldBe 138
+    println(s"unique word count: ${counts.length} ")
+    counts foreach println
   }
 
   test("rdd") {
@@ -70,7 +69,25 @@ class WordCountTest extends FunSuite with Matchers {
     for( (word, count) <- words) println(s"work: $word, count: $count")
   }
 
-  test("streaming") {
+  test("structured streaming") {
+    val lines = sparkSession
+      .readStream
+      .option("basePath", "./data/words")
+      .text("./data/words")
+    val words = lines
+      .as[String]
+      .flatMap(_.split("\\W+"))
+      .groupBy("value")
+      .count
+    val query = words
+      .writeStream
+      .outputMode("complete")
+      .format("console")
+      .start()
+    query.awaitTermination(6000L)
+  }
+
+  test("dstream") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
     val dstream = textToDStream("./data/txt/license.txt", streamingContext)
     val wordCountDstream = countWords(dstream)
