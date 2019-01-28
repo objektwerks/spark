@@ -76,7 +76,7 @@ class WordCountTest extends FunSuite with Matchers {
   }
 
   test("structured streaming") {
-    println("Structure Streaming...")
+    println("Structured Streaming...")
     sparkSession
       .readStream
       .option("basePath", "./data/words")
