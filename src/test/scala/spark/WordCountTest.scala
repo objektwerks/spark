@@ -1,33 +1,37 @@
 package spark
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Dataset
+import org.apache.spark.sql.Encoders
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
 
 import scala.collection.mutable
 
+case class Count(value: String, count: Long)
+object Count {
+  implicit val countSchema = Encoders.product[Count].schema
+}
 class WordCountTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
   test("dataset") {
-    val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").cache
+    val lines = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
     lines.count shouldBe 5
     println(s"line count: ${lines.count}")
 
-    val words = lines
+    val counts = lines
       .flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
-      .map(_.toLowerCase)
-      .groupBy("value")
+      .groupByKey(_.toLowerCase)
       .count
       .collect
+      .map{ case (line, count) => Count(line, count) }
 
-    words.length shouldBe 138
-    println(s"unique word count: ${words.length} ")
-    words foreach println
+    counts.length shouldBe 138
+    println(s"unique word count: ${counts.length} ")
+    counts foreach println
   }
 
   test("structured streaming") {
