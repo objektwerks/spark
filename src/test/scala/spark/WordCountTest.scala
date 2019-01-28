@@ -37,7 +37,7 @@ class WordCountTest extends FunSuite with Matchers {
       .map{ case (line, count) => Count(line, count) }
 
     counts.length shouldBe 138
-    println(s"Dataset word count: ${counts.length}")
+    println(s"Dataset unique word -> count: ${counts.length}")
     counts foreach println
   }
 
@@ -54,7 +54,7 @@ class WordCountTest extends FunSuite with Matchers {
       .collect
 
     counts.length shouldBe 138
-    println(s"Dataframe word count: ${counts.length}")
+    println(s"Dataframe unique word -> count: ${counts.length}")
     counts foreach println
   }
 
@@ -90,7 +90,7 @@ class WordCountTest extends FunSuite with Matchers {
       .foreach(countForeachWriter)
       .start()
       .awaitTermination(15000L)
-    println("Structured Streaming word count will equal 138.")
+    println("Structured Streaming unique word -> count will equal 138.")
   }
 
   test("dstream") {
@@ -102,7 +102,7 @@ class WordCountTest extends FunSuite with Matchers {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    println("DStream word count:")
+    println("DStream unique word -> count:")
     buffer.sortBy(_._1).foreach(println)
     buffer.size shouldBe 96
   }
