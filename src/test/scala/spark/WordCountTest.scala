@@ -1,7 +1,7 @@
 package spark
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Dataset, Encoders, ForeachWriter, Row}
+import org.apache.spark.sql.{Dataset, Encoders, Row}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
@@ -17,16 +17,9 @@ class WordCountTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
-  val countForeachWriter = new ForeachWriter[(String, Long)] {
-    override def open(partitionId: Long, version: Long): Boolean = true
-    override def process(count: (String, Long)): Unit = println(count)
-    override def close(errorOrNull: Throwable): Unit =()
-  }
-
   test("dataset") {
     val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
     lines.count shouldBe 5
-    println(s"line count: ${lines.count}")
 
     val counts = lines
       .flatMap(line => line.split("\\W+"))
@@ -38,13 +31,11 @@ class WordCountTest extends FunSuite with Matchers {
 
     counts.length shouldBe 138
     println(s"Dataset unique word -> count: ${counts.length}")
-    counts foreach println
   }
 
   test("dataframe") {
-    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line")
+    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line").cache
     lines.count shouldBe 5
-    println(s"line count: ${lines.count}")
 
     val counts = lines
       .flatMap(row => row.getString(0).split("\\W+"))
@@ -55,13 +46,11 @@ class WordCountTest extends FunSuite with Matchers {
 
     counts.length shouldBe 138
     println(s"Dataframe unique word -> count: ${counts.length}")
-    counts foreach println
   }
 
   test("rdd") {
     val lines = sparkContext.textFile("./data/words/getttyburg.address.txt").cache
     lines.count shouldBe 5
-    println(s"line count: ${lines.count}")
 
     val counts = lines.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
@@ -71,12 +60,10 @@ class WordCountTest extends FunSuite with Matchers {
       .collect
 
     counts.length shouldBe 138
-    println(s"RDD word count: ${counts.length}")
-    counts foreach println
+    println(s"RDD unique word -> count: ${counts.length}")
   }
 
   test("structured streaming") {
-    println("Structured Streaming...")
     sparkSession
       .readStream
       .option("basePath", "./data/words")
@@ -86,11 +73,15 @@ class WordCountTest extends FunSuite with Matchers {
       .groupByKey(_.toLowerCase)
       .count
       .writeStream
+      .queryName("words")
       .outputMode("complete")
-      .foreach(countForeachWriter)
+      .format("memory")
       .start()
       .awaitTermination(15000L)
-    println("Structured Streaming unique word -> count will equal 138.")
+    val words = sqlContext.sql("select * from words").cache
+    words.count shouldBe 138
+    println(s"Structured Streaming unique word -> count: ${words.count}")
+    words.sort("value").show(numRows = 138, truncate = false)
   }
 
   test("dstream") {
@@ -102,9 +93,8 @@ class WordCountTest extends FunSuite with Matchers {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    println("DStream unique word -> count:")
-    buffer.sortBy(_._1).foreach(println)
     buffer.size shouldBe 96
+    println(s"DStream unique word -> count: ${buffer.size}")
   }
 
   private def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
