@@ -37,7 +37,7 @@ class WordCountTest extends FunSuite with Matchers {
       .map{ case (line, count) => Count(line, count) }
 
     counts.length shouldBe 138
-    println(s"Dataset word count: ${counts.length} ")
+    println(s"Dataset word count: ${counts.length}")
     counts foreach println
   }
 
@@ -54,7 +54,7 @@ class WordCountTest extends FunSuite with Matchers {
       .collect
 
     counts.length shouldBe 138
-    println(s"Dataframe word count: ${counts.length} ")
+    println(s"Dataframe word count: ${counts.length}")
     counts foreach println
   }
 
@@ -71,7 +71,7 @@ class WordCountTest extends FunSuite with Matchers {
       .collect
 
     counts.length shouldBe 138
-    println(s"RDD word count: ${counts.length} ")
+    println(s"RDD word count: ${counts.length}")
     counts foreach println
   }
 
