@@ -56,17 +56,16 @@ class WordCountTest extends FunSuite with Matchers {
     lines.count shouldBe 5
     println(s"line count: ${lines.count}")
 
-    val words = lines.flatMap(line => line.split("\\W+"))
+    val counts = lines.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
       .map(word => (word, 1))
       .reduceByKey(_ + _)
       .collect
-      .toMap
 
-    words.keys.size shouldBe 138
-    println(s"unique word count: ${words.keys.size} ")
-    for( (word, count) <- words) println(s"work: $word, count: $count")
+    counts.length shouldBe 138
+    println(s"unique word count: ${counts.length} ")
+    counts foreach println
   }
 
   test("structured streaming") {
