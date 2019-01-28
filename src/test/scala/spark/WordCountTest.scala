@@ -81,15 +81,16 @@ class WordCountTest extends FunSuite with Matchers {
       .readStream
       .option("basePath", "./data/words")
       .text("./data/words")
-      .as[String]
-      .flatMap(_.split("\\W+"))
+      .flatMap(row => row.getString(0).split("\\W+"))
+      .filter(_.nonEmpty)
       .groupByKey(_.toLowerCase)
       .count
       .writeStream
       .outputMode("complete")
       .foreach(countForeachWriter)
       .start()
-      .awaitTermination(10000L)
+      .awaitTermination(15000L)
+    println("Structured Streaming word count will equal 138.")
   }
 
   test("dstream") {
