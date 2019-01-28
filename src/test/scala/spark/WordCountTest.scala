@@ -26,7 +26,7 @@ class WordCountTest extends FunSuite with Matchers {
       .groupByKey(_.toLowerCase)
       .count
       .collect
-      .map{ case (line, count) => Count(line, count) }
+      .map { case (line, count) => Count(line, count) }
     counts.length shouldBe 138
     println(s"Dataset unique word -> count: ${counts.length}")
   }
@@ -71,7 +71,7 @@ class WordCountTest extends FunSuite with Matchers {
       .outputMode("complete")
       .format("memory")
       .start()
-      .awaitTermination(15000L)
+      .awaitTermination(10000L)
     val words = sqlContext.sql("select * from words").cache
     words.count shouldBe 138
     println(s"Structured Streaming unique word -> count: ${words.count}")
