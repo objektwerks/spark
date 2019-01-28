@@ -80,14 +80,14 @@ class WordCountTest extends FunSuite with Matchers {
 
   test("dstream") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
-    val dstream = textToDStream("./data/txt/license.txt", streamingContext)
+    val dstream = textToDStream("./data/words/getttyburg.address.txt", streamingContext)
     val wordCountDstream = countWords(dstream)
     val buffer = mutable.ArrayBuffer[(String, Int)]()
     wordCountDstream foreachRDD { rdd => buffer ++= rdd.collect }
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    buffer.size shouldBe 96
+    buffer.size shouldBe 138
     println(s"DStream unique word -> count: ${buffer.size}")
   }
 
