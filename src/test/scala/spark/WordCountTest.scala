@@ -1,6 +1,7 @@
 package spark
 
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.streaming.OutputMode
 import org.apache.spark.sql.{Dataset, Encoders, Row}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
@@ -71,21 +72,19 @@ class WordCountTest extends FunSuite with Matchers {
 
   test("structured streaming") {
     println("Structure Streaming...")
-    val lines = sparkSession
+    sparkSession
       .readStream
       .option("basePath", "./data/words")
       .text("./data/words")
-    val words = lines
       .as[String]
       .flatMap(_.split("\\W+"))
-      .groupBy("value")
+      .groupByKey(_.toLowerCase)
       .count
-    val query = words
       .writeStream
-      .outputMode("complete")
+      .outputMode(OutputMode.Complete)
       .format("console")
       .start()
-    query.awaitTermination(6000L)
+      .awaitTermination(10000L)
   }
 
   test("dstream") {
