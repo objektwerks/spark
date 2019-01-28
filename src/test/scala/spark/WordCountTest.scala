@@ -1,8 +1,7 @@
 package spark
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.streaming.OutputMode
-import org.apache.spark.sql.{Dataset, Encoders, Row}
+import org.apache.spark.sql.{Dataset, Encoders, ForeachWriter, Row}
 import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
@@ -17,6 +16,12 @@ object Count {
 class WordCountTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
+
+  val countForeachWriter = new ForeachWriter[(String, Long)] {
+    override def open(partitionId: Long, version: Long): Boolean = true
+    override def process(count: (String, Long)): Unit = println(count)
+    override def close(errorOrNull: Throwable): Unit =()
+  }
 
   test("dataset") {
     val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
@@ -81,8 +86,8 @@ class WordCountTest extends FunSuite with Matchers {
       .groupByKey(_.toLowerCase)
       .count
       .writeStream
-      .outputMode(OutputMode.Complete)
-      .format("console")
+      .outputMode("complete")
+      .foreach(countForeachWriter)
       .start()
       .awaitTermination(10000L)
   }
