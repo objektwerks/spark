@@ -12,6 +12,7 @@ case class Count(value: String, count: Long)
 object Count {
   implicit val countSchema = Encoders.product[Count].schema
 }
+
 class WordCountTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
@@ -95,7 +96,7 @@ class WordCountTest extends FunSuite with Matchers {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    println("Streaming Word Count:")
+    println("DStream Word Count:")
     buffer.sortBy(_._1).foreach(println)
     buffer.size shouldBe 96
   }
