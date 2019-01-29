@@ -1,8 +1,6 @@
 package spark
 
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Encoders, Row}
-import org.apache.spark.streaming.dstream.DStream
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import org.scalatest.{FunSuite, Matchers}
 
@@ -81,21 +79,5 @@ class WordCountTest extends FunSuite with Matchers {
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
     buffer.size shouldBe 138
-  }
-
-  private def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
-    val queue = mutable.Queue[RDD[String]]()
-    val dstream = streamingContext.queueStream(queue)
-    val lines = sparkContext.textFile(filePath)
-    queue += lines
-    dstream
-  }
-
-  private def countWords(ds: DStream[String]): DStream[(String, Int)] = {
-    ds.flatMap(line => line.split("\\W+"))
-      .filter(_.nonEmpty)
-      .map(_.toLowerCase)
-      .map(word => (word, 1))
-      .reduceByKey(_ + _)
   }
 }
