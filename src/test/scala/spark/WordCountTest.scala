@@ -19,7 +19,6 @@ class WordCountTest extends FunSuite with Matchers {
 
   test("dataset") {
     val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
-    lines.count shouldBe 5
     val counts = lines
       .flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
@@ -28,12 +27,10 @@ class WordCountTest extends FunSuite with Matchers {
       .collect
       .map { case (line, count) => Count(line, count) }
     counts.length shouldBe 138
-    println(s"Dataset unique word -> count: ${counts.length}")
   }
 
   test("dataframe") {
-    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line").cache
-    lines.count shouldBe 5
+    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line")
     val counts = lines
       .flatMap(row => row.getString(0).split("\\W+"))
       .filter(_.nonEmpty)
@@ -41,12 +38,10 @@ class WordCountTest extends FunSuite with Matchers {
       .count
       .collect
     counts.length shouldBe 138
-    println(s"Dataframe unique word -> count: ${counts.length}")
   }
 
   test("rdd") {
-    val lines = sparkContext.textFile("./data/words/getttyburg.address.txt").cache
-    lines.count shouldBe 5
+    val lines = sparkContext.textFile("./data/words/getttyburg.address.txt")
     val counts = lines.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
@@ -54,7 +49,6 @@ class WordCountTest extends FunSuite with Matchers {
       .reduceByKey(_ + _)
       .collect
     counts.length shouldBe 138
-    println(s"RDD unique word -> count: ${counts.length}")
   }
 
   test("structured streaming") {
@@ -74,7 +68,6 @@ class WordCountTest extends FunSuite with Matchers {
       .awaitTermination(10000L)
     val words = sqlContext.sql("select * from words").cache
     words.count shouldBe 138
-    println(s"Structured Streaming unique word -> count: ${words.count}")
     words.sort("value").show(numRows = 138, truncate = false)
   }
 
@@ -88,7 +81,6 @@ class WordCountTest extends FunSuite with Matchers {
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
     buffer.size shouldBe 138
-    println(s"DStream unique word -> count: ${buffer.size}")
   }
 
   private def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
