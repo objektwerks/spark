@@ -10,9 +10,9 @@ import scala.collection.mutable.ArrayBuffer
   * WARNING: SparkListener yields false results! Just read the standard Spark log statements.
   */
 class SparkAppListener extends SparkListener {
-  val events = ArrayBuffer[String]()
+  private val events = ArrayBuffer[String]()
 
-  def log(): Unit = {
+  def logEvents(): Unit = {
     val logger = Logger.getLogger(getClass.getName)
     events foreach { event => logger.info(event) }
   }
@@ -21,7 +21,7 @@ class SparkAppListener extends SparkListener {
 
   override def onTaskEnd(end: SparkListenerTaskEnd): Unit = events += s"Task: ${taskEndToString(end.taskInfo, end.taskMetrics)}"
 
-  def taskEndToString(taskInfo: TaskInfo, taskMetrics: TaskMetrics): String = {
+  private def taskEndToString(taskInfo: TaskInfo, taskMetrics: TaskMetrics): String = {
     val info = ArrayBuffer[String]()
     info += s"${taskInfo.status} "
     info += s"time-ms: ${taskInfo.duration} "
