@@ -52,9 +52,14 @@ class SqlTest extends FunSuite with Matchers {
     persons.createOrReplaceTempView("persons")
     tasks.createOrReplaceTempView("tasks")
 
-    val rows: Dataset[Row] = sqlContext.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").cache
-    rows.count shouldBe 4
-    rows.show
+    val personsTasks: Dataset[Row] = sqlContext.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").cache
+    personsTasks.count shouldBe 4
+    personsTasks.show
+
+    personsTasks.createOrReplaceTempView("persons_tasks")
+    val personTask: Dataset[Row] = sqlContext.sql("select name, task from persons_tasks").cache
+    personTask.count shouldBe 4
+    personTask.show
   }
 
   test("dataset join") {
@@ -66,8 +71,13 @@ class SqlTest extends FunSuite with Matchers {
     persons.createOrReplaceTempView("persons")
     tasks.createOrReplaceTempView("tasks")
 
-    val personsTasks: Dataset[PersonsTasks] = sqlContext.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").as[PersonsTasks].cache
+    val personsTasks: Dataset[PersonsTasks] = sqlContext.sql("select * from persons, tasks where persons.id = tasks.pid").as[PersonsTasks].cache
     personsTasks.count shouldBe 4
     personsTasks.show
+
+    personsTasks.createOrReplaceTempView("persons_tasks")
+    val personTask: Dataset[(String, String)] = sqlContext.sql("select name, task from persons_tasks").as[(String, String)].cache
+    personTask.count shouldBe 4
+    personTask.show
   }
 }
