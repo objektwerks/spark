@@ -73,7 +73,7 @@ class DataSourceTest extends FunSuite with Matchers {
     groupByRole.write.partitionBy("role").format("json").save(s"./target/${UUID.randomUUID.toString}")
   }
 
-  def prepareJdbcTestDatabase(): Unit = {
+  private def prepareJdbcTestDatabase(): Unit = {
     import scalikejdbc._
     Class.forName("org.h2.Driver")
     ConnectionPool.singleton("jdbc:h2:mem:test", "test", "test")
