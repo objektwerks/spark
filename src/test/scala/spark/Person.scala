@@ -3,11 +3,12 @@ package spark
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.apache.spark.sql.{Encoders, ForeachWriter}
 
-case class Person(age: Long, name: String, role: String)
+case class Person(id: Long, age: Long, name: String, role: String)
 
 object Person {
   val personSchema = Encoders.product[Person].schema
   val personStructType = new StructType()
+    .add("id", IntegerType)
     .add("age", IntegerType)
     .add("name", StringType)
     .add("role", StringType)

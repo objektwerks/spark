@@ -15,8 +15,9 @@ class SqlTest extends FunSuite with Matchers {
     dataframe.createOrReplaceTempView("persons")
 
     val rows = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
+    rows.show
     rows.count shouldBe 2
-    rows.head.getString(1) shouldBe "betty"
+    rows.head.getString(2) shouldBe "betty"
     rows.head.getLong(0) shouldBe 21
 
     sqlContext.sql("select min(age) from persons").take(1)(0).getLong(0) shouldBe 21

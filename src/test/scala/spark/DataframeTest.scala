@@ -17,14 +17,14 @@ class DataframeTest extends FunSuite with Matchers {
     val filterByName = dataframe.filter("name == 'barney'").cache
     filterByName.count shouldBe 1
     filterByName.first.getLong(0) shouldBe 22
-    filterByName.first.getString(1) shouldBe "barney"
-    filterByName.first.getString(2) shouldBe "husband"
+    filterByName.first.getString(2) shouldBe "barney"
+    filterByName.first.getString(3) shouldBe "husband"
 
     val sortByName = dataframe.sort("name").cache
     sortByName.count shouldBe 4
     sortByName.first.getLong(0) shouldBe 22
-    sortByName.first.getString(1) shouldBe "barney"
-    sortByName.first.getString(2) shouldBe "husband"
+    sortByName.first.getString(2) shouldBe "barney"
+    sortByName.first.getString(3) shouldBe "husband"
 
     val selectByName = dataframe.select("name").where("name == 'barney'").cache
     selectByName.count shouldBe 1
