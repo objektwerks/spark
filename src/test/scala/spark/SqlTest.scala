@@ -42,4 +42,32 @@ class SqlTest extends FunSuite with Matchers {
     sqlContext.sql("select max(age) from persons").as[Long].take(1)(0) shouldBe 24
     sqlContext.sql("select sum(age) from persons").as[Long].take(1)(0) shouldBe 90
   }
+
+  test("dataframe join") {
+    val persons = sparkSession.read.json("./data/person/person.json").cache
+    val tasks = sparkSession.read.json("./data/person/task.json").cache
+    persons.count shouldBe 4
+    tasks.count shouldBe 4
+
+    persons.createOrReplaceTempView("persons")
+    tasks.createOrReplaceTempView("tasks")
+
+    val rows: Dataset[Row] = sqlContext.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").cache
+    rows.count shouldBe 4
+    rows.show
+  }
+
+  test("dataset join") {
+    val persons = sparkSession.read.json("./data/person/person.json").as[Person].cache
+    val tasks = sparkSession.read.json("./data/person/task.json").as[Task].cache
+    persons.count shouldBe 4
+    tasks.count shouldBe 4
+
+    persons.createOrReplaceTempView("persons")
+    tasks.createOrReplaceTempView("tasks")
+
+    val personsTasks: Dataset[PersonsTasks] = sqlContext.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").as[PersonsTasks].cache
+    personsTasks.count shouldBe 4
+    personsTasks.show
+  }
 }
