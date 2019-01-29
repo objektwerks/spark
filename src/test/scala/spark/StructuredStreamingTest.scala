@@ -8,16 +8,15 @@ class StructuredStreamingTest extends FunSuite with Matchers {
 
   test("structured streaming") {
     import Person._
-    val persons = sparkSession
+    sparkSession
       .readStream
       .option("basePath", "./data/person")
       .schema(personStructType)
       .json("./data/person")
       .as[Person]
-    val query = persons
       .writeStream
       .foreach(personForeachWriter)
       .start()
-    query.awaitTermination(1000L)
+      .awaitTermination(3000L)
   }
 }
