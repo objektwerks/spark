@@ -15,7 +15,6 @@ package object spark {
     dstream
   }
 
-
   def textToDStream(filePath: String, streamingContext: StreamingContext): DStream[String] = {
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
