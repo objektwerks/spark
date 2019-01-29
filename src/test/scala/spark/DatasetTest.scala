@@ -59,7 +59,7 @@ class DatasetTest extends FunSuite with Matchers {
     groupByRole.collect.map {
       case ("husband", avgAge) => avgAge shouldBe 23.0
       case ("wife", avgAge) => avgAge shouldBe 22.0
-      case (_, _) => throw new IllegalArgumentException("neither a husband nor wife age!")
+      case (_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
     }
     val groupByRoleMap = groupByRole.collect.map(roleAvgAge => roleAvgAge._1 -> roleAvgAge._2).toMap[String, Double]
     groupByRoleMap("husband") shouldBe 23.0
