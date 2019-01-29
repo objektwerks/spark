@@ -80,4 +80,14 @@ class SqlTest extends FunSuite with Matchers {
     personTask.count shouldBe 4
     personTask.show
   }
+
+  test("udf") {
+    val cityTemps = sparkSession.read.json("./data/weather/city_temps.json").cache
+    cityTemps.createOrReplaceTempView("city_temps")
+
+    sqlContext.udf.register("celciusToFahrenheit", (degreesCelcius: Double) => (degreesCelcius * 9.0 / 5.0) + 32.0)
+
+    val temps = sqlContext.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
+    temps.show
+  }
 }
