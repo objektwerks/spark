@@ -88,6 +88,7 @@ class SqlTest extends FunSuite with Matchers {
     sqlContext.udf.register("celciusToFahrenheit", (degreesCelcius: Double) => (degreesCelcius * 9.0 / 5.0) + 32.0)
 
     val temps = sqlContext.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
+    temps.count shouldBe 6
     temps.show
   }
 }
