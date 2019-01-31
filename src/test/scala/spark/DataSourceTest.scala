@@ -64,7 +64,7 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
-    val roleByAge: Dataset[Row] = persons.groupBy("role").avg("age").cache
+    val roleByAge: Dataset[Row] = persons.groupBy("role").avg("age").cache // .as[AvgAgeByRole] couldn't resolve avg(age)!
     roleByAge.show
     roleByAge.map(row => AvgAgeByRole(row.getString(0), row.getDouble(1)))
   }
