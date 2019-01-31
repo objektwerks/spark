@@ -3,7 +3,7 @@ package spark
 import java.util.UUID
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
 
 case class Friend(id: Int, name: String, age: Int, score: Int)
@@ -58,40 +58,63 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("jdbc") {
-    prepareJdbcTestDatabase()
-    val dataframe: Dataset[Row] = sqlContext
-      .read
-      .format("jdbc")
-      .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:test")
-      .option("user", "test")
-      .option("password", "test")
-      .option("dbtable", "persons")
-      .load()
-    dataframe.printSchema
-    dataframe.show
-    val groupByRole = dataframe.groupBy("role").avg("age").cache
-    groupByRole.count shouldBe 2
-    groupByRole.collect.map {
-      case Row("husband", avgAge) => println(s"Husband average age: $avgAge"); avgAge shouldBe 23.0
-      case Row("wife", avgAge) => println(s"Wife average age: $avgAge"); avgAge shouldBe 22.0
-    }
-    groupByRole.write.partitionBy("role").format("json").save(s"./target/${UUID.randomUUID.toString}")
+    val persons: Dataset[Person] = readPersonsDatasource()
+    val avgAgeByRole: Dataset[AvgAgeByRole] = personsToAvgAgeByRole(persons)
+    writeAvgAgeByRoleDatasource(avgAgeByRole)
   }
 
-  private def prepareJdbcTestDatabase(): Unit = {
+  private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
+    val roleByAge: Dataset[Row] = persons.groupBy("role").avg("age").cache
+    roleByAge.show
+    roleByAge.map(row => AvgAgeByRole(row.getString(0), row.getDouble(1)))
+  }
+
+  private def readPersonsDatasource(): Dataset[Person] = {
     import scalikejdbc._
     Class.forName("org.h2.Driver")
-    ConnectionPool.singleton("jdbc:h2:mem:test", "test", "test")
+    ConnectionPool.singleton("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "sa")
     implicit val session = AutoSession
     sql"""
           drop table persons if exists;
-          create table persons (age int not null, name varchar(64) not null, role varchar(64) not null);
-          insert into persons values (24, 'fred', 'husband');
-          insert into persons values (23, 'wilma', 'wife');
-          insert into persons values (22, 'barney', 'husband');
-          insert into persons values (21, 'betty', 'wife');
+          create table persons (id int not null, age int not null, name varchar(64) not null, role varchar(64) not null);
+          insert into persons values (1, 24, 'fred', 'husband');
+          insert into persons values (2, 23, 'wilma', 'wife');
+          insert into persons values (3, 22, 'barney', 'husband');
+          insert into persons values (4, 21, 'betty', 'wife');
       """.execute.apply
-    ()
+    val persons: Dataset[Person] = sqlContext
+      .read
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+      .option("user", "sa")
+      .option("password", "sa")
+      .option("dbtable", "persons")
+      .load
+      .as[Person]
+    persons.show
+    persons
+  }
+
+  private def writeAvgAgeByRoleDatasource(avgAgeByRole: Dataset[AvgAgeByRole]): Unit = {
+    import scalikejdbc._
+    Class.forName("org.h2.Driver")
+    ConnectionPool.singleton("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "sa")
+    implicit val session = AutoSession
+    sql"""
+          drop table avg_age_by_role if exists;
+          create table avg_age_by_role (role varchar(64) not null, age double not null);
+      """.execute.apply
+    avgAgeByRole.show
+    avgAgeByRole
+      .write
+      .mode(SaveMode.Append)
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+      .option("user", "sa")
+      .option("password", "sa")
+      .option("dbtable", "avg_age_by_role")
+      .save
   }
 }
