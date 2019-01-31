@@ -3,26 +3,32 @@ package spark
 import java.util.UUID
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
+
+case class Friend(id: Int, name: String, age: Int, score: Int)
 
 class DataSourceTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
   test("csv") {
-    val dataframe: Dataset[Row] = sparkSession.read.csv("./data/txt/friends.txt")
+    val dataframe: DataFrame = sparkSession.read
+      .format("csv")
+      .option("delimiter",",")
+      .option("inferSchema","true")
+      .load("./data/txt/friends.txt")
     dataframe.count shouldBe 500
 
-    val uniqueNames: Dataset[String] = dataframe.map(row => row.getString(1)).distinct
-    uniqueNames.count shouldBe 30
+    val friends: Dataset[Friend] = dataframe.map(r => Friend(r.getInt(0), r.getString(1), r.getInt(2), r.getInt(3)))
+    friends.count shouldBe 500
   }
 
   test("text") {
     val rdd: RDD[String] = sparkContext.textFile("./data/txt/license.txt")
     rdd.count shouldBe 19
 
-    val dataframe: Dataset[Row] = sparkSession.read.text("./data/txt/license.txt")
+    val dataframe: DataFrame = sparkSession.read.text("./data/txt/license.txt")
     dataframe.count shouldBe 19
 
     val dataset: Dataset[String] = sparkSession.read.textFile("./data/txt/license.txt")
@@ -30,7 +36,7 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("json") {
-    val dataframe: Dataset[Row] = sparkSession.read.json("./data/person/person.json")
+    val dataframe: DataFrame = sparkSession.read.json("./data/person/person.json")
     dataframe.count shouldBe 4
 
     val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
