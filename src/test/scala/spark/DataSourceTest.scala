@@ -65,8 +65,9 @@ class DataSourceTest extends FunSuite with Matchers {
 
   private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
     val roleByAge: Dataset[Row] = persons.groupBy("role").avg("age").cache // .as[AvgAgeByRole] couldn't resolve avg(age)!
+    roleByAge.count shouldBe 2
     roleByAge.show
-    roleByAge.map(row => AvgAgeByRole(row.getString(0), row.getDouble(1)))
+    roleByAge.map(row => AvgAgeByRole(row.getString(0), row.getDouble(1))).cache
   }
 
   private def readPersonsDatasource(): Dataset[Person] = {
@@ -92,6 +93,8 @@ class DataSourceTest extends FunSuite with Matchers {
       .option("dbtable", "persons")
       .load
       .as[Person]
+    persons.cache
+    persons.count shouldBe 4
     persons.show
     persons
   }
@@ -105,6 +108,7 @@ class DataSourceTest extends FunSuite with Matchers {
           drop table avg_age_by_role if exists;
           create table avg_age_by_role (role varchar(64) not null, age double not null);
       """.execute.apply
+    avgAgeByRole.count shouldBe 2
     avgAgeByRole.show
     avgAgeByRole
       .write
@@ -116,5 +120,18 @@ class DataSourceTest extends FunSuite with Matchers {
       .option("password", "sa")
       .option("dbtable", "avg_age_by_role")
       .save
+    val avgAgeByRoles: Dataset[AvgAgeByRole] = sqlContext
+      .read
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+      .option("user", "sa")
+      .option("password", "sa")
+      .option("dbtable", "avg_age_by_role")
+      .load
+      .as[AvgAgeByRole]
+      .cache
+    avgAgeByRoles.count shouldBe 2
+    avgAgeByRoles.show
   }
 }
