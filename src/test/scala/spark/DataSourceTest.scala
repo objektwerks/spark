@@ -66,6 +66,7 @@ class DataSourceTest extends FunSuite with Matchers {
   private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
     val roleByAge: Dataset[Row] = persons.groupBy("role").avg("age").cache // .as[AvgAgeByRole] couldn't resolve avg(age)!
     roleByAge.count shouldBe 2
+    println("role by avg(age):")
     roleByAge.show
     roleByAge.map(row => AvgAgeByRole(row.getString(0), row.getDouble(1))).cache
   }
@@ -87,7 +88,7 @@ class DataSourceTest extends FunSuite with Matchers {
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+      .option("url", "jdbc:h2:mem:test")
       .option("user", "sa")
       .option("password", "sa")
       .option("dbtable", "persons")
@@ -95,6 +96,7 @@ class DataSourceTest extends FunSuite with Matchers {
       .as[Person]
     persons.cache
     persons.count shouldBe 4
+    println("persons:")
     persons.show
     persons
   }
@@ -109,13 +111,14 @@ class DataSourceTest extends FunSuite with Matchers {
           create table avg_age_by_role (role varchar(64) not null, age double not null);
       """.execute.apply
     avgAgeByRole.count shouldBe 2
+    println("avg age by role:")
     avgAgeByRole.show
     avgAgeByRole
       .write
       .mode(SaveMode.Append)
       .format("jdbc")
       .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+      .option("url", "jdbc:h2:mem:test")
       .option("user", "sa")
       .option("password", "sa")
       .option("dbtable", "avg_age_by_role")
@@ -124,7 +127,7 @@ class DataSourceTest extends FunSuite with Matchers {
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1")
+      .option("url", "jdbc:h2:mem:test")
       .option("user", "sa")
       .option("password", "sa")
       .option("dbtable", "avg_age_by_role")
@@ -132,6 +135,7 @@ class DataSourceTest extends FunSuite with Matchers {
       .as[AvgAgeByRole]
       .cache
     avgAgeByRoles.count shouldBe 2
+    println("avg age by roles:")
     avgAgeByRoles.show
   }
 }
