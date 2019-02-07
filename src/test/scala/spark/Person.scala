@@ -24,3 +24,11 @@ object Person {
     def avg: Double = ages.sum / ages.length.toDouble
   }
 }
+
+case class Task(tid: Long, pid: Long, task: String)
+
+object Task {
+  val taskSchema = Encoders.product[Task].schema
+}
+
+case class AvgAgeByRole(role: String, age: Double)

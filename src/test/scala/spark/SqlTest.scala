@@ -45,7 +45,7 @@ class SqlTest extends FunSuite with Matchers {
 
   test("dataframe join") {
     val persons = sparkSession.read.json("./data/person/person.json").cache
-    val tasks = sparkSession.read.json("./data/person/task.json").cache
+    val tasks = sparkSession.read.json("./data/task/task.json").cache
     persons.count shouldBe 4
     tasks.count shouldBe 4
 
@@ -64,7 +64,7 @@ class SqlTest extends FunSuite with Matchers {
 
   test("dataset join") {
     val persons = sparkSession.read.json("./data/person/person.json").as[Person].cache
-    val tasks = sparkSession.read.json("./data/person/task.json").as[Task].cache
+    val tasks = sparkSession.read.json("./data/task/task.json").as[Task].cache
     persons.count shouldBe 4
     tasks.count shouldBe 4
 
