@@ -3,7 +3,7 @@ package spark
 import java.util.UUID
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, Dataset, Row, SaveMode}
+import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
 
 case class Friend(id: Int, name: String, age: Int, score: Int)
@@ -13,11 +13,12 @@ class DataSourceTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("csv") {
-    val dataframe: DataFrame = sparkSession.read
+    val dataframe = sparkSession.read
       .format("csv")
       .option("delimiter",",")
       .option("inferSchema","true")
       .load("./data/txt/friends.txt")
+      .cache
     dataframe.count shouldBe 500
 
     val friends: Dataset[Friend] = dataframe.map(r => Friend(r.getInt(0), r.getString(1), r.getInt(2), r.getInt(3)))
@@ -58,33 +59,36 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("jdbc") {
-    val persons: Dataset[Person] = readPersonsDatasource()
-    val avgAgeByRole: Dataset[AvgAgeByRole] = personsToAvgAgeByRole(persons)
-    writeAvgAgeByRoleDatasource(avgAgeByRole)
+    prepareDatasource shouldBe false  // Prepare
+
+    val persons = readPersonsDatasource  // Source
+    val avgAgeByRole = personsToAvgAgeByRole(persons)  // Flow
+    writeAvgAgeByRoleDatasource(avgAgeByRole)  // Sink
+
+    val avgAgeByRoles = readAvgAgeByRoleDatasource  // Verify
+    avgAgeByRoles.count shouldBe 2
+    avgAgeByRoles.show
   }
 
-  private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
-    val roleByAge: Dataset[Row] = persons.groupBy("role").avg("age").cache // .as[AvgAgeByRole] couldn't resolve avg(age)!
-    roleByAge.count shouldBe 2
-    println("role by avg(age):")
-    roleByAge.show
-    roleByAge.map(row => AvgAgeByRole(row.getString(0), row.getDouble(1))).cache
-  }
-
-  private def readPersonsDatasource(): Dataset[Person] = {
+  private def prepareDatasource: Boolean = {
     import scalikejdbc._
     Class.forName("org.h2.Driver")
     ConnectionPool.singleton("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "sa")
     implicit val session = AutoSession
     sql"""
           drop table persons if exists;
+          drop table avg_age_by_role if exists;
           create table persons (id int not null, age int not null, name varchar(64) not null, role varchar(64) not null);
           insert into persons values (1, 24, 'fred', 'husband');
           insert into persons values (2, 23, 'wilma', 'wife');
           insert into persons values (3, 22, 'barney', 'husband');
           insert into persons values (4, 21, 'betty', 'wife');
+          create table avg_age_by_role (role varchar(64) not null, avg_age double not null);
       """.execute.apply
-    val persons: Dataset[Person] = sqlContext
+  }
+
+  private def readPersonsDatasource: Dataset[Person] = {
+    sqlContext
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
@@ -94,25 +98,13 @@ class DataSourceTest extends FunSuite with Matchers {
       .option("dbtable", "persons")
       .load
       .as[Person]
-    persons.cache
-    persons.count shouldBe 4
-    println("persons:")
-    persons.show
-    persons
+  }
+
+  private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
+    persons.groupBy("role").avg("age").map(row => AvgAgeByRole(row.getString(0), row.getDouble(1)))
   }
 
   private def writeAvgAgeByRoleDatasource(avgAgeByRole: Dataset[AvgAgeByRole]): Unit = {
-    import scalikejdbc._
-    Class.forName("org.h2.Driver")
-    ConnectionPool.singleton("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "sa")
-    implicit val session = AutoSession
-    sql"""
-          drop table avg_age_by_role if exists;
-          create table avg_age_by_role (role varchar(64) not null, age double not null);
-      """.execute.apply
-    avgAgeByRole.count shouldBe 2
-    println("avg age by role:")
-    avgAgeByRole.show
     avgAgeByRole
       .write
       .mode(SaveMode.Append)
@@ -123,7 +115,10 @@ class DataSourceTest extends FunSuite with Matchers {
       .option("password", "sa")
       .option("dbtable", "avg_age_by_role")
       .save
-    val avgAgeByRoles: Dataset[AvgAgeByRole] = sqlContext
+  }
+
+  private def readAvgAgeByRoleDatasource: Dataset[AvgAgeByRole] = {
+    sqlContext
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
@@ -134,8 +129,5 @@ class DataSourceTest extends FunSuite with Matchers {
       .load
       .as[AvgAgeByRole]
       .cache
-    avgAgeByRoles.count shouldBe 2
-    println("avg age by roles:")
-    avgAgeByRoles.show
   }
 }

@@ -31,4 +31,4 @@ object Task {
   val taskSchema = Encoders.product[Task].schema
 }
 
-case class AvgAgeByRole(role: String, age: Double)
+case class AvgAgeByRole(role: String, avg_age: Double)
