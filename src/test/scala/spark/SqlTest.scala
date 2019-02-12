@@ -1,9 +1,10 @@
 package spark
 
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.{Dataset, Row, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
 
 class SqlTest extends FunSuite with Matchers {
+
   import SparkInstance._
   import sparkSession.implicits._
 
@@ -90,5 +91,37 @@ class SqlTest extends FunSuite with Matchers {
     val temps = sqlContext.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
     temps.count shouldBe 6
     temps.show
+  }
+
+  test("jdbc") {
+    writeKeyValues()
+    readKeyValues.count shouldBe 3
+  }
+
+  private def writeKeyValues(): Unit = {
+    val keyValues = List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS()
+    keyValues
+      .write
+      .mode(SaveMode.Append)
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
+      .option("user", "sa")
+      .option("password", "sa")
+      .option("dbtable", "key_values")
+      .save
+  }
+
+  private def readKeyValues: Dataset[KeyValue] = {
+    sqlContext
+      .read
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
+      .option("user", "sa")
+      .option("password", "sa")
+      .option("dbtable", "key_values")
+      .load
+      .as[KeyValue]
   }
 }
