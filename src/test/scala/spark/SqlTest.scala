@@ -93,7 +93,7 @@ class SqlTest extends FunSuite with Matchers {
     temps.show
   }
 
-  test("jdbc") {
+  test("dataset jdbc") {
     val keyValues = List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS
     writeKeyValues("key_values", keyValues)
 
