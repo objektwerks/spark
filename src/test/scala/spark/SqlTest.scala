@@ -94,12 +94,17 @@ class SqlTest extends FunSuite with Matchers {
   }
 
   test("jdbc") {
-    writeKeyValues()
-    readKeyValues.count shouldBe 3
+    val keyValues = List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS
+    writeKeyValues(keyValues)
+
+    val source = readKeyValues
+    source === keyValues
+
+    writeKeyValues(source.map(kv => kv.copy(kv.value * 10)))
+    readKeyValues === List[KeyValue](KeyValue(1, 10), KeyValue(2, 20), KeyValue(3, 30)).toDS
   }
 
-  private def writeKeyValues(): Unit = {
-    val keyValues = List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS()
+  private def writeKeyValues(keyValues: Dataset[KeyValue]): Unit = {
     keyValues
       .write
       .mode(SaveMode.Append)
