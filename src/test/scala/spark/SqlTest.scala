@@ -95,16 +95,16 @@ class SqlTest extends FunSuite with Matchers {
 
   test("jdbc") {
     val keyValues = List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS
-    writeKeyValues(keyValues)
+    writeKeyValues("key_values", keyValues)
 
-    val source = readKeyValues
+    val source = readKeyValues("key_values")
     source === keyValues
 
-    writeKeyValues(source.map(kv => kv.copy(kv.value * 10)))
-    readKeyValues === List[KeyValue](KeyValue(1, 10), KeyValue(2, 20), KeyValue(3, 30)).toDS
+    writeKeyValues("transformed_key_values", source.map(kv => kv.copy(kv.value * 10)))
+    readKeyValues("transformed_key_values") === List[KeyValue](KeyValue(1, 10), KeyValue(2, 20), KeyValue(3, 30)).toDS
   }
 
-  private def writeKeyValues(keyValues: Dataset[KeyValue]): Unit = {
+  private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit = {
     keyValues
       .write
       .mode(SaveMode.Append)
@@ -113,11 +113,11 @@ class SqlTest extends FunSuite with Matchers {
       .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
       .option("user", "sa")
       .option("password", "sa")
-      .option("dbtable", "key_values")
+      .option("dbtable", table)
       .save
   }
 
-  private def readKeyValues: Dataset[KeyValue] = {
+  private def readKeyValues(table: String): Dataset[KeyValue] = {
     sqlContext
       .read
       .format("jdbc")
@@ -125,7 +125,7 @@ class SqlTest extends FunSuite with Matchers {
       .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
       .option("user", "sa")
       .option("password", "sa")
-      .option("dbtable", "key_values")
+      .option("dbtable", table)
       .load
       .as[KeyValue]
   }
