@@ -4,6 +4,7 @@ import org.apache.spark.sql.{Dataset, Row, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
 
 class SqlTest extends FunSuite with Matchers {
+
   import SparkInstance._
   import sparkSession.implicits._
 
