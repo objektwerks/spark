@@ -12,7 +12,7 @@ Test
 
 >Running **sbt clean test** takes about 51 seconds, while **gradle clean test** takes about 42 seconds.
 
->See **/spark/build/reports/tests/test/index.html** for gradle test result report
+>See **/spark/build/reports/tests/test/index.html** for gradle test result report.
 
 Run
 ---
