@@ -7,4 +7,5 @@ build/
 .settings
 .classpath
 .project
+spark-warehouse
 .DS_Store
