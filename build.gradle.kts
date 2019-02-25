@@ -1,7 +1,7 @@
 plugins {
     scala
     eclipse
-    id("com.github.maiflai.scalatest") version "0.23"
+    id("com.github.maiflai.scalatest") version "0.24"
 }
 
 repositories {
