@@ -10,7 +10,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-sql" % sparkVersion,
     "org.apache.spark" %% "spark-mllib" % sparkVersion,
     "org.apache.spark" %% "spark-graphx" % sparkVersion,
-    "org.scalikejdbc" %% "scalikejdbc" % "3.2.4",
+    "org.scalikejdbc" %% "scalikejdbc" % "3.3.3",
     "com.h2database" % "h2" % "1.4.197",
     "org.slf4j" % "slf4j-api" % "1.7.25",
     "org.scalatest" %% "scalatest" % "3.0.5" % Test
