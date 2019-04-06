@@ -13,7 +13,8 @@ class DataSourceTest extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("csv") {
-    val dataframe = sparkSession.read
+    val dataframe = sparkSession
+      .read
       .format("csv")
       .option("delimiter",",")
       .option("inferSchema","true")
