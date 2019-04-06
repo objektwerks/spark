@@ -1,11 +1,6 @@
 target/
 project/project/
 project/target/
-.gradle
-build/
 .idea
-.settings
-.classpath
-.project
 spark-warehouse
 .DS_Store
