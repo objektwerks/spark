@@ -2,10 +2,6 @@ Spark
 -----
 >The purpose of the project is to test Spark features.
 
-TODO
-----
-1. Enhance Dataset and Dataframe expressions
-
 Test
 ----
 1. sbt clean test
