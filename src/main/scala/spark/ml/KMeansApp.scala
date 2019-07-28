@@ -1,4 +1,4 @@
-package spark.mlib
+package spark.ml
 
 import org.apache.spark.mllib.clustering.StreamingKMeans
 import org.apache.spark.mllib.linalg.Vectors

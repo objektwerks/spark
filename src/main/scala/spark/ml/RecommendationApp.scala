@@ -1,4 +1,4 @@
-package spark.mlib
+package spark.ml
 
 import java.nio.charset.CodingErrorAction
 
