@@ -9,14 +9,14 @@ Test
 Run
 ---
 1. sbt clean test run
-
- [1] spark.graphx.FlightDataApp
- [2] spark.ml.WineRatingApp
- [3] spark.mlib.KMeansApp
- [4] spark.mlib.LinearRegressionApp
- [5] spark.mlib.RecommendationApp
- [6] spark.streaming.LogEntryApp
  
+    * [1] spark.graphx.FlightDataApp
+    * [2] spark.ml.KMeansApp
+    * [3] spark.ml.LinearRegressionApp
+    * [4] spark.ml.RecommendationApp
+    * [5] spark.ml.WinePricePredictionApp
+    * [6] spark.streaming.LogEntryApp
+
 Logs
 ----
 1. ./target/test.log
