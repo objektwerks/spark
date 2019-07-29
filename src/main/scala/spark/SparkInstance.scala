@@ -5,9 +5,17 @@ import java.net.InetAddress
 import org.apache.spark.sql.SparkSession
 
 object SparkInstance {
-  val sparkSession = SparkSession.builder.master("local[*]").appName(InetAddress.getLocalHost.getHostName).getOrCreate()
+  val sparkSession = SparkSession
+    .builder
+    .master("local[*]")
+    .appName(InetAddress.getLocalHost.getHostName)
+    .config("spark.sql.shuffle.partitions", "4")
+    .config("spark.eventLog.enabled", true)
+    .config("spark.eventLog.dir", "/tmp/spark-events")
+    .getOrCreate()
   val sparkContext = sparkSession.sparkContext
   val sqlContext = sparkSession.sqlContext
+  sparkContext.addSparkListener(SparkAppListener())
   println("Initialized Spark instance.")
 
   sys.addShutdownHook {
