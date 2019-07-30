@@ -18,13 +18,13 @@ class DataframeTest extends FunSuite with Matchers {
     sortByName.head.getString(2) shouldBe "barney"
     sortByName.head.getString(3) shouldBe "husband"
 
-    val selectByAge = dataframe.select("age").where("age > 23").cache
-    selectByAge.count shouldBe 1
-    selectByAge.head.getLong(0) shouldBe 24
-
     val selectByName = dataframe.select("name").where("name == 'barney'").cache
     selectByName.count shouldBe 1
     selectByName.head.getString(0) shouldBe "barney"
+
+    val selectByAge = dataframe.select("age").where("age > 23").cache
+    selectByAge.count shouldBe 1
+    selectByAge.head.getLong(0) shouldBe 24
 
     val orderByName = dataframe.select("name").orderBy("name").cache
     orderByName.count shouldBe 4
