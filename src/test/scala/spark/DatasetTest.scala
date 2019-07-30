@@ -6,8 +6,8 @@ import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
   import SparkInstance._
-  import org.apache.spark.sql.functions._
   import sparkSession.implicits._
+  import org.apache.spark.sql.functions._
 
   val dataset = sparkSession.read.json("./data/person/person.json").as[Person].cache
 
@@ -39,7 +39,7 @@ class DatasetTest extends FunSuite with Matchers {
     selectNameByAge.head shouldBe "fred"
   }
 
-  test("sort") {
+  test("sort > orderBy") {
     val sortByName = dataset.sort("name").cache
     sortByName.count shouldBe 4
     sortByName.head.name shouldBe "barney"
