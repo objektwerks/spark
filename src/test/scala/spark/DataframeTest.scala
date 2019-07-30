@@ -1,57 +1,50 @@
 package spark
 
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.Row
 import org.scalatest.{FunSuite, Matchers}
 
 class DataframeTest extends FunSuite with Matchers {
   import SparkInstance._
-  import sparkSession.implicits._
+  import org.apache.spark.sql.functions._
 
   test("dataframe") {
     val dataframe = sparkSession.read.json("./data/person/person.json").cache
     dataframe.printSchema
-    assert(dataframe.isInstanceOf[Dataset[Row]])
-    assert(dataframe.toDF.as[Person].isInstanceOf[Dataset[Person]])
     dataframe.count shouldBe 4
-
-    val filterByName = dataframe.filter("name == 'barney'").cache
-    filterByName.count shouldBe 1
-    filterByName.first.getLong(0) shouldBe 22
-    filterByName.first.getString(2) shouldBe "barney"
-    filterByName.first.getString(3) shouldBe "husband"
 
     val sortByName = dataframe.sort("name").cache
     sortByName.count shouldBe 4
-    sortByName.first.getLong(0) shouldBe 22
-    sortByName.first.getString(2) shouldBe "barney"
-    sortByName.first.getString(3) shouldBe "husband"
-
-    val selectByName = dataframe.select("name").where("name == 'barney'").cache
-    selectByName.count shouldBe 1
-    selectByName.first.getString(0) shouldBe "barney"
+    sortByName.head.getLong(0) shouldBe 22
+    sortByName.head.getString(2) shouldBe "barney"
+    sortByName.head.getString(3) shouldBe "husband"
 
     val selectByAge = dataframe.select("age").where("age > 23").cache
     selectByAge.count shouldBe 1
-    selectByAge.first.getLong(0) shouldBe 24
+    selectByAge.head.getLong(0) shouldBe 24
 
-    val selectNameByAge = dataframe.select("name").where("age == 24").as[String].cache
-    selectNameByAge.count shouldBe 1
-    selectNameByAge.head shouldBe "fred"
+    val selectByName = dataframe.select("name").where("name == 'barney'").cache
+    selectByName.count shouldBe 1
+    selectByName.head.getString(0) shouldBe "barney"
 
-    val orderByName = dataframe.select("name").orderBy("name").as[String].cache
+    val orderByName = dataframe.select("name").orderBy("name").cache
     orderByName.count shouldBe 4
-    orderByName.head shouldBe "barney"
+    orderByName.head.getString(0) shouldBe "barney"
 
-    dataframe.agg(Map("age" -> "min")).first.getLong(0) shouldBe 21
-    dataframe.agg(Map("age" -> "avg")).first.getDouble(0) shouldBe 22.5
-    dataframe.agg(Map("age" -> "max")).first.getLong(0) shouldBe 24
-    dataframe.agg(Map("age" -> "sum")).first.getLong(0) shouldBe 90
+    val filterByName = dataframe.filter("name == 'barney'").cache
+    filterByName.count shouldBe 1
+    filterByName.head.getLong(0) shouldBe 22
+    filterByName.head.getString(2) shouldBe "barney"
+    filterByName.head.getString(3) shouldBe "husband"
 
-    import org.apache.spark.sql.functions._
-    dataframe.agg(min(dataframe("age"))).head.getLong(0) shouldBe 21
-    dataframe.agg(avg(dataframe("age"))).head.getDouble(0) shouldBe 22.5
-    dataframe.agg(max(dataframe("age"))).head.getLong(0) shouldBe 24
-    dataframe.agg(sum(dataframe("age"))).head.getLong(0) shouldBe 90
+    dataframe.select(min(col("age"))).head.getLong(0) shouldBe 21
+    dataframe.select(max(col("age"))).head.getLong(0) shouldBe 24
+    dataframe.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
+    dataframe.select(sum(col("age"))).head.getLong(0) shouldBe 90
+
+    dataframe.agg(Map("age" -> "min")).head.getLong(0) shouldBe 21
+    dataframe.agg(Map("age" -> "avg")).head.getDouble(0) shouldBe 22.5
+    dataframe.agg(Map("age" -> "max")).head.getLong(0) shouldBe 24
+    dataframe.agg(Map("age" -> "sum")).head.getLong(0) shouldBe 90
 
     val groupByRole = dataframe.groupBy("role").avg("age").cache
     groupByRole.count shouldBe 2
@@ -59,10 +52,6 @@ class DataframeTest extends FunSuite with Matchers {
       case Row("husband", avgAge) => avgAge shouldBe 23.0
       case Row("wife", avgAge) => avgAge shouldBe 22.0
     }
-    val groupByRoleMap = groupByRole.collect.map(row => row.getString(0) -> row.getDouble(1)).toMap[String, Double]
-    groupByRoleMap("husband") shouldBe 23.0
-    groupByRoleMap("wife") shouldBe 22.0
-
-    dataframe.describe("age").show
+    groupByRole.show
   }
 }
