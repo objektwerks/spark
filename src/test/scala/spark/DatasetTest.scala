@@ -37,10 +37,10 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
     dataset.select(sum(col("age"))).head.getLong(0) shouldBe 90
 
-    dataset.agg(Map("age" -> "min")).head.getLong(0) shouldBe 21
-    dataset.agg(Map("age" -> "avg")).head.getDouble(0) shouldBe 22.5
-    dataset.agg(Map("age" -> "max")).head.getLong(0) shouldBe 24
-    dataset.agg(Map("age" -> "sum")).head.getLong(0) shouldBe 90
+    dataset.agg("age" -> "min").head.getLong(0) shouldBe 21
+    dataset.agg("age" -> "avg").head.getDouble(0) shouldBe 22.5
+    dataset.agg("age" -> "max").head.getLong(0) shouldBe 24
+    dataset.agg("age" -> "sum").head.getLong(0) shouldBe 90
 
     val groupByRole = dataset.groupBy("role").avg("age").as[(String, Double)].cache
     groupByRole.count shouldBe 2

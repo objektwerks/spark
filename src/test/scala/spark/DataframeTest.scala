@@ -41,10 +41,10 @@ class DataframeTest extends FunSuite with Matchers {
     dataframe.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
     dataframe.select(sum(col("age"))).head.getLong(0) shouldBe 90
 
-    dataframe.agg(Map("age" -> "min")).head.getLong(0) shouldBe 21
-    dataframe.agg(Map("age" -> "avg")).head.getDouble(0) shouldBe 22.5
-    dataframe.agg(Map("age" -> "max")).head.getLong(0) shouldBe 24
-    dataframe.agg(Map("age" -> "sum")).head.getLong(0) shouldBe 90
+    dataframe.agg("age" -> "min").head.getLong(0) shouldBe 21
+    dataframe.agg("age" -> "avg").head.getDouble(0) shouldBe 22.5
+    dataframe.agg("age" -> "max").head.getLong(0) shouldBe 24
+    dataframe.agg("age" -> "sum").head.getLong(0) shouldBe 90
 
     val groupByRole = dataframe.groupBy("role").avg("age").cache
     groupByRole.count shouldBe 2
