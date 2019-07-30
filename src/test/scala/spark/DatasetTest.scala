@@ -51,4 +51,16 @@ class DatasetTest extends FunSuite with Matchers {
     }
     groupByRole.show
   }
+
+  test("dataset join") {
+    val persons = sparkSession.read.json("./data/person/person.json").as[Person].cache
+    val tasks = sparkSession.read.json("./data/task/task.json").as[Task].cache
+    persons.count shouldBe 4
+    tasks.count shouldBe 4
+
+    val joinBy = persons.col("id") === tasks.col("pid")
+    val personsTasks = persons.join(tasks, joinBy)
+    personsTasks.count shouldBe 4
+    personsTasks.show
+  }
 }
