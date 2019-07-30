@@ -11,36 +11,33 @@ class SqlTest extends FunSuite with Matchers {
     val dataframe = sparkSession.read.json("./data/person/person.json").cache
     assert(dataframe.isInstanceOf[Dataset[Row]])
     dataframe.count shouldBe 4
-
     dataframe.createOrReplaceTempView("persons")
 
     val rows = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
-    rows.show
     rows.count shouldBe 2
-    rows.head.getString(2) shouldBe "betty"
     rows.head.getLong(0) shouldBe 21
+    rows.head.getString(2) shouldBe "betty"
 
-    sqlContext.sql("select min(age) from persons").take(1)(0).getLong(0) shouldBe 21
-    sqlContext.sql("select avg(age) from persons").take(1)(0).getDouble(0) shouldBe 22.5
-    sqlContext.sql("select max(age) from persons").take(1)(0).getLong(0) shouldBe 24
-    sqlContext.sql("select sum(age) from persons").take(1)(0).getLong(0) shouldBe 90
+    sqlContext.sql("select min(age) from persons").head.getLong(0) shouldBe 21
+    sqlContext.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
+    sqlContext.sql("select max(age) from persons").head.getLong(0) shouldBe 24
+    sqlContext.sql("select sum(age) from persons").head.getLong(0) shouldBe 90
   }
 
   test("dataset sql") {
     val dataset = sparkSession.read.json("./data/person/person.json").as[Person].cache
     dataset.count shouldBe 4
-
     dataset.createOrReplaceTempView("persons")
 
     val persons = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
     persons.count shouldBe 2
-    persons.head.name shouldBe "betty"
     persons.head.age shouldBe 21
+    persons.head.name shouldBe "betty"
 
-    sqlContext.sql("select min(age) from persons").as[Long].take(1)(0) shouldBe 21
-    sqlContext.sql("select avg(age) from persons").as[Double].take(1)(0) shouldBe 22.5
-    sqlContext.sql("select max(age) from persons").as[Long].take(1)(0) shouldBe 24
-    sqlContext.sql("select sum(age) from persons").as[Long].take(1)(0) shouldBe 90
+    sqlContext.sql("select min(age) from persons").head.getLong(0) shouldBe 21
+    sqlContext.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
+    sqlContext.sql("select max(age) from persons").head.getLong(0) shouldBe 24
+    sqlContext.sql("select sum(age) from persons").head.getLong(0) shouldBe 90
   }
 
   test("dataframe join") {
@@ -48,7 +45,6 @@ class SqlTest extends FunSuite with Matchers {
     val tasks = sparkSession.read.json("./data/task/task.json").cache
     persons.count shouldBe 4
     tasks.count shouldBe 4
-
     persons.createOrReplaceTempView("persons")
     tasks.createOrReplaceTempView("tasks")
 
@@ -67,7 +63,6 @@ class SqlTest extends FunSuite with Matchers {
     val tasks = sparkSession.read.json("./data/task/task.json").as[Task].cache
     persons.count shouldBe 4
     tasks.count shouldBe 4
-
     persons.createOrReplaceTempView("persons")
     tasks.createOrReplaceTempView("tasks")
 
