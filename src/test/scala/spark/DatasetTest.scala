@@ -1,5 +1,7 @@
 package spark
 
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
@@ -7,22 +9,20 @@ class DatasetTest extends FunSuite with Matchers {
   import org.apache.spark.sql.functions._
   import sparkSession.implicits._
 
+  val dataset = sparkSession.read.json("./data/person/person.json").as[Person].cache
+
   test("dataset") {
-    val dataset = sparkSession.read.json("./data/person/person.json").as[Person].cache
     dataset.printSchema
     dataset.count shouldBe 4
+    assert(dataset.toDF.isInstanceOf[Dataset[Row]])
+    assert(dataset.toDF.as[Person].isInstanceOf[Dataset[Person]])
+    assert(dataset.rdd.isInstanceOf[RDD[Person]])
+  }
 
-    val sortByName = dataset.sort("name").cache
-    sortByName.count shouldBe 4
-    sortByName.head.name shouldBe "barney"
-
-    val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
-    selectNameByAge.count shouldBe 1
-    selectNameByAge.head shouldBe "fred"
-
-    val orderByName = dataset.select("name").orderBy("name").as[String].cache
-    orderByName.count shouldBe 4
-    orderByName.head shouldBe "barney"
+  test("map > filter") {
+    val mapByName = dataset.map(_.name).cache
+    mapByName.count shouldBe 4
+    mapByName.head shouldBe "fred"
 
     val filterByName = dataset.filter(_.name == "barney").cache
     filterByName.count shouldBe 1
@@ -31,7 +31,25 @@ class DatasetTest extends FunSuite with Matchers {
     val filterByAge = dataset.filter(_.age > 23).cache
     filterByAge.count shouldBe 1
     filterByAge.head.age shouldBe 24
+  }
 
+  test("select > where") {
+    val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
+    selectNameByAge.count shouldBe 1
+    selectNameByAge.head shouldBe "fred"
+  }
+
+  test("sort") {
+    val sortByName = dataset.sort("name").cache
+    sortByName.count shouldBe 4
+    sortByName.head.name shouldBe "barney"
+
+    val orderByName = dataset.select("name").orderBy("name").as[String].cache
+    orderByName.count shouldBe 4
+    orderByName.head shouldBe "barney"
+  }
+
+  test("aggregate") {
     dataset.select(min(col("age"))).head.getLong(0) shouldBe 21
     dataset.select(max(col("age"))).head.getLong(0) shouldBe 24
     dataset.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
@@ -52,7 +70,7 @@ class DatasetTest extends FunSuite with Matchers {
     groupByRole.show
   }
 
-  test("dataset join") {
+  test("join") {
     val persons = sparkSession.read.json("./data/person/person.json").as[Person].cache
     val tasks = sparkSession.read.json("./data/task/task.json").as[Task].cache
     persons.count shouldBe 4
