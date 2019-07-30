@@ -1,13 +1,16 @@
 package spark
 
+import org.apache.spark.util.LongAccumulator
 import org.scalatest.{FunSuite, Matchers}
 
 class AccumulatorTest extends FunSuite with Matchers {
   import SparkInstance._
 
   test("accumulator") {
-    val accumulator = sparkContext.longAccumulator
-    sparkContext.parallelize(seq = 1 to 1000, numSlices = 4).foreach(x => accumulator.add(x.toLong))
-    accumulator.value shouldBe 500500
+    val accumulator = new LongAccumulator()
+    val accumulatorName = "longAccumulator"
+    sparkContext.register(accumulator, accumulatorName)
+    accumulator.add(1)
+    accumulator.value shouldBe 1
   }
 }
