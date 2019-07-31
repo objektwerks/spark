@@ -13,16 +13,12 @@ import scala.io.{Codec, Source}
 class RddTest extends FunSuite with Matchers {
   import SparkInstance._
 
-  test("transformations with action") {
+  test("transformations -> action") {
     val rdd = sparkContext.makeRDD(Array(1, 2, 3)).cache
     assert(rdd.filter(_ % 2 == 0).first == 2)
     assert(rdd.filter(_ % 2 != 0).first == 1)
     assert(rdd.map(_ + 1).sum == 9)
     assert(rdd.map(_ + 1).collect sameElements Array(2, 3, 4))
-  }
-
-  test("actions") {
-    val rdd = sparkContext.makeRDD(Array(1, 2, 3)).cache
     assert(rdd.count == 3)
     assert(rdd.first == 1)
     assert(rdd.min == 1)
@@ -228,11 +224,12 @@ class RddTest extends FunSuite with Matchers {
       codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
       val moviesById = mutable.Map[Int, String]()
-      val lines = Source.fromFile("./data/txt//movie-data.txt").getLines()
-      lines foreach { line =>
+      val source = Source.fromFile("./data/txt//movie-data.txt")
+      source.getLines foreach { line =>
         val fields = line.split('|')
         if (fields.length > 1) moviesById += (fields(0).toInt -> fields(1))
       }
+      source.close
       moviesById.toMap
     }
 
