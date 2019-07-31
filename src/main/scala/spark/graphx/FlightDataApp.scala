@@ -18,7 +18,7 @@ object FlightDataApp extends App {
   val flightEdges = flightsFromTo
     .map(originDest => ( (MurmurHash3.stringHash( originDest(0).toString ), MurmurHash3.stringHash( originDest(1).toString ) ), 1))
     .reduceByKey(_ + _)
-    .map(airportIds => Edge(airportIds._1._1.toLong, airportIds._1._2.toLong, airportIds._2))
+    .map(airportIds => Edge(airportIds._1._1.asInstanceOf[Long], airportIds._1._2.asInstanceOf[Long], airportIds._2))
 
   val graph = Graph(airportVertices, flightEdges, "default-airport").persist()
   println(s"Graph vertices: ${graph.numVertices}")
