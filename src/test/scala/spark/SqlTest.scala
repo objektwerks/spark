@@ -94,6 +94,7 @@ class SqlTest extends FunSuite with Matchers {
     sqlContext.sql("select count(*) from key_values").head.getLong(0) shouldBe 3
     sqlContext.sql("select min(key) as min_key from key_values").head.getInt(0) shouldBe 1
     sqlContext.sql("select max(value) as max_value from key_values").head.getInt(0) shouldBe 3
+    sqlContext.sql("select sum(value) as sum_value from key_values").head.getLong(0) shouldBe 6
   }
 
   private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit = {
