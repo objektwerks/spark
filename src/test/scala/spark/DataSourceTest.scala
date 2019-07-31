@@ -71,19 +71,6 @@ class DataSourceTest extends FunSuite with Matchers {
     readKeyValues("transformed_key_values") === List[KeyValue](KeyValue(1, 10), KeyValue(2, 20), KeyValue(3, 30)).toDS
   }
 
-  private def readKeyValues(table: String): Dataset[KeyValue] = {
-    sqlContext
-      .read
-      .format("jdbc")
-      .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
-      .option("user", "sa")
-      .option("password", "sa")
-      .option("dbtable", table)
-      .load
-      .as[KeyValue]
-  }
-
   private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit = {
     keyValues
       .write
@@ -95,6 +82,19 @@ class DataSourceTest extends FunSuite with Matchers {
       .option("password", "sa")
       .option("dbtable", table)
       .save
+  }
+
+  private def readKeyValues(table: String): Dataset[KeyValue] = {
+    sqlContext
+      .read
+      .format("jdbc")
+      .option("driver", "org.h2.Driver")
+      .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
+      .option("user", "sa")
+      .option("password", "sa")
+      .option("dbtable", table)
+      .load
+      .as[KeyValue]
   }
 
   test("jdbc persons") {
