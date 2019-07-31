@@ -47,7 +47,7 @@ class DataframeTest extends FunSuite with Matchers {
     orderByName.head.getString(0) shouldBe "barney"
   }
 
-  test("aggregate") {
+  test("agg") {
     dataframe.select(min(col("age"))).head.getLong(0) shouldBe 21
     dataframe.select(max(col("age"))).head.getLong(0) shouldBe 24
     dataframe.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
@@ -57,7 +57,9 @@ class DataframeTest extends FunSuite with Matchers {
     dataframe.agg("age" -> "avg").head.getDouble(0) shouldBe 22.5
     dataframe.agg("age" -> "max").head.getLong(0) shouldBe 24
     dataframe.agg("age" -> "sum").head.getLong(0) shouldBe 90
+  }
 
+  test("groupBy -> agg") {
     val groupByRole = dataframe.groupBy("role").avg("age").cache
     groupByRole.count shouldBe 2
     groupByRole.collect.map {
