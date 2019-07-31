@@ -36,8 +36,8 @@ class RddTest extends FunSuite with Matchers {
   }
 
   test("parallelize") {
-    val data = 1 to 1000000
-    val rdd = sparkContext.parallelize(data)
+    val xs = 1 to 1000000
+    val rdd = sparkContext.parallelize(seq = xs, numSlices = 100)
     val result = rdd.filter(_ % 2 == 0).collect
     assert(result.length == 500000)
   }
