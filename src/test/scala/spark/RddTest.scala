@@ -86,7 +86,7 @@ class RddTest extends FunSuite with Matchers {
     assert(rdd4.cartesian(rdd5).collect sameElements Array((1,3), (1, 4), (2, 3), (2, 4)))
   }
 
-  test("reduce by key") {
+  test("reduceByKey") {
     val rdd = sparkContext.makeRDD(Array((1, 1), (1, 2), (1, 3))).cache
     val (key, aggregate) = rdd.reduceByKey(_ + _).first
     assert(rdd.keys.collect sameElements Array(1, 1, 1))
@@ -94,7 +94,7 @@ class RddTest extends FunSuite with Matchers {
     assert(key == 1 && aggregate == 6)
   }
 
-  test("group by key") {
+  test("groupByKey") {
     val rdd = sparkContext.makeRDD(Array((1, 1), (1, 2), (1, 3))).cache
     val (key, list) = rdd.groupByKey.first
     assert(rdd.keys.collect sameElements Array(1, 1, 1))
@@ -102,12 +102,12 @@ class RddTest extends FunSuite with Matchers {
     assert(key == 1 && list.sum == 6)
   }
 
-  test("sort by key") {
+  test("sortByKey") {
     val rdd = sparkContext.makeRDD(Array((3, 1), (2, 2), (1, 3)))
     assert(rdd.reduceByKey(_ + _).sortByKey(ascending = true).collect sameElements Array((1,3), (2, 2), (3, 1)))
   }
 
-  test("map values") {
+  test("mapValues") {
     val rdd = sparkContext.makeRDD(Array((1, 1), (1, 2), (1, 3)))
     assert(12 == rdd.mapValues(_ * 2).values.sum)
   }
@@ -141,7 +141,7 @@ class RddTest extends FunSuite with Matchers {
     wordCounts.collect.sortBy(_._1).foreach(println)
   }
 
-  test("movie ratings ~ count by value") {
+  test("movie ratings -> countByValue") {
     val lines = sparkContext.textFile("./data/txt/movie-ratings.txt")
     val ratings = lines.map(line => line.split("\t")(2).toInt)
     val ratingsByCount = ratings.countByValue
@@ -152,7 +152,7 @@ class RddTest extends FunSuite with Matchers {
     ratingsByCount(5) shouldBe 21201
   }
 
-  test("friends ~ average") {
+  test("friends -> average") {
     def parseLine(line: String): (Int, Int) = {
       val fields = line.split(",")
       val age = fields(2).toInt
@@ -169,7 +169,7 @@ class RddTest extends FunSuite with Matchers {
     (69, 235) shouldBe results.last
   }
 
-  test("weather ~ min, max") {
+  test("weather -> min, max") {
     def parseLine(line: String): (String, String, Float) = {
       val fields = line.split(",")
       val station = fields(0)
@@ -194,7 +194,7 @@ class RddTest extends FunSuite with Matchers {
     ("EZE00100082", 90.14F) shouldBe maxResults.head
   }
 
-  test("orders ~ sorted by key") {
+  test("orders -> sortByKey") {
     def parseLine(line: String): (Int, Float) = {
       val fields = line.split(",")
       val customer = fields(0).toInt
@@ -217,7 +217,7 @@ class RddTest extends FunSuite with Matchers {
     5004.8916F shouldBe amounts.sum / amounts.length // avg
   }
 
-  test("movies and movie ratings ~ broadcast, reduce by key") {
+  test("movies and movie ratings -> broadcast, reduceByKey") {
     def loadMovies(): Map[Int, String] = {
       implicit val codec = Codec("UTF-8")
       codec.onMalformedInput(CodingErrorAction.REPLACE)
@@ -245,7 +245,7 @@ class RddTest extends FunSuite with Matchers {
     ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
 
-  test("marvel ~ graph analysis") {
+  test("marvel -> graph analysis") {
     implicit val codec = Codec("UTF-8")
     codec.onMalformedInput(CodingErrorAction.REPLACE)
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
