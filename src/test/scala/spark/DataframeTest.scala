@@ -5,8 +5,8 @@ import org.scalatest.{FunSuite, Matchers}
 
 class DataframeTest extends FunSuite with Matchers {
   import SparkInstance._
-  import sparkSession.implicits._
   import org.apache.spark.sql.functions._
+  import sparkSession.implicits._
 
   val dataframe = sparkSession.read.json("./data/person/person.json").cache
 

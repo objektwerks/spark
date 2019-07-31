@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.{Dataset, Row, SaveMode}
+import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
 
 class SqlTest extends FunSuite with Matchers {
@@ -85,42 +85,5 @@ class SqlTest extends FunSuite with Matchers {
     val temps = sqlContext.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
     temps.count shouldBe 6
     temps.show
-  }
-
-  test("dataset jdbc") {
-    val keyValues = List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS
-    writeKeyValues("key_values", keyValues)
-
-    val source = readKeyValues("key_values")
-    source === keyValues
-
-    writeKeyValues("transformed_key_values", source.map(kv => kv.copy(kv.value * 10)))
-    readKeyValues("transformed_key_values") === List[KeyValue](KeyValue(1, 10), KeyValue(2, 20), KeyValue(3, 30)).toDS
-  }
-
-  private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit = {
-    keyValues
-      .write
-      .mode(SaveMode.Append)
-      .format("jdbc")
-      .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
-      .option("user", "sa")
-      .option("password", "sa")
-      .option("dbtable", table)
-      .save
-  }
-
-  private def readKeyValues(table: String): Dataset[KeyValue] = {
-    sqlContext
-      .read
-      .format("jdbc")
-      .option("driver", "org.h2.Driver")
-      .option("url", "jdbc:h2:mem:kv;DB_CLOSE_DELAY=-1")
-      .option("user", "sa")
-      .option("password", "sa")
-      .option("dbtable", table)
-      .load
-      .as[KeyValue]
   }
 }
