@@ -10,6 +10,7 @@ object SparkInstance {
     .master("local[*]")
     .appName(InetAddress.getLocalHost.getHostName)
     .config("spark.sql.shuffle.partitions", "4")
+    .config("spark.sql.warehouse.dir", "./target/spark-warehouse")
     .config("spark.eventLog.enabled", true)
     .config("spark.eventLog.dir", "./target")
     .getOrCreate()
