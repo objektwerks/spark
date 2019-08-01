@@ -22,6 +22,10 @@ Logs
 1. ./target/test.log
 2. ./target/app.log
 
+Events
+------
+1. ./target/local-*
+
 JDKs
 ----
 >If you have more than one JDK installed, such as JDK 8 and JDK 11, you need to run sbt using JDK 8.

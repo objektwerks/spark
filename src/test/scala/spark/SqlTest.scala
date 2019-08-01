@@ -91,7 +91,7 @@ class SqlTest extends FunSuite with Matchers {
     writeKeyValues("key_values", List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS)
     val keyvalues = readKeyValues("key_values").toDF
     keyvalues.createOrReplaceTempView("key_values")
-    sqlContext.sql("select count(*) from key_values").head.getLong(0) shouldBe 3
+    sqlContext.sql("select count(*) as total_rows from key_values").head.getLong(0) shouldBe 3
     sqlContext.sql("select min(key) as min_key from key_values").head.getInt(0) shouldBe 1
     sqlContext.sql("select max(value) as max_value from key_values").head.getInt(0) shouldBe 3
     sqlContext.sql("select sum(value) as sum_value from key_values").head.getLong(0) shouldBe 6

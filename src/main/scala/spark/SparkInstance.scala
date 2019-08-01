@@ -11,7 +11,7 @@ object SparkInstance {
     .appName(InetAddress.getLocalHost.getHostName)
     .config("spark.sql.shuffle.partitions", "4")
     .config("spark.eventLog.enabled", true)
-    .config("spark.eventLog.dir", "/tmp/spark-events")
+    .config("spark.eventLog.dir", "./target")
     .getOrCreate()
   val sparkContext = sparkSession.sparkContext
   val sqlContext = sparkSession.sqlContext
