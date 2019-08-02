@@ -17,7 +17,7 @@ class DeltaLakeTest extends FunSuite with Matchers {
   test("structured streaming") {
     import Person._
     val rolesPath = "./target/delta/roles"
-    val query = sparkSession
+    sparkSession
       .readStream
       .option("basePath", "./data/person")
       .schema(personStructType)
@@ -29,8 +29,8 @@ class DeltaLakeTest extends FunSuite with Matchers {
       .outputMode("complete")
       .option("checkpointLocation", "./target/delta/roles/checkpoints")
       .start(rolesPath)
-    query.awaitTermination(6000L)
-    val roles = sparkSession
+      .awaitTermination(6000L)
+    sparkSession
       .readStream
       .format("delta")
       .load(rolesPath)
@@ -38,7 +38,7 @@ class DeltaLakeTest extends FunSuite with Matchers {
       .format("console")
       .outputMode("append")
       .start
-    roles.awaitTermination(3000L)
+      .awaitTermination(3000L)
     val rolesDelta = sparkSession.read.format("delta").load(rolesPath)
     rolesDelta.select("*").show
     rolesDelta.select("*").count shouldBe 4
