@@ -5,8 +5,17 @@ import org.apache.spark.streaming.{Milliseconds, StreamingContext}
 import spark.SparkInstance.sparkContext
 
 import scala.collection.mutable
+import scala.util.Try
 
 package object spark {
+  def createSparkEventsDir(dir: String): Boolean = {
+    import java.nio.file.{Files, Paths}
+    val path = Paths.get(dir)
+    if (!Files.exists(path))
+      Try ( Files.createDirectories(path) ).isSuccess
+    else true
+  }
+
   def textFileToDStream(filePath: String, sparkContext: SparkContext, streamingContext: StreamingContext): DStream[String] = {
     val queue = mutable.Queue[RDD[String]]()
     val dstream = streamingContext.queueStream(queue)
