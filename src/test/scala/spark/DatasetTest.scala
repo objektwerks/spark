@@ -34,6 +34,12 @@ class DatasetTest extends FunSuite with Matchers {
     filterByAge.head.age shouldBe 24
   }
 
+  test("map -> filter") {
+    val betty = dataset.map(_.name.toUpperCase).filter(_ == "BETTY").cache
+    betty.count shouldBe 1
+    betty.head shouldBe "BETTY"
+  }
+
   test("select > where") {
     val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
