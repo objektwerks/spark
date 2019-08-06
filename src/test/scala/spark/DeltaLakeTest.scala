@@ -29,7 +29,7 @@ class DeltaLakeTest extends FunSuite with Matchers {
       .outputMode("complete")
       .option("checkpointLocation", "./target/delta/roles/checkpoints")
       .start(rolesPath)
-      .awaitTermination(6000L)
+      .awaitTermination(9000L) // Time-dependent due to slow Delta Lake IO!
     sparkSession
       .readStream
       .format("delta")
