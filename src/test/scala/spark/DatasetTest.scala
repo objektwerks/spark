@@ -18,11 +18,13 @@ class DatasetTest extends FunSuite with Matchers {
     assert(dataset.rdd.isInstanceOf[RDD[Person]])
   }
 
-  test("map > filter") {
-    val mapByName = dataset.map(_.name).cache
-    mapByName.count shouldBe 4
-    mapByName.head shouldBe "fred"
+  test("map") {
+    val mapNameToUpperCase = dataset.map(_.name.toUpperCase).cache
+    mapNameToUpperCase.count shouldBe 4
+    mapNameToUpperCase.head shouldBe "FRED"
+  }
 
+  test("filter") {
     val filterByName = dataset.filter(_.name == "barney").cache
     filterByName.count shouldBe 1
     filterByName.head.name shouldBe "barney"
