@@ -21,10 +21,10 @@ object SparkInstance {
   val sparkContext = sparkSession.sparkContext
   val sqlContext = sparkSession.sqlContext
   sparkContext.addSparkListener(SparkAppListener())
-  println("Initialized Spark instance.")
+  println("*** Initialized Spark instance.")
 
   sys.addShutdownHook {
     sparkSession.stop()
-    println("Terminated Spark instance.")
+    println("*** Terminated Spark instance.")
   }
 }
