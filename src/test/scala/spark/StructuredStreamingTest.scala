@@ -16,7 +16,7 @@ class StructuredStreamingTest extends FunSuite with Matchers {
       .as[Person]
       .writeStream
       .foreach(personForeachWriter)
-      .start()
+      .start
       .awaitTermination(3000L)
   }
 }
