@@ -72,8 +72,8 @@ class DataframeTest extends FunSuite with Matchers {
 
   test("window") {
     val window = Window.partitionBy("role").orderBy($"age".desc)
-    val ranking = rank.over(window)
-    dataframe.select($"*", ranking as "rank").show
+    val ranking = rank.over(window).as("rank")
+    dataframe.select(col("role"), col("name"), col("age"), ranking).show
   }
 
   test("join") {
