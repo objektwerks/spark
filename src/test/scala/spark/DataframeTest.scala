@@ -5,6 +5,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 class DataframeTest extends FunSuite with Matchers {
   import SparkInstance._
+  import org.apache.spark.sql.expressions._
   import org.apache.spark.sql.functions._
   import sparkSession.implicits._
 
@@ -67,6 +68,12 @@ class DataframeTest extends FunSuite with Matchers {
       case Row("wife", avgAge) => avgAge shouldBe 22.0
     }
     groupByRole.show
+  }
+
+  test("window") {
+    val window = Window.partitionBy("role").orderBy($"age".desc)
+    val ranking = rank.over(window)
+    dataframe.select($"*", ranking as "rank").show
   }
 
   test("join") {
