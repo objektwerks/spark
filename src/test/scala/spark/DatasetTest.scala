@@ -83,7 +83,9 @@ class DatasetTest extends FunSuite with Matchers {
   test("window") {
     val window = Window.partitionBy("role").orderBy($"age".desc)
     val ranking = rank.over(window).as("rank")
-    dataset.select(col("role"), col("name"), col("age"), ranking).show
+    val result = dataset.select(col("role"), col("name"), col("age"), ranking).as[(String, String, Long, Int)].cache
+    ("wife", "wilma", 23, 1) shouldEqual result.head
+    result.show
   }
 
   test("join") {
