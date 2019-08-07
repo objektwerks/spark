@@ -6,6 +6,7 @@ import org.scalatest.{FunSuite, Matchers}
 
 class DatasetTest extends FunSuite with Matchers {
   import SparkInstance._
+  import org.apache.spark.sql.expressions._
   import org.apache.spark.sql.functions._
   import sparkSession.implicits._
 
@@ -77,6 +78,12 @@ class DatasetTest extends FunSuite with Matchers {
       case (_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
     }
     groupByRole.show
+  }
+
+  test("window") {
+    val window = Window.partitionBy("role").orderBy($"age".desc)
+    val ranking = rank.over(window)
+    dataset.select($"*", ranking as "rank").show
   }
 
   test("join") {
