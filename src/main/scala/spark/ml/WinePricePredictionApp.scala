@@ -104,6 +104,4 @@ object WinePricePredictionApp extends App {
   println(f"3. Training / Test ratio: $trainingTestCountRatio%1.2f")
   println(s"4. Predictions count: ${predictions.count}")
   println(f"5. Root Mean Squared Error: ${evaluator.evaluate(predictions)}%1.2f\n")
-
-  sparkSession.stop()
 }

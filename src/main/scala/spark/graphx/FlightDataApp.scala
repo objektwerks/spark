@@ -64,6 +64,4 @@ object FlightDataApp extends App {
     .map(_._2._2)
     .take(10)
     .foreach(println)
-
-  sparkSession.stop()
 }

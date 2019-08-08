@@ -21,6 +21,7 @@ object SparkInstance {
   val sparkContext = sparkSession.sparkContext
   val sqlContext = sparkSession.sqlContext
   sparkContext.addSparkListener(SparkAppListener())
+  sparkSession.streams.addListener(StreamingQueryAppListener())
   println("*** Initialized Spark instance.")
 
   sys.addShutdownHook {

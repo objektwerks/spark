@@ -35,8 +35,6 @@ object RecommendationApp extends App {
     println(s"${i + 1}. ${movieIdToNameMap(recommendation.product.toInt)} score ${recommendation.rating}")
   }
 
-  sparkSession.stop()
-
   def loadMovieIdToNameMap(filePath: String): Map[Int, String] = {
     implicit val codec = Codec("UTF-8")
     codec.onMalformedInput(CodingErrorAction.REPLACE)

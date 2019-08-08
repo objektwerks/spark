@@ -29,6 +29,4 @@ object KMeansApp extends App {
   streamingContext.start
   streamingContext.awaitTerminationOrTimeout(1000)
   streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-
-  sparkSession.stop()
 }

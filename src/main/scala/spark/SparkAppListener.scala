@@ -1,34 +1,67 @@
 package spark
 
 import org.apache.log4j.Logger
-import org.apache.spark.executor.TaskMetrics
 import org.apache.spark.scheduler._
 
 import scala.collection.mutable.ArrayBuffer
 
 object SparkAppListener {
-  def apply(): SparkListener = new SparkAppListener()
+  def apply(): SparkAppListener = new SparkAppListener()
 }
 
 class SparkAppListener extends SparkListener {
+  private val logger = Logger.getLogger(getClass.getName)
   private val events = ArrayBuffer[String]()
 
-  def logEvents(): Unit = {
-    val logger = Logger.getLogger(getClass.getName)
-    events foreach { event => logger.info(s"*** SparkListener event: $event") }
-    println(s"*** SparkListener events: ${events.toString}")
-  }
+  def log(event: String): Unit = logger.info(s"+++ $event")
 
-  override def onJobEnd(end: SparkListenerJobEnd): Unit = events += s"+++ ${end.jobResult}"
+  override def onStageCompleted(event: SparkListenerStageCompleted): Unit = log(event.toString)
 
-  override def onTaskEnd(end: SparkListenerTaskEnd): Unit = events += s"+++ Task: ${taskEndToString(end.taskInfo, end.taskMetrics)}"
+  override def onStageSubmitted(event: SparkListenerStageSubmitted): Unit = log(event.toString)
 
-  private def taskEndToString(taskInfo: TaskInfo, taskMetrics: TaskMetrics): String = {
-    val info = ArrayBuffer[String]()
-    info += s"${taskInfo.status} "
-    info += s"+++ time-ms: ${taskInfo.duration} "
-    info += s"+++ mem-kb: ${taskMetrics.peakExecutionMemory} "
-    info += s"+++ records: ${taskMetrics.inputMetrics.recordsRead}"
-    info.mkString
-  }
+  override def onTaskStart(event: SparkListenerTaskStart): Unit = log(event.toString)
+
+  override def onTaskEnd(event: SparkListenerTaskEnd): Unit = log(event.toString)
+
+  override def onTaskGettingResult(event: SparkListenerTaskGettingResult): Unit = log(event.toString)
+
+  override def onJobStart(event: SparkListenerJobStart): Unit = log(event.toString)
+
+  override def onJobEnd(event: SparkListenerJobEnd): Unit = log(event.toString)
+
+  override def onEnvironmentUpdate(event: SparkListenerEnvironmentUpdate): Unit = log(event.toString)
+
+  override def onBlockManagerAdded(event: SparkListenerBlockManagerAdded): Unit = log(event.toString)
+
+  override def onBlockManagerRemoved(event: SparkListenerBlockManagerRemoved): Unit = log(event.toString)
+
+  override def onUnpersistRDD(event: SparkListenerUnpersistRDD): Unit = log(event.toString)
+
+  override def onApplicationStart(event: SparkListenerApplicationStart): Unit = log(event.toString)
+
+  override def onApplicationEnd(event: SparkListenerApplicationEnd): Unit = log(event.toString)
+
+  override def onExecutorMetricsUpdate(event: SparkListenerExecutorMetricsUpdate): Unit = log(event.toString)
+
+  override def onExecutorAdded(event: SparkListenerExecutorAdded): Unit = log(event.toString)
+
+  override def onExecutorRemoved(event: SparkListenerExecutorRemoved): Unit = log(event.toString)
+
+  override def onExecutorBlacklisted(event: SparkListenerExecutorBlacklisted): Unit = log(event.toString)
+
+  override def onExecutorBlacklistedForStage(event: SparkListenerExecutorBlacklistedForStage): Unit = log(event.toString)
+
+  override def onNodeBlacklistedForStage(event: SparkListenerNodeBlacklistedForStage): Unit = log(event.toString)
+
+  override def onExecutorUnblacklisted(event: SparkListenerExecutorUnblacklisted): Unit = log(event.toString)
+
+  override def onNodeBlacklisted(event: SparkListenerNodeBlacklisted): Unit = log(event.toString)
+
+  override def onNodeUnblacklisted(event: SparkListenerNodeUnblacklisted): Unit = log(event.toString)
+
+  override def onBlockUpdated(event: SparkListenerBlockUpdated): Unit = log(event.toString)
+
+  override def onSpeculativeTaskSubmitted(event: SparkListenerSpeculativeTaskSubmitted): Unit = log(event.toString)
+
+  override def onOtherEvent(event: SparkListenerEvent): Unit = log(event.toString)
 }
