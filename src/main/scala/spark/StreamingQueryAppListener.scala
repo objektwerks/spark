@@ -12,9 +12,9 @@ class StreamingQueryAppListener extends StreamingQueryListener {
 
   def log(event: String): Unit = logger.info(s"+++ $event")
 
-  override def onQueryStarted(event: StreamingQueryListener.QueryStartedEvent): Unit = log(event.toString)
+  override def onQueryStarted(event: StreamingQueryListener.QueryStartedEvent): Unit = log(s"query started: ${event.name}")
 
-  override def onQueryProgress(event: StreamingQueryListener.QueryProgressEvent): Unit = log(event.toString)
+  override def onQueryProgress(event: StreamingQueryListener.QueryProgressEvent): Unit = log(s"query progress: ${event.progress.prettyJson}")
 
-  override def onQueryTerminated(event: StreamingQueryListener.QueryTerminatedEvent): Unit = log(event.toString)
+  override def onQueryTerminated(event: StreamingQueryListener.QueryTerminatedEvent): Unit = log(s"query terminated: ${event.exception.toString}")
 }
