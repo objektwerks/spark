@@ -3,15 +3,12 @@ package spark
 import org.apache.log4j.Logger
 import org.apache.spark.scheduler._
 
-import scala.collection.mutable.ArrayBuffer
-
 object SparkAppListener {
   def apply(): SparkAppListener = new SparkAppListener()
 }
 
 class SparkAppListener extends SparkListener {
   private val logger = Logger.getLogger(getClass.getName)
-  private val events = ArrayBuffer[String]()
 
   def log(event: String): Unit = logger.info(s"+++ $event")
 
