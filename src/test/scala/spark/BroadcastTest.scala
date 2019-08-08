@@ -1,6 +1,7 @@
 package spark
 
 import org.scalatest.{FunSuite, Matchers}
+import spark.entity.{Person, Task}
 
 class BroadcastTest extends FunSuite with Matchers {
   import SparkInstance._

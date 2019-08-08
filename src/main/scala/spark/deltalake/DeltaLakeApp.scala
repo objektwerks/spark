@@ -4,7 +4,7 @@ import spark.SparkInstance
 
 object DeltaLakeApp extends App {
   import SparkInstance._
-  import spark.Person._
+  import spark.entity.Person._
 
   batch()
   structuredStreaming()

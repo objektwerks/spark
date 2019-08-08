@@ -2,6 +2,7 @@ package spark
 
 import org.apache.spark.sql.{Dataset, Row, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
+import spark.entity.{KeyValue, Person, PersonsTasks, Task}
 
 class SqlTest extends FunSuite with Matchers {
   import SparkInstance._

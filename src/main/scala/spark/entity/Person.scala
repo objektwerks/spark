@@ -1,4 +1,4 @@
-package spark
+package spark.entity
 
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.apache.spark.sql.{Encoders, ForeachWriter}

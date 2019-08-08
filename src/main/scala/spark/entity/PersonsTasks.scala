@@ -1,4 +1,4 @@
-package spark
+package spark.entity
 
 import org.apache.spark.sql.Encoders
 

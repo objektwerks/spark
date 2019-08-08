@@ -5,6 +5,7 @@ import java.util.UUID
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
+import spark.entity.{AvgAgeByRole, Person}
 
 case class Friend(id: Int, name: String, age: Int, score: Int)
 

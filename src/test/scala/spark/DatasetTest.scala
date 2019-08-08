@@ -3,6 +3,7 @@ package spark
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
+import spark.entity.{Person, Task}
 
 class DatasetTest extends FunSuite with Matchers {
   import SparkInstance._
