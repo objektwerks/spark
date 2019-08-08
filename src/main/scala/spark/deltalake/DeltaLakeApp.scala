@@ -1,21 +1,24 @@
-package spark
+package spark.deltalake
 
-import org.scalatest.{FunSuite, Matchers}
+import spark.SparkInstance
 
-class DeltaLakeTest extends FunSuite with Matchers {
+object DeltaLakeApp extends App {
   import SparkInstance._
+  import spark.Person._
 
-  test("batch") {
+  batch()
+  structuredStreaming()
+
+  def batch(): Unit = {
     val personsPath = "./target/delta/persons"
     val personsDataframe = sparkSession.read.json("./data/person/person.json")
     personsDataframe.write.format("delta").mode("overwrite").save(personsPath)
     val personsDelta = sparkSession.read.format("delta").load(personsPath)
     personsDelta.select("*").show
-    personsDelta.select("*").count shouldBe 4
+    assert( personsDelta.select("*").count == 4 )
   }
 
-  test("structured streaming") {
-    import Person._
+  def structuredStreaming(): Unit = {
     val rolesPath = "./target/delta/roles"
     sparkSession
       .readStream
@@ -29,7 +32,7 @@ class DeltaLakeTest extends FunSuite with Matchers {
       .outputMode("complete")
       .option("checkpointLocation", "./target/delta/roles/checkpoints")
       .start(rolesPath)
-      .awaitTermination(9000L) // Time-dependent due to slow Delta Lake IO!
+      .awaitTermination(30000) // Time-dependent due to slow Delta Lake IO!
     sparkSession
       .readStream
       .format("delta")
@@ -38,9 +41,9 @@ class DeltaLakeTest extends FunSuite with Matchers {
       .format("console")
       .outputMode("append")
       .start
-      .awaitTermination(3000L)
+      .awaitTermination(30000)
     val rolesDelta = sparkSession.read.format("delta").load(rolesPath)
     rolesDelta.select("*").show
-    rolesDelta.select("*").count shouldBe 4
+    assert( rolesDelta.select("*").count == 4 )
   }
 }

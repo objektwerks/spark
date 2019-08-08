@@ -19,17 +19,3 @@ object Person {
   }
   implicit def personOrdering: Ordering[Person] = Ordering.by(_.name)
 }
-
-case class Task(tid: Long, pid: Long, task: String)
-
-object Task {
-  val taskSchema = Encoders.product[Task].schema
-  implicit def taskOrdering: Ordering[Task] = Ordering.by(_.task)
-}
-
-case class AvgAgeByRole(role: String, avg_age: Double)
-
-object AvgAgeByRole {
-  val avgAgeByRoleSchema = Encoders.product[AvgAgeByRole].schema
-  implicit def avgAgeByRoleOrdering: Ordering[AvgAgeByRole] = Ordering.by(role => role.avg_age > role.avg_age)
-}
