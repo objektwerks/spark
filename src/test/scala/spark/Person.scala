@@ -17,18 +17,19 @@ object Person {
     override def process(person: Person): Unit = println(s"$person")
     override def close(errorOrNull: Throwable): Unit = ()
   }
-
   implicit def personOrdering: Ordering[Person] = Ordering.by(_.name)
-
-  implicit class Average(ages: Array[Long]) {
-    def avg: Double = ages.sum / ages.length.toDouble
-  }
 }
 
 case class Task(tid: Long, pid: Long, task: String)
 
 object Task {
   val taskSchema = Encoders.product[Task].schema
+  implicit def taskOrdering: Ordering[Task] = Ordering.by(_.task)
 }
 
 case class AvgAgeByRole(role: String, avg_age: Double)
+
+object AvgAgeByRole {
+  val avgAgeByRoleSchema = Encoders.product[AvgAgeByRole].schema
+  implicit def avgAgeByRoleOrdering: Ordering[AvgAgeByRole] = Ordering.by(role => role.avg_age > role.avg_age)
+}
