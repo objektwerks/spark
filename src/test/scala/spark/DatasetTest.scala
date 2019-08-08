@@ -18,6 +18,7 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.count shouldBe 4
     assert(dataset.toDF.isInstanceOf[Dataset[Row]])
     assert(dataset.rdd.isInstanceOf[RDD[Person]])
+    dataset.describe("age").show
   }
 
   test("map") {

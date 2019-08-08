@@ -17,6 +17,7 @@ class DataframeTest extends FunSuite with Matchers {
     dataframe.count shouldBe 4
     assert(dataframe.isInstanceOf[Dataset[Row]])
     assert(dataframe.as[Person].isInstanceOf[Dataset[Person]])
+    dataframe.describe("age").show
   }
 
   test("filter") {
