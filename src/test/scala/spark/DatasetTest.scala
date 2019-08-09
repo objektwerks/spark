@@ -44,7 +44,7 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("select > where") {
-    val selectNameByAge = dataset.select("name").where("age == 24").as[String].cache
+    val selectNameByAge = dataset.select('name).where("age == 24").as[String].cache
     selectNameByAge.count shouldBe 1
     selectNameByAge.head shouldBe "fred"
   }
