@@ -21,7 +21,7 @@ object LogEntryApp extends App {
     .text("./data/log")
     .flatMap(rowToLogEntry)
     .select("status", "dateTime", "ip")
-    .withWatermark("dateTime", "15 seconds")
+    .withWatermark("dateTime", "1 minute")
     .groupBy($"status", $"ip", window($"dateTime", "15 seconds"))
     .count
     .orderBy("window")
