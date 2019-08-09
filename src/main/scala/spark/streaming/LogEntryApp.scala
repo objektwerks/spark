@@ -15,20 +15,20 @@ object LogEntryApp extends App {
   implicit val codec = Codec("UTF-8")
   codec.onMalformedInput(CodingErrorAction.REPLACE)
   codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
-  val reader = sparkSession.readStream.text("./data/log")
 
-  val rows = reader
+  val streamingLogs = sparkSession
+    .readStream
+    .text("./data/log")
     .flatMap(rowToLogEntry)
     .select("status", "dateTime", "ip")
     .withWatermark("dateTime", "10 minutes")
     .groupBy($"status", $"ip", window($"dateTime", "1 hour"))
     .count
     .orderBy("window")
-
-  val writer = rows
     .writeStream
     .outputMode("complete")
     .foreach(rowForeachWriter)
     .start
-  writer.awaitTermination(33000)
+
+  streamingLogs.awaitTermination
 }
