@@ -50,11 +50,11 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("sort > orderBy") {
-    val sortByName = dataset.sort("name").cache
+    val sortByName = dataset.sort('name).cache
     sortByName.count shouldBe 4
     sortByName.head.name shouldBe "barney"
 
-    val orderByName = dataset.select("name").orderBy("name").as[String].cache
+    val orderByName = dataset.select('name).orderBy('name).as[String].cache
     orderByName.count shouldBe 4
     orderByName.head shouldBe "barney"
   }
@@ -72,7 +72,7 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("groupBy -> agg") {
-    val groupByRole = dataset.groupBy("role").avg("age").as[(String, Double)].cache
+    val groupByRole = dataset.groupBy('role).avg("age").as[(String, Double)].cache
     groupByRole.count shouldBe 2
     groupByRole.collect.map {
       case ("husband", avgAge) => avgAge shouldBe 23.0
@@ -83,7 +83,7 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("window") {
-    val window = Window.partitionBy("role").orderBy($"age".desc)
+    val window = Window.partitionBy('role).orderBy($"age".desc)
     val ranking = rank.over(window).as("rank")
     val result = dataset.select(col("role"), col("name"), col("age"), ranking).as[(String, String, Long, Int)].cache
     ("wife", "wilma", 23, 1) shouldEqual result.head
