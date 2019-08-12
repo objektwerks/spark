@@ -23,6 +23,13 @@ class SqlTest extends FunSuite with Matchers {
     sqlContext.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
     sqlContext.sql("select max(age) from persons").head.getLong(0) shouldBe 24
     sqlContext.sql("select sum(age) from persons").head.getLong(0) shouldBe 90
+
+    val agesLimitByTwoDesc = sqlContext
+      .sql("select name, age from persons where role = 'wife' order by name desc limit 2")
+      .as[(String, Long)]
+      .collect
+    ("wilma",23) shouldEqual agesLimitByTwoDesc.head
+    ("betty",21) shouldEqual agesLimitByTwoDesc.tail(0)
   }
 
   test("dataset sql") {
