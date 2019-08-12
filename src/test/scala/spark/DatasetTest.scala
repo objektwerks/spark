@@ -60,15 +60,15 @@ class DatasetTest extends FunSuite with Matchers {
   }
 
   test("agg") {
-    dataset.select(min(col("age"))).head.getLong(0) shouldBe 21
-    dataset.select(max(col("age"))).head.getLong(0) shouldBe 24
-    dataset.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
-    dataset.select(sum(col("age"))).head.getLong(0) shouldBe 90
+    dataset.select(min(col("age"))).as[Long].head shouldBe 21
+    dataset.select(max(col("age"))).as[Long].head shouldBe 24
+    dataset.select(avg(col("age"))).as[Double].head shouldBe 22.5
+    dataset.select(sum(col("age"))).as[Long].head shouldBe 90
 
-    dataset.agg("age" -> "min").head.getLong(0) shouldBe 21
-    dataset.agg("age" -> "avg").head.getDouble(0) shouldBe 22.5
-    dataset.agg("age" -> "max").head.getLong(0) shouldBe 24
-    dataset.agg("age" -> "sum").head.getLong(0) shouldBe 90
+    dataset.agg("age" -> "min").as[Long].head shouldBe 21
+    dataset.agg("age" -> "avg").as[Double].head shouldBe 22.5
+    dataset.agg("age" -> "max").as[Long].head shouldBe 24
+    dataset.agg("age" -> "sum").as[Long].head shouldBe 90
   }
 
   test("groupBy -> agg") {
