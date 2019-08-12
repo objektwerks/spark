@@ -35,10 +35,10 @@ class SqlTest extends FunSuite with Matchers {
     persons.head.age shouldBe 21
     persons.head.name shouldBe "betty"
 
-    sqlContext.sql("select min(age) from persons").head.getLong(0) shouldBe 21
-    sqlContext.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
-    sqlContext.sql("select max(age) from persons").head.getLong(0) shouldBe 24
-    sqlContext.sql("select sum(age) from persons").head.getLong(0) shouldBe 90
+    sqlContext.sql("select min(age) from persons").as[Long].head shouldBe 21
+    sqlContext.sql("select avg(age) from persons").as[Double].head shouldBe 22.5
+    sqlContext.sql("select max(age) from persons").as[Long].head shouldBe 24
+    sqlContext.sql("select sum(age) from persons").as[Long].head shouldBe 90
 
     val agesLimitByTwoDesc = sqlContext
       .sql("select name, age from persons where role = 'husband' order by name desc limit 2")
