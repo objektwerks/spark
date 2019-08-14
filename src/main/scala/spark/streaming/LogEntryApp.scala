@@ -16,7 +16,7 @@ object LogEntryApp extends App {
   codec.onMalformedInput(CodingErrorAction.REPLACE)
   codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
 
-  val streamingLogs = sparkSession
+  sparkSession
     .readStream
     .text("./data/log")
     .flatMap(rowToLogEntry)
@@ -29,6 +29,5 @@ object LogEntryApp extends App {
     .outputMode("complete")
     .foreach(rowForeachWriter)
     .start
-
-  streamingLogs.awaitTermination
+    .awaitTermination
 }
