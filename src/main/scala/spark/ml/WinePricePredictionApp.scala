@@ -18,7 +18,7 @@ object WinePricePredictionApp extends App {
   import Wine._
 
   // Data.
-  val dataframe = sparkSession
+  val wine = sparkSession
     .read
     .schema(wineSchema)
     .option("header", "true")
@@ -27,7 +27,7 @@ object WinePricePredictionApp extends App {
     .drop()
 
   // Training and Test datasets.
-  val Array(trainingData, testData) = dataframe.randomSplit(Array(0.8, 0.2))
+  val Array(trainingData, testData) = wine.randomSplit(Array(0.8, 0.2))
   val trainingDataset = trainingData.cache
   val testDataset = testData.cache
 

@@ -8,6 +8,7 @@ import spark.{SparkInstance, textFileToDStream}
 
 object KMeansApp extends App {
   import SparkInstance._
+  
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
   val kmeansTrainingDStream = textFileToDStream("./data/txt/kmeans-training.txt", sparkContext, streamingContext)

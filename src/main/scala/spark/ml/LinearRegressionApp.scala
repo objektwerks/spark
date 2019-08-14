@@ -7,6 +7,7 @@ import spark.{SparkInstance, textFileToDStream}
 
 object LinearRegressionApp extends App {
   import SparkInstance._
+
   val streamingContext = new StreamingContext(sparkContext, batchDuration = Seconds(1))
 
   val regressionTrainingDStream = textFileToDStream("./data/txt/regression.txt", sparkContext, streamingContext)
