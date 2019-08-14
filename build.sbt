@@ -1,7 +1,7 @@
 name := "spark"
 organization := "objektwerks"
 version := "0.1"
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.9"
 libraryDependencies ++= {
   val sparkVersion = "2.4.3"
   Seq(
@@ -10,7 +10,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-sql" % sparkVersion,
     "org.apache.spark" %% "spark-mllib" % sparkVersion,
     "org.apache.spark" %% "spark-graphx" % sparkVersion,
-    "io.delta" %% "delta-core" % "0.2.0",
+    "io.delta" %% "delta-core" % "0.3.0",
     "org.scalikejdbc" %% "scalikejdbc" % "3.3.5",
     "com.h2database" % "h2" % "1.4.197",
     "org.slf4j" % "slf4j-api" % "1.7.26",
