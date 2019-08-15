@@ -70,6 +70,7 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.select(min(col("age"))).as[Long].head shouldBe 21
     dataset.select(max(col("age"))).as[Long].head shouldBe 24
     dataset.select(avg(col("age"))).as[Double].head shouldBe 22.5
+    dataset.select(sum(col("age"))).as[Long].head shouldBe 90
   }
 
   test("agg > case class") {

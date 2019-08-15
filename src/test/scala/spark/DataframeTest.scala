@@ -2,7 +2,7 @@ package spark
 
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
-import spark.entity.Person
+import spark.entity.{Age, Person}
 
 class DataframeTest extends FunSuite with Matchers {
   import SparkInstance._
@@ -51,15 +51,22 @@ class DataframeTest extends FunSuite with Matchers {
   }
 
   test("agg") {
-    dataframe.select(min(col("age"))).head.getLong(0) shouldBe 21
-    dataframe.select(max(col("age"))).head.getLong(0) shouldBe 24
-    dataframe.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
-    dataframe.select(sum(col("age"))).head.getLong(0) shouldBe 90
-
     dataframe.agg("age" -> "min").head.getLong(0) shouldBe 21
     dataframe.agg("age" -> "avg").head.getDouble(0) shouldBe 22.5
     dataframe.agg("age" -> "max").head.getLong(0) shouldBe 24
     dataframe.agg("age" -> "sum").head.getLong(0) shouldBe 90
+  }
+
+  test("agg > select") {
+    dataframe.select(min(col("age"))).head.getLong(0) shouldBe 21
+    dataframe.select(max(col("age"))).head.getLong(0) shouldBe 24
+    dataframe.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
+    dataframe.select(sum(col("age"))).head.getLong(0) shouldBe 90
+  }
+
+  test("agg > case class") {
+    dataframe.select(min(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(21)
+    dataframe.select(max(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(24)
   }
 
   test("groupBy -> agg") {
