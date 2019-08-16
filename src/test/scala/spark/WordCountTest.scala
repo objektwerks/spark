@@ -63,7 +63,7 @@ class WordCountTest extends FunSuite with Matchers {
       .outputMode("complete")
       .format("memory")
       .start()
-      .awaitTermination(10000L)
+      .awaitTermination(1000L)
     val words = sqlContext.sql("select * from words").cache
     words.count shouldBe 138
     words.sort("value").show(numRows = 138, truncate = false)
