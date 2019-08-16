@@ -1,6 +1,6 @@
+.bloop
+.idea
 target/
 project/project/
 project/target/
-.idea
-spark-warehouse
 .DS_Store
