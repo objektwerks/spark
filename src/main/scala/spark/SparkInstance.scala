@@ -1,7 +1,6 @@
 package spark
 
 import java.io.File
-import java.net.InetAddress
 
 import org.apache.spark.sql.SparkSession
 
@@ -14,7 +13,7 @@ object SparkInstance {
   val sparkSession = SparkSession
     .builder
     .master("local[*]")
-    .appName(InetAddress.getLocalHost.getHostName)
+    .appName("spark-app")
     .config("spark.sql.shuffle.partitions", "4")
     .config("spark.sql.warehouse.dir", sparkWarehouseDir)
     .config("spark.eventLog.enabled", true)
