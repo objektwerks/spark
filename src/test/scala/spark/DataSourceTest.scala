@@ -66,6 +66,7 @@ class DataSourceTest extends FunSuite with Matchers {
     sqlContext.sql("LOAD DATA LOCAL INPATH './data/txt/kv.txt' INTO TABLE keyvalue")
     val keyvalues = sqlContext.sql("SELECT * FROM keyvalue").as[KeyValue].cache
     keyvalues.count shouldBe 9
+    keyvalues.filter(_.key == 3).head.value shouldBe 33
     keyvalues.show
   }
 
