@@ -5,7 +5,7 @@ import java.util.UUID
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
-import spark.entity.{AvgAgeByRole, Person}
+import spark.entity.{AvgAgeByRole, KeyValue, Person}
 
 case class Friend(id: Int, name: String, age: Int, score: Int)
 
@@ -61,7 +61,12 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("hive") {
-
+    sqlContext.sql("DROP TABLE IF EXISTS keyvalue")
+    sqlContext.sql("CREATE TABLE keyvalue (key INT, value INT) row format delimited fields terminated by ','")
+    sqlContext.sql("LOAD DATA LOCAL INPATH './data/txt/kv.txt' INTO TABLE keyvalue")
+    val keyvalues = sqlContext.sql("SELECT * FROM keyvalue").as[KeyValue].cache
+    keyvalues.count shouldBe 9
+    keyvalues.show
   }
 
   test("jdbc") {
