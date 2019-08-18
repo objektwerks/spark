@@ -60,6 +60,10 @@ class DataSourceTest extends FunSuite with Matchers {
     resultset.head.age shouldBe 21
   }
 
+  test("hive") {
+
+  }
+
   test("jdbc") {
     prepareDatasource shouldBe false  // Prepare
 
