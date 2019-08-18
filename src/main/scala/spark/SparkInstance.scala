@@ -17,6 +17,7 @@ object SparkInstance {
     .config("spark.sql.warehouse.dir", "./target/spark-warehouse")
     .config("spark.eventLog.enabled", true)
     .config("spark.eventLog.dir", sparkEventLogDir)
+    .enableHiveSupport
     .getOrCreate()
   val sparkContext = sparkSession.sparkContext
   val sqlContext = sparkSession.sqlContext
