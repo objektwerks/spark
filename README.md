@@ -27,6 +27,12 @@ Events
 ------
 1. ./target/local-*
 
+Tunning
+-------
+>Kyro serialization, partitions, driver and executor memory/cores, cache/persist, narrow vs wide transformations,
+>shuffling (disk/network io), splittable files, number of files and size, data locality, JVM GC, Spark Web UI,
+>Spark History UI
+
 JDKs
 ----
 >If you have more than one JDK installed, such as JDK 8 and JDK 11, you need to run sbt using JDK 8.
