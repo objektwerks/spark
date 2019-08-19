@@ -50,9 +50,8 @@ class SqlTest extends FunSuite with Matchers {
     val agesLimitByTwoDesc = sqlContext
       .sql("select name, age from persons where role = 'husband' order by name desc limit 2")
       .as[(String, Long)]
-      .collect
-    ("fred",24) shouldEqual agesLimitByTwoDesc.head
-    ("barney",22) shouldEqual agesLimitByTwoDesc.tail(0)
+    ("fred", 24) shouldEqual agesLimitByTwoDesc.head
+    ("barney", 22) shouldEqual agesLimitByTwoDesc.take(2).tail(0)
   }
 
   test("dataframe join") {
