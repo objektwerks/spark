@@ -26,10 +26,10 @@ class SqlTest extends FunSuite with Matchers {
 
     val agesLimitByTwoDesc = sqlContext
       .sql("select name, age from persons where role = 'wife' order by name desc limit 2")
-      .as[(String, Long)]
-      .collect
-    ("wilma",23) shouldEqual agesLimitByTwoDesc.head
-    ("betty",21) shouldEqual agesLimitByTwoDesc.tail(0)
+    agesLimitByTwoDesc.head.getString(0) shouldBe "wilma"
+    agesLimitByTwoDesc.head.getLong(1) shouldBe 23
+    agesLimitByTwoDesc.take(2).tail(0).getString(0) shouldBe "betty"
+    agesLimitByTwoDesc.take(2).tail(0).getLong(1) shouldBe 21
   }
 
   test("dataset sql") {
