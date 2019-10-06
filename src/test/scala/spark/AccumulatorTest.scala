@@ -2,12 +2,24 @@ package spark
 
 import org.scalatest.{FunSuite, Matchers}
 
+import scala.collection.JavaConverters._
+
 class AccumulatorTest extends FunSuite with Matchers {
   import SparkInstance._
 
   test("accumulator") {
-    val accumulator = sparkContext.longAccumulator(name = "accumulator")
-    accumulator.add(1)
-    accumulator.value shouldBe 1
+    val longAcc = sparkContext.longAccumulator
+    longAcc.add(1)
+    longAcc.value shouldBe 1
+
+    val doubleAcc = sparkContext.doubleAccumulator
+    doubleAcc.add(1.0)
+    doubleAcc.value shouldBe 1.0
+
+    val collectionAcc = sparkContext.collectionAccumulator[Int]
+    collectionAcc.add(1)
+    collectionAcc.add(2)
+    collectionAcc.add(3)
+    collectionAcc.value.asScala.sum shouldEqual 6
   }
 }
