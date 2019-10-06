@@ -13,7 +13,7 @@ class BroadcastTest extends FunSuite with Matchers {
     val persons = broadcastPersons.value
     val tasks = sparkSession.read.json("./data/task/task.json").as[Task]
 
-    val joinBy = broadcastPersons.value.col("id") === tasks.col("pid")
+    val joinBy = persons.col("id") === tasks.col("pid")
     val personsTasks = persons.join(tasks, joinBy)
 
     personsTasks.count shouldBe 4
