@@ -1,9 +1,10 @@
 package spark
 
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.expressions.scalalang.typed
 import org.apache.spark.sql.{Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
-import spark.entity.{Age, Person, Task}
+import spark.entity.{Age, AvgAgeByRole, Person, Task}
 
 class DatasetTest extends FunSuite with Matchers {
   import SparkInstance._
@@ -43,12 +44,6 @@ class DatasetTest extends FunSuite with Matchers {
     betty.head shouldBe "BETTY"
   }
 
-  test("select > where") {
-    val selectNameByAge = dataset.select('name).where("age == 24").as[String].cache
-    selectNameByAge.count shouldBe 1
-    selectNameByAge.head shouldBe "fred"
-  }
-
   test("sort > orderBy") {
     val sortByName = dataset.sort('name).cache
     sortByName.count shouldBe 4
@@ -59,23 +54,22 @@ class DatasetTest extends FunSuite with Matchers {
     orderByName.head shouldBe "barney"
   }
 
-  test("agg") {
-    dataset.agg("age" -> "min").as[Long].head shouldBe 21
-    dataset.agg("age" -> "avg").as[Double].head shouldBe 22.5
-    dataset.agg("age" -> "max").as[Long].head shouldBe 24
-    dataset.agg("age" -> "sum").as[Long].head shouldBe 90
-  }
-
-  test("agg > select") {
-    dataset.select(min(col("age"))).as[Long].head shouldBe 21
-    dataset.select(max(col("age"))).as[Long].head shouldBe 24
-    dataset.select(avg(col("age"))).as[Double].head shouldBe 22.5
-    dataset.select(sum(col("age"))).as[Long].head shouldBe 90
-  }
-
   test("agg > case class") {
     dataset.select(min(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(21)
     dataset.select(max(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(24)
+  }
+
+  test("groupByKey > agg") {
+    dataset
+      .groupByKey( _.role )
+      .agg( typed.avg(_.age.toDouble) )
+      .map( tuple => AvgAgeByRole(tuple._1, tuple._2) )
+      .collect
+      .map {
+        case AvgAgeByRole("husband", avgAge) => avgAge shouldBe 23.0
+        case AvgAgeByRole("wife", avgAge) => avgAge shouldBe 22.0
+        case AvgAgeByRole(_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
+      }
   }
 
   test("groupBy -> agg") {
