@@ -23,7 +23,7 @@ class DataSourceTest extends FunSuite with Matchers {
       .cache
     dataframe.count shouldBe 500
 
-    val friends: Dataset[Friend] = dataframe.map(r => Friend(r.getInt(0), r.getString(1), r.getInt(2), r.getInt(3)))
+    val friends = dataframe.map(row => Friend(row.getInt(0), row.getString(1), row.getInt(2), row.getInt(3)))
     friends.count shouldBe 500
   }
 
