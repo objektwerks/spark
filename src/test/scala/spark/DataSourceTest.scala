@@ -2,7 +2,7 @@ package spark
 
 import java.util.UUID
 
-import org.apache.spark.sql.{DataFrame, Dataset, SaveMode}
+import org.apache.spark.sql.{Dataset, SaveMode}
 import org.scalatest.{FunSuite, Matchers}
 import spark.entity.{AvgAgeByRole, KeyValue, Person}
 
@@ -38,22 +38,22 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("json") {
-    val dataframe: DataFrame = sparkSession.read.json("./data/person/person.json")
+    val dataframe = sparkSession.read.json("./data/person/person.json")
     dataframe.count shouldBe 4
 
-    val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
+    val dataset = sparkSession.read.json("./data/person/person.json").as[Person]
     dataset.count shouldBe 4
   }
 
   test("parquet") {
     val parquetFileName = s"${UUID.randomUUID.toString}.person.parquet"
-    val dataset: Dataset[Person] = sparkSession.read.json("./data/person/person.json").as[Person]
+    val dataset = sparkSession.read.json("./data/person/person.json").as[Person]
     dataset.write.parquet(s"./target/$parquetFileName")
 
-    val parquet: Dataset[Person] = dataset.sqlContext.read.parquet(s"./target/$parquetFileName").as[Person]
+    val parquet = dataset.sqlContext.read.parquet(s"./target/$parquetFileName").as[Person]
     parquet.createOrReplaceTempView("persons")
 
-    val resultset: Dataset[Person] = parquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
+    val resultset = parquet.sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
     resultset.count shouldBe 2
     resultset.head.name shouldBe "betty"
     resultset.head.age shouldBe 21
