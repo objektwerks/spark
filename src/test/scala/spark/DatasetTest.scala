@@ -38,8 +38,8 @@ class DatasetTest extends FunSuite with Matchers {
     filterByAge.head.age shouldBe 24
   }
 
-  test("map -> filter") {
-    val betty = dataset.map(_.name.toUpperCase).filter(_ == "BETTY").cache
+  test("filter -> map") {
+    val betty = dataset.filter(_.name == "betty").map(_.name.toUpperCase).cache
     betty.count shouldBe 1
     betty.head shouldBe "BETTY"
   }
