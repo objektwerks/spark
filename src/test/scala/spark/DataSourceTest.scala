@@ -112,7 +112,10 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   private def personsToAvgAgeByRole(persons: Dataset[Person]): Dataset[AvgAgeByRole] = {
-    persons.groupBy("role").avg("age").map(row => AvgAgeByRole(row.getString(0), row.getDouble(1)))
+    persons
+      .groupBy("role")
+      .avg("age")
+      .map(row => AvgAgeByRole(row.getString(0), row.getDouble(1)))
   }
 
   private def writeAvgAgeByRoleDatasource(avgAgeByRole: Dataset[AvgAgeByRole]): Unit = {
