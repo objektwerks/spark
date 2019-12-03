@@ -101,8 +101,9 @@ class SqlTest extends FunSuite with Matchers {
   }
 
   test("jdbc") {
-    writeKeyValues("key_values", List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS)
-    val keyvalues = readKeyValues("key_values").toDF
+    val tableName = "key_values"
+    writeKeyValues(tableName, List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS)
+    val keyvalues = readKeyValues(tableName).toDF
     keyvalues.createOrReplaceTempView("key_values")
     sqlContext.sql("select count(*) as total_rows from key_values").head.getLong(0) shouldBe 3
     sqlContext.sql("select min(key) as min_key from key_values").head.getInt(0) shouldBe 1
