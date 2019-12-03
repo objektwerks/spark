@@ -64,8 +64,7 @@ class DatasetTest extends FunSuite with Matchers {
       .groupByKey( _.role )
       .agg( typed.avg(_.age.toDouble) )
       .map( tuple => AvgAgeByRole(tuple._1, tuple._2) )
-      .collect
-      .map {
+      .collect.map {
         case AvgAgeByRole("husband", avgAge) => avgAge shouldBe 23.0
         case AvgAgeByRole("wife", avgAge) => avgAge shouldBe 22.0
         case AvgAgeByRole(_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
