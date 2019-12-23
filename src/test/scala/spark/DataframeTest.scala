@@ -20,6 +20,12 @@ class DataframeTest extends FunSuite with Matchers {
     dataframe.describe("age").show
   }
 
+  test("transform") {
+    val mapNameToUpperCase = dataframe.withColumn("name", upper($"name"))
+    mapNameToUpperCase.count shouldBe 4
+    mapNameToUpperCase.head.getString(2) shouldBe "FRED"
+  }
+
   test("filter") {
     val filterByName = dataframe.filter("name == 'barney'").cache
     filterByName.count shouldBe 1
