@@ -21,9 +21,12 @@ class DataframeTest extends FunSuite with Matchers {
   }
 
   test("transform") {
-    val mapNameToUpperCase = dataframe.withColumn("name", upper($"name"))
-    mapNameToUpperCase.count shouldBe 4
-    mapNameToUpperCase.head.getString(2) shouldBe "FRED"
+    val ageIncrement = dataframe.withColumn("age", $"age" + 1)
+    val nameUpper = ageIncrement.withColumn("name", upper($"name"))
+    nameUpper.show()
+    nameUpper.count shouldBe 4
+    nameUpper.head.getLong(0) shouldBe 25
+    nameUpper.head.getString(2) shouldBe "FRED"
   }
 
   test("filter") {
