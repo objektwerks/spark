@@ -21,11 +21,12 @@ class DataframeTest extends FunSuite with Matchers {
   }
 
   test("transform") {
-    val ageIncrement = dataframe.withColumn("age", $"age" + 1)
-    val nameUpper = ageIncrement.withColumn("name", upper($"name"))
-    nameUpper.count shouldBe 4
-    nameUpper.head.getLong(0) shouldBe 25
-    nameUpper.head.getString(2) shouldBe "FRED"
+    val ageIncrementNameUpper = dataframe
+      .withColumn("age", $"age" + 1)
+      .withColumn("name", upper($"name"))
+    ageIncrementNameUpper.count shouldBe 4
+    ageIncrementNameUpper.head.getLong(0) shouldBe 25
+    ageIncrementNameUpper.head.getString(2) shouldBe "FRED"
   }
 
   test("filter") {
