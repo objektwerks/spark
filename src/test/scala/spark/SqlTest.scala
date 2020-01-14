@@ -14,17 +14,17 @@ class SqlTest extends FunSuite with Matchers {
     dataframe.count shouldBe 4
     dataframe.createOrReplaceTempView("persons")
 
-    val rows = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
+    val rows = sparkSession.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
     rows.count shouldBe 2
     rows.head.getLong(0) shouldBe 21
     rows.head.getString(2) shouldBe "betty"
 
-    sqlContext.sql("select min(age) from persons").head.getLong(0) shouldBe 21
-    sqlContext.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
-    sqlContext.sql("select max(age) from persons").head.getLong(0) shouldBe 24
-    sqlContext.sql("select sum(age) from persons").head.getLong(0) shouldBe 90
+    sparkSession.sql("select min(age) from persons").head.getLong(0) shouldBe 21
+    sparkSession.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
+    sparkSession.sql("select max(age) from persons").head.getLong(0) shouldBe 24
+    sparkSession.sql("select sum(age) from persons").head.getLong(0) shouldBe 90
 
-    val agesLimitByTwoDesc = sqlContext.sql("select name, age from persons where role = 'wife' order by name desc limit 2")
+    val agesLimitByTwoDesc = sparkSession.sql("select name, age from persons where role = 'wife' order by name desc limit 2")
     agesLimitByTwoDesc.head.getString(0) shouldBe "wilma"
     agesLimitByTwoDesc.head.getLong(1) shouldBe 23
     agesLimitByTwoDesc.take(2).tail(0).getString(0) shouldBe "betty"
@@ -36,17 +36,17 @@ class SqlTest extends FunSuite with Matchers {
     dataset.count shouldBe 4
     dataset.createOrReplaceTempView("persons")
 
-    val persons = sqlContext.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
+    val persons = sparkSession.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
     persons.count shouldBe 2
     persons.head.age shouldBe 21
     persons.head.name shouldBe "betty"
 
-    sqlContext.sql("select min(age) from persons").as[Long].head shouldBe 21
-    sqlContext.sql("select avg(age) from persons").as[Double].head shouldBe 22.5
-    sqlContext.sql("select max(age) from persons").as[Long].head shouldBe 24
-    sqlContext.sql("select sum(age) from persons").as[Long].head shouldBe 90
+    sparkSession.sql("select min(age) from persons").as[Long].head shouldBe 21
+    sparkSession.sql("select avg(age) from persons").as[Double].head shouldBe 22.5
+    sparkSession.sql("select max(age) from persons").as[Long].head shouldBe 24
+    sparkSession.sql("select sum(age) from persons").as[Long].head shouldBe 90
 
-    val agesLimitByTwoDesc = sqlContext
+    val agesLimitByTwoDesc = sparkSession
       .sql("select name, age from persons where role = 'husband' order by name desc limit 2")
       .as[(String, Long)]
     ("fred", 24) shouldEqual agesLimitByTwoDesc.head
@@ -61,12 +61,12 @@ class SqlTest extends FunSuite with Matchers {
     persons.createOrReplaceTempView("persons")
     tasks.createOrReplaceTempView("tasks")
 
-    val personsTasks: Dataset[Row] = sqlContext.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").cache
+    val personsTasks: Dataset[Row] = sparkSession.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").cache
     personsTasks.count shouldBe 4
     personsTasks.show
 
     personsTasks.createOrReplaceTempView("persons_tasks")
-    val personTask: Dataset[Row] = sqlContext.sql("select name, task from persons_tasks").cache
+    val personTask: Dataset[Row] = sparkSession.sql("select name, task from persons_tasks").cache
     personTask.count shouldBe 4
     personTask.show
   }
@@ -79,12 +79,12 @@ class SqlTest extends FunSuite with Matchers {
     persons.createOrReplaceTempView("persons")
     tasks.createOrReplaceTempView("tasks")
 
-    val personsTasks: Dataset[PersonsTasks] = sqlContext.sql("select * from persons, tasks where persons.id = tasks.pid").as[PersonsTasks].cache
+    val personsTasks: Dataset[PersonsTasks] = sparkSession.sql("select * from persons, tasks where persons.id = tasks.pid").as[PersonsTasks].cache
     personsTasks.count shouldBe 4
     personsTasks.show
 
     personsTasks.createOrReplaceTempView("persons_tasks")
-    val personTask: Dataset[(String, String)] = sqlContext.sql("select name, task from persons_tasks").as[(String, String)].cache
+    val personTask: Dataset[(String, String)] = sparkSession.sql("select name, task from persons_tasks").as[(String, String)].cache
     personTask.count shouldBe 4
     personTask.show
   }
@@ -93,9 +93,9 @@ class SqlTest extends FunSuite with Matchers {
     val cityTemps = sparkSession.read.json("./data/weather/city_temps.json").cache
     cityTemps.createOrReplaceTempView("city_temps")
 
-    sqlContext.udf.register("celciusToFahrenheit", (degreesCelcius: Double) => (degreesCelcius * 9.0 / 5.0) + 32.0)
+    sparkSession.udf.register("celciusToFahrenheit", (degreesCelcius: Double) => (degreesCelcius * 9.0 / 5.0) + 32.0)
 
-    val temps = sqlContext.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
+    val temps = sparkSession.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
     temps.count shouldBe 6
     temps.show
   }
@@ -105,10 +105,10 @@ class SqlTest extends FunSuite with Matchers {
     writeKeyValues(tableName, List[KeyValue](KeyValue(1, 1), KeyValue(2, 2), KeyValue(3, 3)).toDS)
     val keyvalues = readKeyValues(tableName).toDF
     keyvalues.createOrReplaceTempView("key_values")
-    sqlContext.sql("select count(*) as total_rows from key_values").head.getLong(0) shouldBe 3
-    sqlContext.sql("select min(key) as min_key from key_values").head.getInt(0) shouldBe 1
-    sqlContext.sql("select max(value) as max_value from key_values").head.getInt(0) shouldBe 3
-    sqlContext.sql("select sum(value) as sum_value from key_values").head.getLong(0) shouldBe 6
+    sparkSession.sql("select count(*) as total_rows from key_values").head.getLong(0) shouldBe 3
+    sparkSession.sql("select min(key) as min_key from key_values").head.getInt(0) shouldBe 1
+    sparkSession.sql("select max(value) as max_value from key_values").head.getInt(0) shouldBe 3
+    sparkSession.sql("select sum(value) as sum_value from key_values").head.getLong(0) shouldBe 6
   }
 
   private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit = {
@@ -125,7 +125,7 @@ class SqlTest extends FunSuite with Matchers {
   }
 
   private def readKeyValues(table: String): Dataset[KeyValue] = {
-    sqlContext
+    sparkSession
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")

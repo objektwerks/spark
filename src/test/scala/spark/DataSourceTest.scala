@@ -60,10 +60,10 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("hive") {
-    sqlContext.sql("DROP TABLE IF EXISTS keyvalue")
-    sqlContext.sql("CREATE TABLE keyvalue (key INT, value INT) row format delimited fields terminated by ','")
-    sqlContext.sql("LOAD DATA LOCAL INPATH './data/txt/kv.txt' INTO TABLE keyvalue")
-    val keyvalues = sqlContext.sql("SELECT * FROM keyvalue").as[KeyValue].cache
+    sparkSession.sql("DROP TABLE IF EXISTS keyvalue")
+    sparkSession.sql("CREATE TABLE keyvalue (key INT, value INT) row format delimited fields terminated by ','")
+    sparkSession.sql("LOAD DATA LOCAL INPATH './data/txt/kv.txt' INTO TABLE keyvalue")
+    val keyvalues = sparkSession.sql("SELECT * FROM keyvalue").as[KeyValue].cache
     keyvalues.count shouldBe 9
     keyvalues.filter(_.key == 3).head.value shouldBe 33
     keyvalues.show
@@ -99,7 +99,7 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   private def readPersonsDatasource: Dataset[Person] = {
-    sqlContext
+    sparkSession
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
@@ -132,7 +132,7 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   private def readAvgAgeByRoleDatasource: Dataset[AvgAgeByRole] = {
-    sqlContext
+    sparkSession
       .read
       .format("jdbc")
       .option("driver", "org.h2.Driver")
