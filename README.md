@@ -6,6 +6,14 @@ Test
 ----
 1. sbt clean test
 
+Bloop
+-----
+1. sbt bloopInstall
+2. bloop projects
+3. bloop clean spark
+4. bloop compile spark
+5. bloop test spark
+
 Run
 ---
 1. sbt clean test run
