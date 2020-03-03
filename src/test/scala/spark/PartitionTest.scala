@@ -7,8 +7,8 @@ class PartitionTest  extends FunSuite with Matchers {
   import sparkSession.implicits._
 
   test("partitions") {
-    val dataframe = (1 to 10).toList.toDF
+    val dataframe = (1 to 10).toList.toDF("number")
     dataframe.rdd.partitions.length shouldEqual 8
+    dataframe.write.csv("./target/numbers")
   }
-
 }
