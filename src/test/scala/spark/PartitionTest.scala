@@ -2,7 +2,7 @@ package spark
 
 import org.scalatest.{FunSuite, Matchers}
 
-class PartitionTest  extends FunSuite with Matchers {
+class PartitionTest extends FunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
