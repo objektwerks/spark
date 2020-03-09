@@ -24,6 +24,7 @@ class DataframeTest extends FunSuite with Matchers {
     val incrementAgeNameToUpper = dataframe
       .withColumn("age", $"age" + 1)
       .withColumn("name", upper($"name"))
+      .cache
     incrementAgeNameToUpper.count shouldBe 4
     incrementAgeNameToUpper.head.getLong(0) shouldBe 25
     incrementAgeNameToUpper.head.getString(2) shouldBe "FRED"
@@ -35,6 +36,7 @@ class DataframeTest extends FunSuite with Matchers {
     val incrementAgeNameToUpper = dataframe
       .transform(incrementAge)
       .transform(nameToUpper)
+      .cache
     incrementAgeNameToUpper.count shouldBe 4
     incrementAgeNameToUpper.head.getLong(0) shouldBe 25
     incrementAgeNameToUpper.head.getString(2) shouldBe "FRED"
