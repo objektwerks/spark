@@ -1,6 +1,6 @@
 package spark
 
-import org.apache.spark.sql.{Dataset, Row}
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.scalatest.{FunSuite, Matchers}
 import spark.entity.{Age, Person}
 
@@ -20,13 +20,24 @@ class DataframeTest extends FunSuite with Matchers {
     dataframe.describe("age").show
   }
 
-  test("transform") {
+  test("update") {
     val ageIncrementNameUpper = dataframe
       .withColumn("age", $"age" + 1)
       .withColumn("name", upper($"name"))
     ageIncrementNameUpper.count shouldBe 4
     ageIncrementNameUpper.head.getLong(0) shouldBe 25
     ageIncrementNameUpper.head.getString(2) shouldBe "FRED"
+  }
+
+  test("transform") {
+    def incrementAge(df: DataFrame): DataFrame = df.withColumn("age", $"age" + 1)
+    def nameToUpper(df: DataFrame): DataFrame = df.withColumn("name", upper($"name"))
+    val incrementAgeNameToUpper = dataframe
+      .transform(incrementAge)
+      .transform(nameToUpper)
+    incrementAgeNameToUpper.count shouldBe 4
+    incrementAgeNameToUpper.head.getLong(0) shouldBe 25
+    incrementAgeNameToUpper.head.getString(2) shouldBe "FRED"
   }
 
   test("filter") {
