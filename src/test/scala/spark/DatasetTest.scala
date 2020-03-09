@@ -22,6 +22,27 @@ class DatasetTest extends FunSuite with Matchers {
     dataset.describe("age").show
   }
 
+  test("update") {
+    val incrementAgeNameToUpper = dataset
+      .withColumn("age", 'age + 1)
+      .withColumn("name", upper('name))
+      .as[Person]
+    incrementAgeNameToUpper.count shouldBe 4
+    incrementAgeNameToUpper.head.age shouldBe 25
+    incrementAgeNameToUpper.head.name shouldBe "FRED"
+  }
+
+  test("transform") {
+    def incrementAge(ds: Dataset[Person]): Dataset[Person] = ds.withColumn("age", $"age" + 1).as[Person]
+    def nameToUpper(ds: Dataset[Person]): Dataset[Person] = ds.withColumn("name", upper($"name")).as[Person]
+    val incrementAgeNameToUpper = dataset
+      .transform(incrementAge)
+      .transform(nameToUpper)
+    incrementAgeNameToUpper.count shouldBe 4
+    incrementAgeNameToUpper.head.age shouldBe 25
+    incrementAgeNameToUpper.head.name shouldBe "FRED"
+  }
+
   test("map") {
     val mapNameToUpperCase = dataset.map(_.name.toUpperCase).cache
     mapNameToUpperCase.count shouldBe 4
