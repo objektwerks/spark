@@ -27,12 +27,12 @@ class PartitionTest extends FunSuite with Matchers {
   }
 
   test("partitionBy") {
-    val dataframe = sparkSession.read.json("./data/person/person.json").cache
-    val outputPath = new java.io.File(s"./target/partitionby-roles-${UUID.randomUUID.toString}").getCanonicalPath
-    dataframe
+    val persons = sparkSession.read.json("./data/person/person.json").cache
+    val file = s"./target/partitionby-roles-${UUID.randomUUID.toString}"
+    persons
       .repartition(2)
       .write
       .partitionBy("role")
-      .parquet(outputPath)
+      .parquet(file)
   }
 }

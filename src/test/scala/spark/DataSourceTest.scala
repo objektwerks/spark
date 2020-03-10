@@ -46,7 +46,7 @@ class DataSourceTest extends FunSuite with Matchers {
   }
 
   test("parquet") {
-    val parquetFileName = s"${UUID.randomUUID.toString}.person.parquet"
+    val parquetFileName = s"person-${UUID.randomUUID.toString}.parquet"
     val dataset = sparkSession.read.json("./data/person/person.json").as[Person]
     dataset.write.parquet(s"./target/$parquetFileName")
 
