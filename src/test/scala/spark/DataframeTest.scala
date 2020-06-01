@@ -60,16 +60,18 @@ class DataframeTest extends FunSuite with Matchers {
     selectByAge.head.getLong(0) shouldBe 24
   }
 
-  test("sort > orderBy") {
+  test("select > orderBy") {
+    val orderByName = dataframe.select("name").orderBy("name").cache
+    orderByName.count shouldBe 4
+    orderByName.head.getString(0) shouldBe "barney"
+  }
+
+  test("sort") {
     val sortByName = dataframe.sort("name").cache
     sortByName.count shouldBe 4
     sortByName.head.getLong(0) shouldBe 22
     sortByName.head.getString(2) shouldBe "barney"
     sortByName.head.getString(3) shouldBe "husband"
-
-    val orderByName = dataframe.select("name").orderBy("name").cache
-    orderByName.count shouldBe 4
-    orderByName.head.getString(0) shouldBe "barney"
   }
 
   test("agg") {
@@ -79,14 +81,14 @@ class DataframeTest extends FunSuite with Matchers {
     dataframe.agg("age" -> "sum").head.getLong(0) shouldBe 90
   }
 
-  test("agg > select") {
+  test("select > agg") {
     dataframe.select(min(col("age"))).head.getLong(0) shouldBe 21
     dataframe.select(max(col("age"))).head.getLong(0) shouldBe 24
     dataframe.select(avg(col("age"))).head.getDouble(0) shouldBe 22.5
     dataframe.select(sum(col("age"))).head.getLong(0) shouldBe 90
   }
 
-  test("agg > case class") {
+  test("select > agg > case class") {
     dataframe.select(min(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(21)
     dataframe.select(max(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(24)
   }
