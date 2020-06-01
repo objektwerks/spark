@@ -67,17 +67,19 @@ class DatasetTest extends FunSuite with Matchers {
     betty.head shouldBe "BETTY"
   }
 
-  test("sort > orderBy") {
+  test("sort") {
     val sortByName = dataset.sort('name).cache
     sortByName.count shouldBe 4
     sortByName.head.name shouldBe "barney"
+  }
 
+  test("select > orderBy") {
     val orderByName = dataset.select('name).orderBy('name).as[String].cache
     orderByName.count shouldBe 4
     orderByName.head shouldBe "barney"
   }
 
-  test("agg > case class") {
+  test("select > agg > case class") {
     dataset.select(min(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(21)
     dataset.select(max(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(24)
   }
@@ -87,7 +89,8 @@ class DatasetTest extends FunSuite with Matchers {
       .groupByKey( _.role )
       .agg( typed.avg(_.age.toDouble) )
       .map( tuple => AvgAgeByRole(tuple._1, tuple._2) )
-      .collect.map {
+      .collect
+      .map {
         case AvgAgeByRole("husband", avgAge) => avgAge shouldBe 23.0
         case AvgAgeByRole("wife", avgAge) => avgAge shouldBe 22.0
         case AvgAgeByRole(_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
@@ -97,7 +100,9 @@ class DatasetTest extends FunSuite with Matchers {
   test("groupBy -> agg") {
     val groupByRole = dataset.groupBy('role).avg("age").as[(String, Double)].cache
     groupByRole.count shouldBe 2
-    groupByRole.collect.map {
+    groupByRole
+    .collect
+    .map {
       case ("husband", avgAge) => avgAge shouldBe 23.0
       case ("wife", avgAge) => avgAge shouldBe 22.0
       case (_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
