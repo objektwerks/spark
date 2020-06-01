@@ -14,10 +14,10 @@ class SqlTest extends FunSuite with Matchers {
     dataframe.count shouldBe 4
     dataframe.createOrReplaceTempView("persons")
 
-    val rows = sparkSession.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
-    rows.count shouldBe 2
-    rows.head.getLong(0) shouldBe 21
-    rows.head.getString(2) shouldBe "betty"
+    val persons = sparkSession.sql("select * from persons where age >= 21 and age <= 22 order by age").cache
+    persons.count shouldBe 2
+    persons.head.getLong(0) shouldBe 21
+    persons.head.getString(2) shouldBe "betty"
 
     sparkSession.sql("select min(age) from persons").head.getLong(0) shouldBe 21
     sparkSession.sql("select avg(age) from persons").head.getDouble(0) shouldBe 22.5
