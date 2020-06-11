@@ -1,10 +1,11 @@
 package spark
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.JavaConverters._
 
-class AccumulatorTest extends FunSuite with Matchers {
+class AccumulatorTest extends AnyFunSuite with Matchers {
   import SparkInstance._
 
   test("accumulator") {

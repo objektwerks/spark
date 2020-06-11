@@ -2,9 +2,10 @@ package spark
 
 import java.util.UUID
 
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
-class PartitionTest extends FunSuite with Matchers {
+class PartitionTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 

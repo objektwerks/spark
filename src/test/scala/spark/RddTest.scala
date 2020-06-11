@@ -3,14 +3,16 @@ package spark
 import java.nio.charset.CodingErrorAction
 
 import breeze.linalg.{max, min}
+
 import org.apache.spark.HashPartitioner
 import org.apache.spark.rdd.RDD
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.{SortedSet, mutable}
 import scala.io.{Codec, Source}
 
-class RddTest extends FunSuite with Matchers {
+class RddTest extends AnyFunSuite with Matchers {
   import SparkInstance._
 
   test("transformations -> action") {

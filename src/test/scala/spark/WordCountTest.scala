@@ -2,7 +2,8 @@ package spark
 
 import org.apache.spark.sql.{Dataset, Encoders, Row}
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.mutable
 
@@ -11,7 +12,7 @@ object Count {
   implicit val countSchema = Encoders.product[Count].schema
 }
 
-class WordCountTest extends FunSuite with Matchers {
+class WordCountTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 

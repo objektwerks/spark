@@ -3,10 +3,12 @@ package spark
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.expressions.scalalang.typed
 import org.apache.spark.sql.{Dataset, Row}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+
 import spark.entity.{Age, AvgAgeByRole, Person, Task}
 
-class DatasetTest extends FunSuite with Matchers {
+class DatasetTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import org.apache.spark.sql.expressions._
   import org.apache.spark.sql.functions._

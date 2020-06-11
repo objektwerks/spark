@@ -1,10 +1,12 @@
 package spark
 
 import org.apache.spark.sql.{DataFrame, Dataset, Row}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+
 import spark.entity.{Age, Person}
 
-class DataframeTest extends FunSuite with Matchers {
+class DataframeTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import org.apache.spark.sql.expressions._
   import org.apache.spark.sql.functions._

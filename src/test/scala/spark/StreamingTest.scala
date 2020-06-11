@@ -1,11 +1,12 @@
 package spark
 
 import org.apache.spark.streaming.{Milliseconds, StreamingContext}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 import scala.collection.mutable
 
-class StreamingTest extends FunSuite with Matchers {
+class StreamingTest extends AnyFunSuite with Matchers {
   import SparkInstance._
 
   test("batch") {

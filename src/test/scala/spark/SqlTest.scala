@@ -1,10 +1,12 @@
 package spark
 
 import org.apache.spark.sql.{Dataset, Row, SaveMode}
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+
 import spark.entity.{KeyValue, Person, PersonsTasks, Task}
 
-class SqlTest extends FunSuite with Matchers {
+class SqlTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._
 
