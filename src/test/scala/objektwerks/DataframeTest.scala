@@ -4,8 +4,6 @@ import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
-import objektwerks.entity.{Age, Person}
-
 class DataframeTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import org.apache.spark.sql.expressions._

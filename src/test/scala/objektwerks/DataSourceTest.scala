@@ -6,10 +6,6 @@ import org.apache.spark.sql.{Dataset, SaveMode}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
-import objektwerks.entity.{AvgAgeByRole, KeyValue, Person}
-
-case class Friend(id: Int, name: String, age: Int, score: Int)
-
 class DataSourceTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._

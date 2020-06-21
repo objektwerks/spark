@@ -4,8 +4,6 @@ import org.apache.spark.sql.Dataset
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
 
-import objektwerks.entity.Person
-
 class ExplainTest extends AnyFunSuite with Matchers {
   import SparkInstance._
   import sparkSession.implicits._

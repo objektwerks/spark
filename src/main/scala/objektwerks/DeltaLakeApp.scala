@@ -2,8 +2,8 @@ package objektwerks
 
 object DeltaLakeApp extends App {
   import SparkInstance._
-  import objektwerks.entity.Person._
-
+  import Person.personStructType
+  
   batch()
   structuredStreaming()
 
