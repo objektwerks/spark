@@ -13,7 +13,6 @@ class StructuredStreamingTest extends AnyFunSuite with Matchers {
     import Person._
     sparkSession
       .readStream
-      .option("basePath", "./data/person")
       .schema(personStructType)
       .json("./data/person")
       .as[Person]
