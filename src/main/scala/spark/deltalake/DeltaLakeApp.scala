@@ -22,7 +22,6 @@ object DeltaLakeApp extends App {
     val rolesPath = "./target/delta/roles"
     sparkSession
       .readStream
-      .option("basePath", "./data/person")
       .schema(personStructType)
       .json("./data/person")
       .groupBy("role", "name")
