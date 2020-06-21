@@ -53,7 +53,6 @@ class WordCountTest extends AnyFunSuite with Matchers {
   test("structured streaming") {
     sparkSession
       .readStream
-      .option("basePath", "./data/words")
       .text("./data/words")
       .flatMap(row => row.getString(0).split("\\W+"))
       .filter(_.nonEmpty)
