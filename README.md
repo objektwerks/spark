@@ -2,6 +2,10 @@ Spark
 -----
 >The purpose of the project is to test Spark features.
 
+WARNING
+-------
+>**Spark 3.0 breaks a number of 2.X features.** Proceed with caustion.;)
+
 Test
 ----
 1. sbt clean test
