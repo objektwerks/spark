@@ -1,4 +1,4 @@
-name := "spark"
+name := "spark2"
 organization := "objektwerks"
 version := "0.1"
 scalaVersion := "2.12.11"
