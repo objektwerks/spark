@@ -15,7 +15,13 @@ object FlightGraphApp extends App {
     .option("header", "true")
     .option("inferSchema", "true")
     .option("delimiter", ",")
-    .load("./data/flights/1987.a.csv")
+    .load(
+      "./data/flights/1987.a.csv",
+      "./data/flights/1987.b.csv",
+      "./data/flights/1987.c.csv",
+      "./data/flights/1987.d.csv",
+      "./data/flights/1987.e.csv"
+    )
   flights.printSchema()
   val flightsFromTo = flights.select("Origin", "Dest").rdd
   val airportCodes = flights.select($"Origin", $"Dest").flatMap(originDest => Iterable( originDest(0).toString, originDest(1).toString ) ).rdd
