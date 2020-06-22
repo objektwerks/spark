@@ -1,5 +1,5 @@
-Spark
------
+Spark2
+------
 >The purpose of the project is to test Spark 2 features.
 
 Test
