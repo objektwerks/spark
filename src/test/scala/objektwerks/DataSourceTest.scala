@@ -13,10 +13,9 @@ class DataSourceTest extends AnyFunSuite with Matchers {
   test("csv") {
     val dataframe = sparkSession
       .read
-      .format("csv")
       .option("delimiter",",")
       .option("inferSchema","true")
-      .load("./data/txt/friends.txt")
+      .csv("./data/txt/friends.txt")
       .cache
     dataframe.count shouldBe 500
 

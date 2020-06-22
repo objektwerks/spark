@@ -17,15 +17,15 @@ Bloop
 Run
 ---
 1. sbt clean test run
- 
-    * [1] spark.deltalake.DeltaLakeApp
-    * [2] spark.graphx.FlightDataApp
-    * [3] spark.ml.KMeansApp
-    * [4] spark.ml.LinearRegressionApp
-    * [5] spark.ml.RecommendationApp
-    * [6] spark.ml.WinePricePredictionApp
-    * [7] spark.streaming.LogEntryApp
 
+    * [1] objektwerks.DeltaLakeApp
+    * [2] objektwerks.FlightGraphApp
+    * [3] objektwerks.KMeansApp
+    * [4] objektwerks.LinearRegressionApp
+    * [5] objektwerks.LogEntryApp
+    * [6] objektwerks.RecommendationApp
+    * [7] objektwerks.WinePricePredictionApp
+ 
 Logs
 ----
 1. ./target/test.log

@@ -5,12 +5,19 @@ import org.apache.spark.rdd.RDD
 
 import scala.util.hashing.MurmurHash3
 
-object FlightDataApp extends App {
+object FlightGraphApp extends App {
   import SparkInstance._
   import sparkSession.implicits._
 
-  val flights = sparkSession.read.format("csv").option("header", "true").load("./data/flights/*.csv")
-  val flightsFromTo = flights.select($"Origin", $"Dest").rdd
+  val flights = sparkSession
+    .read
+    .format("csv")
+    .option("header", "true")
+    .option("inferSchema", "true")
+    .option("delimiter", ",")
+    .load("./data/flights/1987.a.csv")
+  flights.printSchema()
+  val flightsFromTo = flights.select("Origin", "Dest").rdd
   val airportCodes = flights.select($"Origin", $"Dest").flatMap(originDest => Iterable( originDest(0).toString, originDest(1).toString ) ).rdd
 
   val airportVertices: RDD[(VertexId, String)] = airportCodes.distinct.map(airportCode => ( MurmurHash3.stringHash(airportCode).toLong, airportCode) )
