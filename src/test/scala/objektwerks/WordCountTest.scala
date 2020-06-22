@@ -12,7 +12,7 @@ class WordCountTest extends AnyFunSuite with Matchers {
   import sparkSession.implicits._
 
   test("dataset") {
-    val lines: Dataset[String] = sparkSession.read.textFile("./data/words/getttyburg.address.txt")
+    val lines: Dataset[String] = sparkSession.read.textFile("./data/words/gettysburg.address.txt")
     val counts = lines
       .flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
@@ -24,7 +24,7 @@ class WordCountTest extends AnyFunSuite with Matchers {
   }
 
   test("dataframe") {
-    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/getttyburg.address.txt").toDF("line")
+    val lines: Dataset[Row] = sparkSession.read.textFile("./data/words/gettysburg.address.txt").toDF("line")
     val counts = lines
       .flatMap(row => row.getString(0).split("\\W+"))
       .filter(_.nonEmpty)
@@ -35,7 +35,7 @@ class WordCountTest extends AnyFunSuite with Matchers {
   }
 
   test("rdd") {
-    val lines = sparkContext.textFile("./data/words/getttyburg.address.txt")
+    val lines = sparkContext.textFile("./data/words/gettysburg.address.txt")
     val counts = lines.flatMap(line => line.split("\\W+"))
       .filter(_.nonEmpty)
       .map(_.toLowerCase)
@@ -65,7 +65,7 @@ class WordCountTest extends AnyFunSuite with Matchers {
 
   test("dstream") {
     val streamingContext = new StreamingContext(sparkContext, batchDuration = Milliseconds(100))
-    val dstream = textToDStream("./data/words/getttyburg.address.txt", streamingContext)
+    val dstream = textToDStream("./data/words/gettysburg.address.txt", streamingContext)
     val wordCountDstream = countWords(dstream)
     val buffer = mutable.ArrayBuffer[(String, Int)]()
     wordCountDstream foreachRDD { rdd => buffer ++= rdd.collect }
