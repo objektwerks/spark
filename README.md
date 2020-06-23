@@ -37,9 +37,18 @@ Events
 
 Tunning
 ------- 
->kyro serialization, partitions, driver and executor memory/cores, cache/persist/checkpointing, narrow vs wide transformations,
->shuffling (disk/network io), splittable files, number of files and size, data locality, jvm gc, spark web/history ui,
->tungsten
+1. kyro serialization
+2. partitions
+3. driver and executor memory/cores
+4. cache/persist/checkpointing
+5. narrow vs wide transformations
+6. shuffling (disk/network io)
+7. splittable files
+8. number of files and size
+9. data locality
+10. jvm gc
+11. spark web/history ui
+12. tungsten
 
 JDKs
 ----
