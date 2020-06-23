@@ -19,7 +19,6 @@ class DatasetTest extends AnyFunSuite with Matchers {
     dataset.count shouldBe 4
     assert(dataset.toDF.isInstanceOf[Dataset[Row]])
     assert(dataset.rdd.isInstanceOf[RDD[Person]])
-    dataset.describe("age").show
   }
 
   test("update") {
@@ -107,7 +106,6 @@ class DatasetTest extends AnyFunSuite with Matchers {
       case ("wife", avgAge) => avgAge shouldBe 22.0
       case (_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
     }
-    groupByRole.show
   }
 
   test("window") {
@@ -115,7 +113,6 @@ class DatasetTest extends AnyFunSuite with Matchers {
     val ranking = rank.over(window).as("rank")
     val result = dataset.select(col("role"), col("name"), col("age"), ranking).as[(String, String, Long, Int)].cache
     ("wife", "wilma", 23, 1) shouldEqual result.head
-    result.show
   }
 
   test("join") {
@@ -127,6 +124,5 @@ class DatasetTest extends AnyFunSuite with Matchers {
     val joinBy = persons.col("id") === tasks.col("pid")
     val personsTasks = persons.join(tasks, joinBy)
     personsTasks.count shouldBe 4
-    personsTasks.show
   }
 }
