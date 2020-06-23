@@ -15,7 +15,6 @@ class DatasetTest extends AnyFunSuite with Matchers {
   val dataset = sparkSession.read.json("./data/person/person.json").as[Person].cache
 
   test("dataset") {
-    dataset.printSchema
     dataset.count shouldBe 4
     assert(dataset.toDF.isInstanceOf[Dataset[Row]])
     assert(dataset.rdd.isInstanceOf[RDD[Person]])

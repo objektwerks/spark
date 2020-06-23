@@ -18,8 +18,6 @@ class StreamingTest extends AnyFunSuite with Matchers {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    println(s"Batch Word Count: ${buffer.size}")
-    buffer.sortBy(_._1).foreach(println)
     buffer.size shouldBe 96
   }
 
@@ -32,8 +30,6 @@ class StreamingTest extends AnyFunSuite with Matchers {
     streamingContext.start
     streamingContext.awaitTerminationOrTimeout(100)
     streamingContext.stop(stopSparkContext = false, stopGracefully = true)
-    println(s"Window Word Count: ${buffer.size}")
-    buffer.sortBy(_._1).foreach(println)
     buffer.size shouldBe 96
   }
 }

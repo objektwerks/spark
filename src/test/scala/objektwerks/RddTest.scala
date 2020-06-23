@@ -61,7 +61,6 @@ class RddTest extends AnyFunSuite with Matchers {
     val leftRdd = sparkContext.makeRDD(Array((1, 2)))
     val rightRdd = sparkContext.makeRDD(Array((1, 3)))
     val cogroupRdd = leftRdd.cogroup(rightRdd)
-    cogroupRdd foreach println
     cogroupRdd.collect foreach { t:(Int, (Iterable[Int], Iterable[Int])) => assert( (1,(Iterable(2),Iterable(3))) == t ) }
   }
 
@@ -138,9 +137,6 @@ class RddTest extends AnyFunSuite with Matchers {
     val maxWordCount = wordCounts.values.max
     val (word, count) = wordCounts.filter(_._2 == maxWordCount).first
     assert(word == "the" && count == 14)
-
-    println("RDD Word Count:")
-    wordCounts.collect.sortBy(_._1).foreach(println)
   }
 
   test("movie ratings -> countByValue") {
