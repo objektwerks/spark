@@ -63,12 +63,10 @@ class SqlTest extends AnyFunSuite with Matchers {
 
     val personsTasks: Dataset[Row] = sparkSession.sql("SELECT * FROM persons, tasks WHERE persons.id = tasks.pid").cache
     personsTasks.count shouldBe 4
-    personsTasks.show
 
     personsTasks.createOrReplaceTempView("persons_tasks")
     val personTask: Dataset[Row] = sparkSession.sql("select name, task from persons_tasks").cache
     personTask.count shouldBe 4
-    personTask.show
   }
 
   test("dataset join") {
@@ -81,12 +79,10 @@ class SqlTest extends AnyFunSuite with Matchers {
 
     val personsTasks: Dataset[PersonsTasks] = sparkSession.sql("select * from persons, tasks where persons.id = tasks.pid").as[PersonsTasks].cache
     personsTasks.count shouldBe 4
-    personsTasks.show
 
     personsTasks.createOrReplaceTempView("persons_tasks")
     val personTask: Dataset[(String, String)] = sparkSession.sql("select name, task from persons_tasks").as[(String, String)].cache
     personTask.count shouldBe 4
-    personTask.show
   }
 
   test("udf") {
@@ -97,7 +93,6 @@ class SqlTest extends AnyFunSuite with Matchers {
 
     val temps = sparkSession.sql("select city, celciusToFahrenheit(avgLow) as avgLowFahrenheit, celciusToFahrenheit(avgHigh) as avgHighFahrenheit from city_temps")
     temps.count shouldBe 6
-    temps.show
   }
 
   test("jdbc") {

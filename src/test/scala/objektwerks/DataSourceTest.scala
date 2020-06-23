@@ -63,7 +63,6 @@ class DataSourceTest extends AnyFunSuite with Matchers {
     val keyvalues = sparkSession.sql("SELECT * FROM keyvalue").as[KeyValue].cache
     keyvalues.count shouldBe 9
     keyvalues.filter(_.key == 3).head.value shouldBe 33
-    keyvalues.show
   }
 
   test("jdbc") {
@@ -75,7 +74,6 @@ class DataSourceTest extends AnyFunSuite with Matchers {
 
     val avgAgeByRoles = readAvgAgeByRoleDatasource  // Verify
     avgAgeByRoles.count shouldBe 2
-    avgAgeByRoles.show
   }
 
   private def prepareDatasource: Boolean = {

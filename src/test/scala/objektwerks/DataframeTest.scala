@@ -17,7 +17,6 @@ class DataframeTest extends AnyFunSuite with Matchers {
     dataframe.count shouldBe 4
     assert(dataframe.isInstanceOf[Dataset[Row]])
     assert(dataframe.as[Person].isInstanceOf[Dataset[Person]])
-    dataframe.describe("age").show
   }
 
   test("update") {
@@ -100,7 +99,6 @@ class DataframeTest extends AnyFunSuite with Matchers {
       case Row("husband", avgAge) => avgAge shouldBe 23.0
       case Row("wife", avgAge) => avgAge shouldBe 22.0
     }
-    groupByRole.show
   }
 
   test("window") {
@@ -108,7 +106,6 @@ class DataframeTest extends AnyFunSuite with Matchers {
     val ranking = rank.over(window).as("rank")
     val result = dataframe.select(col("role"), col("name"), col("age"), ranking).as[(String, String, Long, Int)].cache
     ("wife", "wilma", 23, 1) shouldEqual result.head
-    result.show
   }
 
   test("join") {
@@ -120,6 +117,5 @@ class DataframeTest extends AnyFunSuite with Matchers {
     val joinBy = persons.col("id") === tasks.col("pid")
     val personsTasks = persons.join(tasks, joinBy)
     personsTasks.count shouldBe 4
-    personsTasks.show
   }
 }

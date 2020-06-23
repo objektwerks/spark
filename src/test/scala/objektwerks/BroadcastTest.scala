@@ -17,6 +17,5 @@ class BroadcastTest extends AnyFunSuite with Matchers {
     val personsTasks = persons.join(tasks, joinBy)
 
     personsTasks.count shouldBe 4
-    personsTasks.show
   }
 }
