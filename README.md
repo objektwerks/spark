@@ -2,6 +2,10 @@ Spark2
 ------
 >The purpose of the project is to test Spark 2 features.
 
+WARNING
+-------
+>See .sbtopts JDK 8 must be used!s
+
 Test
 ----
 1. sbt clean test
