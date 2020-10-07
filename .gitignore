@@ -1,11 +1,10 @@
-.bloop
-.idea
-.metals
-.vscode
-target/
+.*
+!/.gitignore
+project/.bloop
 project/metals.sbt
 project/project/
 project/target/
+target/
+.DS_Store
 metastore_db/
 derby.log
-.DS_Store
