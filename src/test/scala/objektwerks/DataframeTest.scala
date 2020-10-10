@@ -92,7 +92,10 @@ class DataframeTest extends AnyFunSuite with Matchers {
   }
 
   test("groupBy -> agg") {
-    val groupByRole = dataframe.groupBy("role").avg("age").cache
+    val groupByRole = dataframe
+      .groupBy("role")
+      .avg("age")
+      .cache
     groupByRole.count shouldBe 2
     groupByRole.collect.map {
       case Row("husband", avgAge) => avgAge shouldBe 23.0
