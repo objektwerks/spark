@@ -19,11 +19,11 @@ class AccumulatorTest extends AnyFunSuite with Matchers {
     doubleAcc.name.get shouldBe "doubleAcc"
     doubleAcc.value shouldBe 1.0
 
-    val collectionAcc = sparkContext.collectionAccumulator[Int]("collectionAcc")
-    collectionAcc.add(1)
-    collectionAcc.add(2)
-    collectionAcc.add(3)
-    collectionAcc.name.get shouldBe "collectionAcc"
-    collectionAcc.value.asScala.sum shouldEqual 6
+    val intsAcc = sparkContext.collectionAccumulator[Int]("intsAcc")
+    intsAcc.add(1)
+    intsAcc.add(2)
+    intsAcc.add(3)
+    intsAcc.name.get shouldBe "intsAcc"
+    intsAcc.value.asScala.sum shouldEqual 6
   }
 }
