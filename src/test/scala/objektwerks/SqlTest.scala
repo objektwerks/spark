@@ -106,7 +106,7 @@ class SqlTest extends AnyFunSuite with Matchers {
     sparkSession.sql("select sum(value) as sum_value from key_values").head.getLong(0) shouldBe 6
   }
 
-  private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit = {
+  private def writeKeyValues(table: String, keyValues: Dataset[KeyValue]): Unit =
     keyValues
       .write
       .mode(SaveMode.Append)
@@ -117,9 +117,8 @@ class SqlTest extends AnyFunSuite with Matchers {
       .option("password", "sa")
       .option("dbtable", table)
       .save
-  }
 
-  private def readKeyValues(table: String): Dataset[KeyValue] = {
+  private def readKeyValues(table: String): Dataset[KeyValue] =
     sparkSession
       .read
       .format("jdbc")
@@ -130,5 +129,4 @@ class SqlTest extends AnyFunSuite with Matchers {
       .option("dbtable", table)
       .load
       .as[KeyValue]
-  }
 }
