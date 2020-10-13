@@ -1,7 +1,5 @@
 package objektwerks
 
-import java.util.UUID
-
 import org.apache.spark.sql.{Dataset, SaveMode}
 import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
@@ -43,17 +41,17 @@ class DataSourceTest extends AnyFunSuite with Matchers {
   }
 
   test("parquet") {
-    val parquetFileName = s"person-${UUID.randomUUID.toString}.parquet"
     val dataset = sparkSession.read.json("./data/person/person.json").as[Person]
-    dataset.write.parquet(s"./target/$parquetFileName")
 
-    val parquet = sparkSession.read.parquet(s"./target/$parquetFileName").as[Person]
+    dataset.write.parquet("./target/parquet/person.parquet")
+
+    val parquet = sparkSession.read.parquet("./target/parquet/person.parquet").as[Person]
+
     parquet.createOrReplaceTempView("persons")
-
-    val resultset = sparkSession.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
-    resultset.count shouldBe 2
-    resultset.head.name shouldBe "betty"
-    resultset.head.age shouldBe 21
+    val persons = sparkSession.sql("select * from persons where age >= 21 and age <= 22 order by age").as[Person].cache
+    persons.count shouldBe 2
+    persons.head.name shouldBe "betty"
+    persons.head.age shouldBe 21
   }
 
   test("hive") {
