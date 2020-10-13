@@ -2,27 +2,27 @@ package objektwerks
 
 import org.apache.spark.sql.Encoders
 
-case class Age(value: Long)
+final case class Age(value: Long)
 
 object Age {
   val ageSchema = Encoders.product[Age].schema
 }
 
-case class AvgAgeByRole(role: String, avg_age: Double)
+final case class AvgAgeByRole(role: String, avg_age: Double)
 
 object AvgAgeByRole {
   val avgAgeByRoleSchema = Encoders.product[AvgAgeByRole].schema
   implicit def avgAgeByRoleOrdering: Ordering[AvgAgeByRole] = Ordering.by(role => role.avg_age > role.avg_age)
 }
 
-case class Count(value: String, count: Long)
+final case class Count(value: String, count: Long)
 object Count {
   implicit val countSchema = Encoders.product[Count].schema
 }
 
-case class Friend(id: Int, name: String, age: Int, score: Int)
+final case class Friend(id: Int, name: String, age: Int, score: Int)
 
-case class KeyValue(key: Int, value: Int)
+final case class KeyValue(key: Int, value: Int)
 
 object KeyValue {
   val keyValueSchema = Encoders.product[KeyValue].schema
@@ -32,7 +32,7 @@ object KeyValue {
 import org.apache.spark.sql.types.{IntegerType, StringType, StructType}
 import org.apache.spark.sql.{Encoders, ForeachWriter}
 
-case class Person(id: Long, age: Long, name: String, role: String)
+final case class Person(id: Long, age: Long, name: String, role: String)
 
 object Person {
   val personSchema = Encoders.product[Person].schema
@@ -49,15 +49,21 @@ object Person {
   implicit def personOrdering: Ordering[Person] = Ordering.by(_.name)
 }
 
-case class PersonsTasks(id: Long, age: Long, name: String, role: String, tid: Long, pid: Long, task: String)
+final case class PersonsTasks(id: Long, age: Long, name: String, role: String, tid: Long, pid: Long, task: String)
 
 object PersonsTasks {
   val personsTasksSchema = Encoders.product[PersonsTasks].schema
 }
 
-case class Task(tid: Long, pid: Long, task: String)
+final case class Task(tid: Long, pid: Long, task: String)
 
 object Task {
   val taskSchema = Encoders.product[Task].schema
   implicit def taskOrdering: Ordering[Task] = Ordering.by(_.task)
+}
+
+final case class PersonAsDog(id: Long, age: Long, name: String, role: String, dogAge: Long)
+
+object PersonAsDog {
+  val personAsDogSchema = Encoders.product[PersonAsDog].schema
 }
