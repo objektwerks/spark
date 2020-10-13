@@ -11,10 +11,7 @@ class DataframeTest extends AnyFunSuite with Matchers {
   import sparkSession.implicits._
 
   val dataframe = sparkSession.read.json("./data/person/person.json").cache
-
-  test("write") {
-    dataframe.write.json("./target/dataframe/person.json")
-  }
+  dataframe.write.json("./target/dataframe/person.json")
 
   test("dataframe") {
     dataframe.count shouldBe 4
