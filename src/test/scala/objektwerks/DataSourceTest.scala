@@ -87,7 +87,7 @@ class DataSourceTest extends AnyFunSuite with Matchers {
           insert into persons values (2, 23, 'wilma', 'wife');
           insert into persons values (3, 22, 'barney', 'husband');
           insert into persons values (4, 21, 'betty', 'wife');
-          create table avg_age_by_role (role varchar(64) not null, avg_age double not null);
+          create table avg_age_by_role (role varchar(64) not null, avgAge double not null);
       """.execute.apply
   }
 
