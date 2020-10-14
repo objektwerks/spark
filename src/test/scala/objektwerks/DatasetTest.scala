@@ -21,6 +21,32 @@ class DatasetTest extends AnyFunSuite with Matchers {
     assert(dataset.rdd.isInstanceOf[RDD[Person]])
   }
 
+  test("column") {
+    val idColumn = dataset.col("id")
+    val nameColumn = col("name")
+    val ageColumn = column("age")
+    val roleColumn = expr("role")
+    dataset
+      .select(idColumn, nameColumn, ageColumn, roleColumn)
+      .as[Person]
+      .count shouldBe 4
+  }
+
+  test("selectExpr") {
+    dataset
+      .selectExpr("id", "name", "age", "role")
+      .as[Person]
+      .count shouldBe 4
+  }
+
+  test("extend") { 
+    dataset
+      .withColumn("dogAge", $"age" * 7)
+      .as[PersonAsDog]
+      .head
+      .dogAge shouldBe 168
+  }
+
   test("update") {
     val incrementAgeNameToUpper = dataset
       .withColumn("age", 'age + 1)
