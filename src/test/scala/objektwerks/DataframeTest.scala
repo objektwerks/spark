@@ -120,6 +120,28 @@ class DataframeTest extends AnyFunSuite with Matchers {
     }
   }
 
+  test("groupBy > agg( min, avg, max)") {
+    val groupByRole = dataframe
+      .groupBy("role")
+      .agg(
+        min("age"),
+        avg("age"),
+        max("age")
+      )
+      .cache
+    groupByRole.count shouldBe 2
+    groupByRole.collect.map {
+      case Row("husband", minAge, avgAge, maxAge) =>
+        minAge shouldBe 22
+        avgAge shouldBe 23.0
+        maxAge shouldBe 24
+      case Row("wife", minAge, avgAge, maxAge) => 
+        minAge shouldBe 21
+        avgAge shouldBe 22.0
+        maxAge shouldBe 23
+    }
+  }
+
   test("window") {
     val window = Window.partitionBy("role").orderBy($"age".desc)
     val ranking = rank.over(window).as("rank")
