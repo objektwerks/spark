@@ -114,8 +114,7 @@ class DatasetTest extends AnyFunSuite with Matchers {
       .groupByKey( _.role )
       .agg( typed.avg(_.age.toDouble) )
       .map( tuple => AvgAgeByRole(tuple._1, tuple._2) )
-      .collect
-      .map {
+      .collect.foreach {
         case AvgAgeByRole("husband", avgAge) => avgAge shouldBe 23.0
         case AvgAgeByRole("wife", avgAge) => avgAge shouldBe 22.0
         case AvgAgeByRole(_, _) => throw new IllegalArgumentException("GroupByRole test failed!")
@@ -129,7 +128,7 @@ class DatasetTest extends AnyFunSuite with Matchers {
       .as[(String, Double)]
       .cache
     groupByRole.count shouldBe 2
-    groupByRole.collect.map {
+    groupByRole.collect.foreach {
       case ("husband", avgAge) => avgAge shouldBe 23.0
       case ("wife", avgAge) => avgAge shouldBe 22.0
       case _ => fail("groupBy > avg test failed!")
@@ -146,7 +145,7 @@ class DatasetTest extends AnyFunSuite with Matchers {
       )
       .cache
     groupByRole.count shouldBe 2
-    groupByRole.collect.map {
+    groupByRole.collect.foreach {
       case Row("husband", minAge, avgAge, maxAge) =>
         minAge shouldBe 22
         avgAge shouldBe 23.0

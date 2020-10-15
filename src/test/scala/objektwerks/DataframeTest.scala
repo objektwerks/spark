@@ -114,7 +114,7 @@ class DataframeTest extends AnyFunSuite with Matchers {
       .avg("age")
       .cache
     groupByRole.count shouldBe 2
-    groupByRole.collect.map {
+    groupByRole.collect.foreach {
       case Row("husband", avgAge) => avgAge shouldBe 23.0
       case Row("wife", avgAge) => avgAge shouldBe 22.0
     }
@@ -130,7 +130,7 @@ class DataframeTest extends AnyFunSuite with Matchers {
       )
       .cache
     groupByRole.count shouldBe 2
-    groupByRole.collect.map {
+    groupByRole.collect.foreach {
       case Row("husband", minAge, avgAge, maxAge) =>
         minAge shouldBe 22
         avgAge shouldBe 23.0
