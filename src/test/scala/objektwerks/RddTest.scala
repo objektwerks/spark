@@ -15,7 +15,7 @@ import scala.io.{Codec, Source}
 class RddTest extends AnyFunSuite with Matchers {
   import SparkInstance._
 
-  test("transformations -> action") {
+  test("transformations > action") {
     val rdd = sparkContext.makeRDD(Array(1, 2, 3)).cache
     assert(rdd.filter(_ % 2 == 0).first == 2)
     assert(rdd.filter(_ % 2 != 0).first == 1)
@@ -139,7 +139,7 @@ class RddTest extends AnyFunSuite with Matchers {
     assert(word == "the" && count == 14)
   }
 
-  test("movie ratings -> countByValue") {
+  test("movie ratings > countByValue") {
     val lines = sparkContext.textFile("./data/txt/movie-ratings.txt")
     val ratings = lines.map(line => line.split("\t")(2).toInt)
     val ratingsByCount = ratings.countByValue
@@ -150,7 +150,7 @@ class RddTest extends AnyFunSuite with Matchers {
     ratingsByCount(5) shouldBe 21201
   }
 
-  test("friends -> average") {
+  test("friends > average") {
     def parseLine(line: String): (Int, Int) = {
       val fields = line.split(",")
       val age = fields(2).toInt
@@ -167,7 +167,7 @@ class RddTest extends AnyFunSuite with Matchers {
     (69, 235) shouldBe results.last
   }
 
-  test("weather -> min, max") {
+  test("weather > min, max") {
     def parseLine(line: String): (String, String, Float) = {
       val fields = line.split(",")
       val station = fields(0)
@@ -192,7 +192,7 @@ class RddTest extends AnyFunSuite with Matchers {
     ("EZE00100082", 90.14F) shouldBe maxResults.head
   }
 
-  test("orders -> sortByKey") {
+  test("orders > sortByKey") {
     def parseLine(line: String): (Int, Float) = {
       val fields = line.split(",")
       val customer = fields(0).toInt
@@ -215,7 +215,7 @@ class RddTest extends AnyFunSuite with Matchers {
     5004.8916F shouldBe amounts.sum / amounts.length // avg
   }
 
-  test("movies and movie ratings -> broadcast, reduceByKey") {
+  test("movies and movie ratings > broadcast, reduceByKey") {
     def loadMovies(): Map[Int, String] = {
       implicit val codec = Codec("UTF-8")
       codec.onMalformedInput(CodingErrorAction.REPLACE)
@@ -243,7 +243,7 @@ class RddTest extends AnyFunSuite with Matchers {
     ("Star Wars (1977)", 583) shouldBe results.last // most popular
   }
 
-  test("marvel -> graph analysis") {
+  test("marvel > graph analysis") {
     implicit val codec = Codec("UTF-8")
     codec.onMalformedInput(CodingErrorAction.REPLACE)
     codec.onUnmappableCharacter(CodingErrorAction.REPLACE)

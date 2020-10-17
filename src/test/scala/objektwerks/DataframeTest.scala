@@ -108,7 +108,7 @@ class DataframeTest extends AnyFunSuite with Matchers {
     dataframe.select(max(col("age"))).map(row => Age(row.getLong(0))).head shouldBe Age(24)
   }
 
-  test("groupBy -> avg") {
+  test("groupBy > avg") {
     val groupByRole = dataframe
       .groupBy("role")
       .avg("age")
@@ -120,7 +120,7 @@ class DataframeTest extends AnyFunSuite with Matchers {
     }
   }
 
-  test("groupBy > agg( min, avg, max)") {
+  test("groupBy > agg(min, avg, max)") {
     val groupByRole = dataframe
       .groupBy("role")
       .agg(

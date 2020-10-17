@@ -86,7 +86,7 @@ class DatasetTest extends AnyFunSuite with Matchers {
     filterByAge.head.age shouldBe 24
   }
 
-  test("filter -> map") {
+  test("filter > map") {
     val betty = dataset.filter(_.name == "betty").map(_.name.toUpperCase).cache
     betty.count shouldBe 1
     betty.head shouldBe "BETTY"
@@ -135,7 +135,7 @@ class DatasetTest extends AnyFunSuite with Matchers {
     }
   }
 
-  test("groupBy > agg( min, avg, max)") {
+  test("groupBy > agg(min, avg, max)") {
     val groupByRole = dataset
       .groupBy("role")
       .agg(
