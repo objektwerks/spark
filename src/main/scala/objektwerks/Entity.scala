@@ -58,3 +58,8 @@ final case class PersonAsDog(id: Long, age: Long, name: String, role: String, do
 object PersonAsDog {
   val personAsDogSchema = Encoders.product[PersonAsDog].schema
 }
+
+final case class PersonWithGender(id: Long, age: Long, name: String, role: String, gender: String)
+object PersonWithGender {
+  val personeWithGenderSchema = Encoders.product[PersonWithGender].schema
+}
