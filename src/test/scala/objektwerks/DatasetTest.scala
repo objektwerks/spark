@@ -158,6 +158,17 @@ class DatasetTest extends AnyFunSuite with Matchers {
     }
   }
 
+  test("when > otherwise") {
+    val personsWithGender = dataset
+      .withColumn("gender", when($"role" === "husband", "male").otherwise("female"))
+      .as[PersonWithGender]
+    personsWithGender.collect.foreach {
+      case PersonWithGender(_, _, _, "husband", gender) => gender shouldBe "male"
+      case PersonWithGender(_, _, _, "wife", gender) => gender shouldBe "female"
+      case _ => fail("when > otherwise test failed!")
+    }
+  }
+
   test("window") {
     val window = Window.partitionBy('role).orderBy($"age".desc)
     val ranking = rank.over(window).as("rank")
