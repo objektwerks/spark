@@ -14,14 +14,6 @@ Test
 ----
 1. sbt clean test
 
-Bloop
------
-1. sbt bloopInstall
-2. bloop projects
-3. bloop clean spark
-4. bloop compile spark
-5. bloop test spark
-
 Run
 ---
 1. sbt clean compile run
@@ -36,12 +28,12 @@ Run
  
 Logs
 ----
-1. ./target/test.log
-2. ./target/app.log
+1. target/test.log
+2. target/app.log
 
 Events
 ------
-1. ./target/local-*
+1. target/local-*
 
 Tuning
 ------
@@ -68,4 +60,4 @@ JDK
 .sbtopts
 --------
 1. Create an .sbtopts file in the project root directory.
-2. Add this line ( to line 1 ): -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
+2. Add this line: -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
