@@ -24,7 +24,7 @@ Bloop
 
 Run
 ---
-1. sbt clean test run
+1. sbt clean compile run
 
     * [1] objektwerks.DeltaLakeApp
     * [2] objektwerks.FlightGraphApp
