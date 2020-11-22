@@ -56,13 +56,10 @@ Tunning
 
 JDKs
 ----
->If you have more than one JDK installed, such as JDK 8 and JDK 11, you need to run sbt using JDK 8.
-Here's a few examples:
+>Spark 2 requires JDK 8. Via Sbt, use as follows:
 
 * sbt clean test -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
 * sbt run -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
-
->Or, optionally, create an .sbtopts file.
  
 .sbtopts
 --------
