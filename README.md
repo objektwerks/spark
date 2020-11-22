@@ -2,9 +2,9 @@ Spark2
 ------
 >This project tests Spark 2 features.
 
-WARNING
--------
->JDK 8 must be used with Spark 2. See .sbtopts
+JDK
+---
+>JDK 8 **must** be used with Spark 2.
 
 Test
 ----
