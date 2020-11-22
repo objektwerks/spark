@@ -1,10 +1,6 @@
-Spark2
-------
->This project tests Spark 2 features.
-
-JDK
----
->JDK 8 **must** be used with Spark 2.
+Spark
+-----
+>Tests Spark 2 features.
 
 Test
 ----
@@ -39,8 +35,8 @@ Events
 ------
 1. ./target/local-*
 
-Tunning
-------- 
+Tuning
+------
 1. kyro serialization
 2. partitions
 3. driver and executor memory/cores
@@ -54,8 +50,8 @@ Tunning
 11. spark web/history ui
 12. tungsten
 
-JDKs
-----
+JDK
+---
 >Spark 2 requires JDK 8. Via Sbt, use as follows:
 
 * sbt clean test -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
