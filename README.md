@@ -4,7 +4,7 @@ Spark
 
 Architecture
 ------------
-* Job 1 --> * Stage 1 --> * Partition
+* Job 1 --> * Stage 1 --> * Partition | Task
 * Driver 1 --> * Executor
 * JVM 1 --> 1 Executor
 * Executor 1 --> * Partition | Task
