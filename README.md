@@ -2,6 +2,14 @@ Spark
 -----
 >Tests Spark 2 features.
 
+Architecture
+------------
+* Job 1 --> * Stage 1 --> * Partition
+* Driver 1 --> * Executor
+* JVM 1 --> 1 Executor
+* Executor 1 --> * Partition | Task
+* Task 1 --> 1 Partition
+
 Test
 ----
 1. sbt clean test
