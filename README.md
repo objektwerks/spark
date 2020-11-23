@@ -6,7 +6,7 @@ Architecture
 ------------
 >This model excludes the cluster manager, such as Standalone, Yarn, Mesos and Kubernetes.
 * Job 1 --> * Stage 1 --> * Partition | Task
-* Driver 1 --> * Executor
+* Driver 1 <--> * Executor
 * Node 1 --> * JVM 1 --> 1 Executor
 * Executor 1 --> * Partition | Task
 * Task 1 --> 1 Partition
@@ -19,13 +19,13 @@ Run
 ---
 1. sbt clean compile run
 
-* [1] objektwerks.DeltaLakeApp
-* [2] objektwerks.FlightGraphApp
-* [3] objektwerks.KMeansApp
-* [4] objektwerks.LinearRegressionApp
-* [5] objektwerks.LogEntryApp
-* [6] objektwerks.RecommendationApp
-* [7] objektwerks.WinePricePredictionApp
+  * [1] objektwerks.DeltaLakeApp
+  * [2] objektwerks.FlightGraphApp
+  * [3] objektwerks.KMeansApp
+  * [4] objektwerks.LinearRegressionApp
+  * [5] objektwerks.LogEntryApp
+  * [6] objektwerks.RecommendationApp
+  * [7] objektwerks.WinePricePredictionApp
  
 Logs
 ----
