@@ -1,6 +1,6 @@
 Spark
 -----
->Tests Spark 2 features.
+>Spark 2 feature tests.
 
 Architecture
 ------------
@@ -50,15 +50,3 @@ Tuning
 10. jvm gc
 11. spark web/history ui
 12. tungsten
-
-JDK
----
->Spark 2 requires JDK 8. Via Sbt, use as follows:
-
-* sbt clean test -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
-* sbt run -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
- 
-.sbtopts
---------
-1. Create an .sbtopts file in the project root directory.
-2. Add this line: -java-home /Users/objektwerks/.sdkman/candidates/java/8.0.275.hs-adpt
