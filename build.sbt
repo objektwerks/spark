@@ -11,8 +11,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-hive" % sparkVersion,
     "org.apache.spark" %% "spark-mllib" % sparkVersion,
     "org.apache.spark" %% "spark-graphx" % sparkVersion,
-    "io.delta" %% "delta-core" % "0.6.1",
-    // delta-core 0.7.0 Cause NoClassDefFoundError errors on org/apache/spark/sql/connector/catalog/TableProvider
+    "io.delta" %% "delta-core" % "1.0.0",
     "org.scalikejdbc" %% "scalikejdbc" % "3.5.0",
     "com.h2database" % "h2" % "1.4.200",
     "org.slf4j" % "slf4j-api" % "1.7.32",
