@@ -15,7 +15,7 @@ libraryDependencies ++= {
     // delta-core 0.7.0 Cause NoClassDefFoundError errors on org/apache/spark/sql/connector/catalog/TableProvider
     "org.scalikejdbc" %% "scalikejdbc" % "3.5.0",
     "com.h2database" % "h2" % "1.4.200",
-    "org.slf4j" % "slf4j-api" % "1.7.30",
+    "org.slf4j" % "slf4j-api" % "1.7.32",
     "org.scalatest" %% "scalatest" % "3.2.9" % Test
   )
 }
