@@ -11,7 +11,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-hive" % sparkVersion,
     "org.apache.spark" %% "spark-mllib" % sparkVersion,
     "org.apache.spark" %% "spark-graphx" % sparkVersion,
-    "io.delta" %% "delta-core" % "1.0.0",
+    "io.delta" %% "delta-core" % "1.1.0",
     "org.scalikejdbc" %% "scalikejdbc" % "3.5.0", // Can't upgrade to 4.0.0
     "com.h2database" % "h2" % "2.1.210",
     "org.slf4j" % "slf4j-api" % "1.7.36",
