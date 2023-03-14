@@ -1,9 +1,9 @@
 package objektwerks
 
+import SparkInstance._
+import Person.personStructType
+
 object DeltaLakeApp extends App {
-  import SparkInstance._
-  import Person.personStructType
-  
   batch()
   structuredStreaming()
 
@@ -29,18 +29,13 @@ object DeltaLakeApp extends App {
       .outputMode("complete")
       .option("checkpointLocation", "./target/delta/roles/checkpoints")
       .start(rolesPath)
-      .awaitTermination(30000) // Time-dependent due to slow Delta Lake IO!
-    sparkSession
-      .readStream
+      .awaitTermination(10000) // Time-dependent due to slow Delta Lake IO!
+    val rolesDelta = sparkSession
+      .read
       .format("delta")
       .load(rolesPath)
-      .writeStream
-      .format("console")
-      .outputMode("append")
-      .start
-      .awaitTermination(30000)
-    val rolesDelta = sparkSession.read.format("delta").load(rolesPath)
     rolesDelta.select("*").show
     assert( rolesDelta.select("*").count == 4 )
+    sys.exit()
   }
 }
