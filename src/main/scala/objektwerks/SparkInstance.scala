@@ -5,7 +5,6 @@ import java.io.File
 import org.apache.spark.sql.SparkSession
 
 object SparkInstance {
-  System.setSecurityManager(null) // Resolves Derby DB access issue.
   val sparkWarehouseDir = new File("./target/spark-warehouse").getAbsolutePath
   val sparkEventLogDir = "/tmp/spark-events"
   val sparkEventDirCreated = createSparkEventsDir(sparkEventLogDir)
