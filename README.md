@@ -4,7 +4,9 @@ Spark
 
 Warning
 -------
->This project is fundamentally broken due to classloader issues. See [Spark3](https://github.com/objektwerks/spark3), instead!
+>This project is fundamentally broken due to library ***version*** and ***classloader*** issues.
+
+>See [Spark3](https://github.com/objektwerks/spark3), instead!
 
 Architecture
 ------------
