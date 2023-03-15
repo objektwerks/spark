@@ -1,6 +1,10 @@
 Spark
 -----
->Spark 2 feature tests.
+>Spark 2 feature apps and tests.
+
+Warning
+-------
+>This project is fundamentally broken due to classloader issues. See [Spark3](https://github.com/objektwerks/spark3), instead!
 
 Architecture
 ------------
