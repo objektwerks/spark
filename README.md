@@ -1,6 +1,6 @@
 Spark
 -----
->Spark 2 feature apps and tests.
+>Spark 2 apps and tests.
 
 Warning
 -------
