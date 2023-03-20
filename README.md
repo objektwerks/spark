@@ -11,10 +11,10 @@ Warning
 Architecture
 ------------
 >This model excludes the cluster manager, such as Standalone, Yarn, Mesos and Kubernetes.
-* Job 1 --> * Stage 1 --> * Partition | Task
+* Job 1 --> * Stage 1 --> * Task
 * Driver 1 <--> * Executor
-* Node 1 --> * JVM 1 --> 1 Executor
-* Executor 1 --> * Partition | Task
+* Node 1 --> * JVM 1 --> * Executor
+* Executor 1 --> * Task | Partition
 * Task 1 --> 1 Partition
 
 Test
