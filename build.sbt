@@ -13,7 +13,7 @@ libraryDependencies ++= {
     "org.apache.spark" %% "spark-graphx" % sparkVersion,
     "io.delta" %% "delta-core" % "2.4.0",
     "org.scalikejdbc" %% "scalikejdbc" % "3.5.0",
-    "com.h2database" % "h2" % "2.1.214",
+    "com.h2database" % "h2" % "2.1.220",
     "org.slf4j" % "slf4j-api" % "2.0.7",
     "org.scalatest" %% "scalatest" % "3.2.16" % Test
   )
