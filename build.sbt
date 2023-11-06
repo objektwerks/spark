@@ -14,7 +14,7 @@ libraryDependencies ++= {
     "io.delta" %% "delta-core" % "2.4.0",
     "org.scalikejdbc" %% "scalikejdbc" % "4.1.0",
     "com.h2database" % "h2" % "2.2.224",
-    "org.slf4j" % "slf4j-api" % "2.0.7",
+    "org.slf4j" % "slf4j-api" % "2.0.8",
     "org.scalatest" %% "scalatest" % "3.2.17" % Test
   )
 }
