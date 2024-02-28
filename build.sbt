@@ -15,6 +15,6 @@ libraryDependencies ++= {
     "org.scalikejdbc" %% "scalikejdbc" % "4.2.1",
     "com.h2database" % "h2" % "2.2.224",
     "org.slf4j" % "slf4j-api" % "2.0.9",
-    "org.scalatest" %% "scalatest" % "3.2.17" % Test
+    "org.scalatest" %% "scalatest" % "3.2.18" % Test
   )
 }
